@@ -11,18 +11,16 @@ Application: "Personal assistant"
 Run:
 
 ```shell
-uv run personal-assistant
+personal-assistant
 ```
 
 ---
 
-## Dev
-
-### Docs
-
-[docs](docs)
+## Install
 
 ### Uv install or update
+
+You need this for both usage and development.
 
 https://docs.astral.sh/uv/getting-started/installation/
 
@@ -35,6 +33,48 @@ fi
 
 uv --version
 ```
+
+### Install or update a project
+
+```shell
+if ! command -v personal-assistant &> /dev/null; then
+    uv tool install git+https://github.com/Alirex/goit-i-pycore-i-personal-assistant
+else
+    uv tool upgrade goit-i-pycore-i-personal-assistant
+fi
+```
+
+Note: You can change the url to something like this if the repository is private:
+
+- git+ssh://your-ssh-config-profile/Alirex/goit-i-pycore-i-personal-assistant
+
+Or, for development, change the installation command to:
+
+```shell
+uv tool install --editable .
+```
+
+And run it from the repository directory.
+
+### Remove project
+
+```shell
+uv tool uninstall goit-i-pycore-i-personal-assistant
+```
+
+### Check project in the list
+
+```shell
+uv tool list --show-python
+```
+
+---
+
+## Dev
+
+### Docs
+
+[docs](docs)
 
 ### Ruff install or update
 
