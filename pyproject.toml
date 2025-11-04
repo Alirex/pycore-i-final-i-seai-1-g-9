@@ -1,0 +1,34 @@
+[project]
+name = "goit-i-pycore-i-personal-assistant"
+version = "0.1.0"
+description = "Personal Assistant application"
+readme = "README.md"
+authors = [
+    { name = "alirex", email = "alirex.prime@gmail.com" }
+]
+requires-python = ">=3.14.0"
+dependencies = [
+    # Better classes and validation.
+    "pydantic>=2.12.3",
+    # Pretty terminal output.
+    "rich>=14.2.0",
+    # Environment variable parsing and validation.
+    "environs>=14.5.0",
+]
+
+[dependency-groups]
+dev = [
+    # Static type checker
+    "mypy>=1.18.2",
+    # Tests.
+    "pytest>=8.4.2",
+    # Freeze time for tests.
+    "freezegun>=1.5.5",
+]
+
+[project.scripts]
+personal-assistant = "goit_i_pycore_i_personal_assistant:main"
+
+[build-system]
+requires = ["uv_build>=0.9.7,<0.10.0"]
+build-backend = "uv_build"
