@@ -11,7 +11,7 @@ Application: "Personal assistant"
 Run:
 
 ```shell
-personal-assistant
+personal-assistant chat run
 ```
 
 ---
