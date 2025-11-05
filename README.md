@@ -90,7 +90,9 @@ uv tool list --show-python
 
 ### Docs
 
-[docs](docs)
+Here you can read some [docs](docs).
+
+Here is a [project code conventions](docs/conventions.md).
 
 ### Ruff install or update
 
