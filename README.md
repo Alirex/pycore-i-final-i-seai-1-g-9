@@ -14,6 +14,22 @@ Run:
 personal-assistant chat run
 ```
 
+### CLI help
+
+Help for non-interactive CLI mode:
+
+[See here](docs/cli_help.md)
+
+### Install CLI completion
+
+This will install completion for the current shell. Available after restarting the shell.
+
+```shell
+personal-assistant --install-completion
+```
+
+Note: relatively safe to run multiple times. It just adds extra newlines to your shell config when run multiple times.
+
 ---
 
 ## Install

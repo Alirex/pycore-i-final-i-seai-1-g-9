@@ -1,6 +1,7 @@
 exclude: |
   (?x)^(
-    \.idea/.*
+    \.idea/.*|
+    docs/cli_help.md
     )$
 
 repos:
@@ -37,7 +38,7 @@ repos:
 
   - repo: https://gitlab.com/vojko.pribudic.foss/pre-commit-update
     # https://pypi.org/project/pre-commit-update/
-    rev: v0.8.0
+    rev: v0.9.0
     hooks:
       - id: pre-commit-update
 
@@ -66,6 +67,14 @@ repos:
       #        entry: uv run pytest
       #        language: system
       #        pass_filenames: false
+
+      - id: generate-cli-help
+        # Generate CLI help.
+        name: generate-cli-help
+        entry: uv run typer goit_i_pycore_i_personal_assistant.cli.main utils
+          docs --output docs/cli_help.md
+        language: system
+        pass_filenames: false
 
       - id: mypy
         # Static type checker for Python.

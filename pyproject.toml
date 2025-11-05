@@ -14,6 +14,12 @@ dependencies = [
     "rich>=14.2.0",
     # Environment variable parsing and validation.
     "environs>=14.5.0",
+    # Better command-line interfaces.
+    "prompt-toolkit>=3.0.52",
+    # Command-line interface creation library.
+    "typer>=0.20.0",
+    # User folders path handling.
+    "platformdirs>=4.5.0",
 ]
 
 [dependency-groups]
@@ -28,6 +34,7 @@ dev = [
 
 [project.scripts]
 personal-assistant = "goit_i_pycore_i_personal_assistant:main"
+# typer goit_i_pycore_i_personal_assistant.cli.main run chat run
 
 [build-system]
 requires = ["uv_build>=0.9.7,<0.10.0"]
