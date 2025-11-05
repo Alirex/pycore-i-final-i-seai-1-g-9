@@ -21,10 +21,13 @@ def get_platform_dirs(
 
 class AppPaths(BaseModel):
     data_dir: Annotated[pathlib.Path, Field(description="Data directory.")]
-    config_dir: Annotated[pathlib.Path, Field(description="Configuration directory.")]
+    # config_dir: Annotated[pathlib.Path, Field(description="Configuration directory.")]
 
     def _get_paths(self) -> Iterable[pathlib.Path]:
-        return [self.data_dir, self.config_dir]
+        return [
+            self.data_dir,
+            # self.config_dir,
+        ]
 
     def get_for_cli(self) -> T_RICH_TEXT:
         text_as_list = []
@@ -38,7 +41,7 @@ class AppPaths(BaseModel):
         return "\n".join(text_as_list)
 
     def remove_all(self):
-        for path in [self.data_dir, self.config_dir]:
+        for path in self._get_paths():
             if path.exists():
                 path.rmdir()
 
@@ -47,8 +50,8 @@ def get_app_paths(
     *,
     ensure_exists: bool = False,
 ) -> AppPaths:
-    platform_dirs = get_platform_dirs(ensure_exists=True)
+    platform_dirs = get_platform_dirs(ensure_exists=ensure_exists)
     return AppPaths(
         data_dir=pathlib.Path(platform_dirs.user_data_dir),
-        config_dir=pathlib.Path(platform_dirs.user_config_dir),
+        # config_dir=pathlib.Path(platform_dirs.user_config_dir),
     )

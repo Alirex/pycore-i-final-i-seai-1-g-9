@@ -13,3 +13,12 @@ def show_paths() -> None:
     console = rich.console.Console()
     console.print("Paths:")
     console.print(get_app_paths().get_for_cli())
+
+
+@app.command()
+def clear_storage() -> None:
+    """Clear all stored data."""
+    get_app_paths().remove_all()
+
+    console = rich.console.Console()
+    console.print("All stored data has been cleared.")
