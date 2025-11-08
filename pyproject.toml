@@ -37,5 +37,91 @@ personal-assistant = "goit_i_pycore_i_personal_assistant:main"
 # typer goit_i_pycore_i_personal_assistant.cli.main run chat run
 
 [build-system]
-requires = ["uv_build>=0.9.7,<0.10.0"]
+requires = ["uv_build>=0.9.8,<0.10.0"]
 build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers"
+
+[tool.mypy]
+strict = true
+
+[tool.ruff]
+line-length = 120
+
+extend-exclude = [
+]
+
+[tool.ruff.lint]
+extend-select = [
+    "ALL",
+]
+extend-ignore = [
+    # Missing docstring.
+    "D1",
+    # flake8-future-annotations.
+    "FA",
+    # Missing type annotation for self and cls.
+    "ANN1",
+    # f-strings to format logging messages.
+    "G004",
+    # Consider {expression} instead of string join.
+    "FLY002",
+    # TODO: Remove after this will be implemented in MyPy.
+    # Type alias {name} uses TypeAlias annotation instead of the type keyword
+    "UP040",
+    # TODOs
+    # Author.
+    "TD002",
+    # Link to issue
+    "TD003",
+    # Line contains a TODO or related comment
+    "FIX",
+    # Args and kwargs are not used and not annotated
+    "ANN002",
+    "ANN003",
+    # Commented code
+    "ERA001",
+    # empty-comment
+    "PLR2044",
+    #
+    #
+    # print used.
+    "T201",
+]
+
+task-tags = [
+    "TODO",
+    "FIXME",
+    "HACK",
+    "XXX",
+    "[",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+# https://betterprogramming.pub/3-different-docstring-formats-for-python-d27be81e0d68
+
+[tool.ruff.lint.flake8-comprehensions]
+allow-dict-calls-with-keyword-arguments = true
+
+
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = [
+    # Unused import.
+    "F401",
+]
+
+"test_*.py" = [
+    # Allow `assert` statements in tests.
+    "S101",
+]
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = [
+    "pydantic.BaseModel",
+]
+runtime-evaluated-decorators = [
+    "pydantic.validate_call",
+    "app.command",
+]
