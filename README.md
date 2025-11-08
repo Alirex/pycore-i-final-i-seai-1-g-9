@@ -8,10 +8,16 @@ Application: "Personal assistant"
 
 ## Usage:
 
-Run:
+Run from the project:
 
 ```shell
 personal-assistant chat run
+```
+
+Run after installation:
+
+```shell
+personal-assistant
 ```
 
 ### CLI help
