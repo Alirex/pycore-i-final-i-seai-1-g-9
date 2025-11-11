@@ -1,14 +1,6 @@
 # Team
 
-## Team name
-
-...
-
-## App name
-
-Persyval.
-
-## Roles
+## Members & Roles
 
 | Name                 | GitHub                         | Email                    | Role        | Notes                                                 |
 | -------------------- | ------------------------------ | ------------------------ | ----------- | ----------------------------------------------------- |
@@ -17,3 +9,19 @@ Persyval.
 | Natasha Belodedenko  | https://github.com/Cocokringle | cocokringle.1@gmail.com  | ? Developer | JS Focused Developer                                  |
 | Rita Bohoslavska     | ...                            | bohoslavskar@gmail.com   | ? Developer | Experienced Graphic Designer                          |
 | Ruslan Stupak        | https://github.com/Ruslan5891  | stupakruslan07@gmail.com | ? Developer | Experienced Frontend Developer (React). + Some other. |
+
+## Team name
+
+Coding Ninjas
+
+### App name
+
+Persyval.
+
+## Git repository
+
+https://github.com/Alirex/pycore-i-final-i-seai-1-g-9
+
+## Tasks board
+
+https://github.com/users/Alirex/projects/3/
