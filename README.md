@@ -6,9 +6,18 @@ Group: "SEAI-1 / Group 9"
 
 Application: "Personal assistant"
 
-Codename: "Persyval"
+Team: "The Iterators"
 
-![logo](./docs/assets/logo.png)
+App name: "Persyval"
+
+[//]: # "![logo team](./docs/assets/logo_team.png)"
+[//]: # '<img src="./docs/assets/logo_team.png" alt="logo team" width="200">'
+[//]: # "![logo](./docs/assets/logo.png)"
+[//]: # '<img src="./docs/assets/logo.png" alt="logo" width="500">'
+
+<!--suppress CheckImageSize -->
+
+<img src="./docs/assets/logo_team_2.png" alt="logo team" width="300"> <img src="./docs/assets/logo.png" alt="logo" width="300">
 
 ---
 
