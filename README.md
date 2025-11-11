@@ -139,6 +139,12 @@ fi
 uv sync --all-packages
 ```
 
+### Install pre-commit
+
+```shell
+uv tool install pre-commit
+```
+
 ### Register pre-commit hooks
 
 ```shell
