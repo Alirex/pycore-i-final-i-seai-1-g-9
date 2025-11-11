@@ -17,7 +17,7 @@ App name: "Persyval"
 
 <!--suppress CheckImageSize -->
 
-<img src="./docs/assets/logo_team_2.png" alt="logo team" width="300"> <img src="./docs/assets/logo.png" alt="logo" width="300">
+<img src="docs/assets/logo_team.png" alt="logo team" width="300"> <img src="./docs/assets/logo.png" alt="logo" width="300">
 
 ---
 
