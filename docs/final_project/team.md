@@ -2,21 +2,17 @@
 
 ## Members & Roles
 
-| Name                 | GitHub                         | Email                    | Role        | Notes                                                 |
-| -------------------- | ------------------------------ | ------------------------ | ----------- | ----------------------------------------------------- |
-| Aleksandr Sizov      | https://github.com/Alirex      | alirex.prime@gmail.com   | ? Team Lead | Full-stack Developer. Including Experience in Python  |
-| Liudmyla Deinychenko | https://github.com/Milosska    | deliugri@gmail.com       | ? Developer | ?                                                     |
-| Natasha Belodedenko  | https://github.com/Cocokringle | cocokringle.1@gmail.com  | ? Developer | JS Focused Developer                                  |
-| Rita Bohoslavska     | ...                            | bohoslavskar@gmail.com   | ? Developer | Experienced Graphic Designer                          |
-| Ruslan Stupak        | https://github.com/Ruslan5891  | stupakruslan07@gmail.com | ? Developer | Experienced Frontend Developer (React). + Some other. |
+| Name                 | Role                                   | GitHub                         | Email                    | Notes                                                                             |
+| -------------------- | -------------------------------------- | ------------------------------ | ------------------------ | --------------------------------------------------------------------------------- |
+| Aleksandr Sizov      | Team Lead, Developer                   | https://github.com/Alirex      | alirex.prime@gmail.com   | Full-stack Developer (Python back, JS Front, etc). Including Experience in Python |
+| Rita Bohoslavska     | Scrum-master, Design, UI/UX, Developer | # TODO                         | bohoslavskar@gmail.com   | Experienced Graphic Designer                                                      |
+| Liudmyla Deinychenko | Developer                              | https://github.com/Milosska    | deliugri@gmail.com       | Full-stack Developer (JS focused).                                                |
+| Natasha Belodedenko  | Developer                              | https://github.com/Cocokringle | cocokringle.1@gmail.com  | Full-stack Developer (JS focused).                                                |
+| Ruslan Stupak        | Developer                              | https://github.com/Ruslan5891  | stupakruslan07@gmail.com | Experienced Frontend Developer (React). + Some other.                             |
 
 ## Team name
 
-The Iterators
-
-### App name
-
-Persyval
+The Iterators <img src="../assets/logo_team.png" alt="logo team" width="50">
 
 ## Git repository
 
