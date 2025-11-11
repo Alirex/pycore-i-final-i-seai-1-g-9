@@ -5,7 +5,7 @@
 | Name                 | Role                                   | GitHub                         | Email                    | Notes                                                                             |
 | -------------------- | -------------------------------------- | ------------------------------ | ------------------------ | --------------------------------------------------------------------------------- |
 | Aleksandr Sizov      | Team Lead, Developer                   | https://github.com/Alirex      | alirex.prime@gmail.com   | Full-stack Developer (Python back, JS Front, etc). Including Experience in Python |
-| Rita Bohoslavska     | Scrum-master, Design, UI/UX, Developer | # TODO                         | bohoslavskar@gmail.com   | Experienced Graphic Designer                                                      |
+| Rita Bohoslavska     | Scrum-master, Design, UI/UX, Developer | https://github.com/Rita180886  | bohoslavskar@gmail.com   | Experienced Graphic Designer                                                      |
 | Liudmyla Deinychenko | Developer                              | https://github.com/Milosska    | deliugri@gmail.com       | Full-stack Developer (JS focused).                                                |
 | Natasha Belodedenko  | Developer                              | https://github.com/Cocokringle | cocokringle.1@gmail.com  | Full-stack Developer (JS focused).                                                |
 | Ruslan Stupak        | Developer                              | https://github.com/Ruslan5891  | stupakruslan07@gmail.com | Experienced Frontend Developer (React). + Some other.                             |
