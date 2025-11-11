@@ -12,11 +12,11 @@
 
 ## Team name
 
-Coding Ninjas
+The Iterators
 
 ### App name
 
-Persyval.
+Persyval
 
 ## Git repository
 
