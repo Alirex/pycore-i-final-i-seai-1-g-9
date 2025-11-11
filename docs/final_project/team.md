@@ -16,4 +16,4 @@ Persyval.
 | Liudmyla Deinychenko | ...                            | deliugri@gmail.com       | ? Developer | ?                                                     |
 | Natasha Belodedenko  | https://github.com/Cocokringle | cocokringle.1@gmail.com  | ? Developer | JS Focused Developer                                  |
 | Rita Bohoslavska     | ...                            | bohoslavskar@gmail.com   | ? Developer | Experienced Graphic Designer                          |
-| Ruslan Stupak        | ...                            | stupakruslan07@gmail.com | ? Developer | Experienced Frontend Developer (React). + Some other. |
+| Ruslan Stupak        | https://github.com/Ruslan5891  | stupakruslan07@gmail.com | ? Developer | Experienced Frontend Developer (React). + Some other. |
