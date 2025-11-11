@@ -61,12 +61,12 @@ repos:
   - repo: local
     # Hooks with local scripts.
     hooks:
-      #      - id: pytest
-      #        # Test suite.
-      #        name: pytest
-      #        entry: uv run pytest
-      #        language: system
-      #        pass_filenames: false
+      - id: pytest
+        # Test suite.
+        name: pytest
+        entry: uv run pytest
+        language: system
+        pass_filenames: false
 
       - id: generate-cli-help
         # Generate CLI help.
