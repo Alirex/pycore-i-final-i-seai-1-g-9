@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PYTHON_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$/../pycore-i-final-i-seai-1-g-9">
+      <sourceFolder url="file://$MODULE_DIR$/../pycore-i-final-i-seai-1-g-9/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/../pycore-i-final-i-seai-1-g-9/.venv" />
+    </content>
+    <orderEntry type="jdk" jdkName="uv (pycore-i-final-i-seai-1-g-9)" jdkType="Python SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

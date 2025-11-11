@@ -72,15 +72,15 @@ uv --version
 
 ```shell
 if ! command -v persyval &> /dev/null; then
-    uv tool install git+https://github.com/Alirex/goit-i-pycore-i-personal-assistant
+    uv tool install git+https://github.com/Alirex/pycore-i-final-i-seai-1-g-9
 else
-    uv tool upgrade goit-i-pycore-i-personal-assistant
+    uv tool upgrade pycore-i-final-i-seai-1-g-9
 fi
 ```
 
 Note: You can change the url to something like this if the repository is private:
 
-- git+ssh://your-ssh-config-profile/Alirex/goit-i-pycore-i-personal-assistant
+- git+ssh://your-ssh-config-profile/Alirex/pycore-i-final-i-seai-1-g-9
 
 Or, for development, change the installation command to:
 
@@ -93,7 +93,7 @@ And run it from the repository directory.
 ### Remove project
 
 ```shell
-uv tool uninstall goit-i-pycore-i-personal-assistant
+uv tool uninstall pycore-i-final-i-seai-1-g-9
 ```
 
 ### Check project in the list
