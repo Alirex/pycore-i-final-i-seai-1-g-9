@@ -71,7 +71,7 @@ repos:
       - id: generate-cli-help
         # Generate CLI help.
         name: generate-cli-help
-        entry: uv run typer goit_i_pycore_i_personal_assistant.cli.main utils
+        entry: uv run typer persyval.cli.main utils
           docs --output docs/cli_help.md
         language: system
         pass_filenames: false

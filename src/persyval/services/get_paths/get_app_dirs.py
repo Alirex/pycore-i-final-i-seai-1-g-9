@@ -6,8 +6,8 @@ from platformdirs import PlatformDirs
 from pydantic import BaseModel, Field
 from rich.markup import escape
 
-from goit_i_pycore_i_personal_assistant.constants.app_info import APP_AUTHOR, APP_NAME
-from goit_i_pycore_i_personal_assistant.services.console.types import RichFormattedText
+from persyval.constants.app_info import APP_AUTHOR, APP_NAME
+from persyval.services.console.types import RichFormattedText
 
 if TYPE_CHECKING:
     from collections.abc import Iterable

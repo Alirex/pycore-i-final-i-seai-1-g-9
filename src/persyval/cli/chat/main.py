@@ -1,6 +1,6 @@
 import typer
 
-from goit_i_pycore_i_personal_assistant.services.chat.main import main_chat
+from persyval.services.chat.main import main_chat
 
 app = typer.Typer()
 

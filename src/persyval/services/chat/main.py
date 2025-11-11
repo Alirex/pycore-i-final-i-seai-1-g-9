@@ -1,13 +1,13 @@
 from prompt_toolkit import PromptSession
 from rich.console import Console
 
-from goit_i_pycore_i_personal_assistant.exceptions.invalid_command_error import InvalidCommandError
-from goit_i_pycore_i_personal_assistant.services.commands.commands_meta_registry import COMMANDS_META_REGISTRY
-from goit_i_pycore_i_personal_assistant.services.console.completer import get_completer
-from goit_i_pycore_i_personal_assistant.services.data_storage.data_storage import DataStorage
-from goit_i_pycore_i_personal_assistant.services.get_paths.get_app_dirs import get_data_dir_in_user_space
-from goit_i_pycore_i_personal_assistant.services.parse_input.parse_input import parse_input
-from goit_i_pycore_i_personal_assistant.utils.format import format_error, format_prompt_message, format_system_message
+from persyval.exceptions.invalid_command_error import InvalidCommandError
+from persyval.services.commands.commands_meta_registry import COMMANDS_META_REGISTRY
+from persyval.services.console.completer import get_completer
+from persyval.services.data_storage.data_storage import DataStorage
+from persyval.services.get_paths.get_app_dirs import get_data_dir_in_user_space
+from persyval.services.parse_input.parse_input import parse_input
+from persyval.utils.format import format_error, format_prompt_message, format_system_message
 
 
 def main_chat(

@@ -3,10 +3,10 @@ from typing import TypeAlias
 from pydantic import BaseModel
 from rich.table import Table
 
-from goit_i_pycore_i_personal_assistant.exceptions.invalid_command_error import InvalidCommandError
-from goit_i_pycore_i_personal_assistant.services.commands.commands_enum import COMMANDS_ORDER
-from goit_i_pycore_i_personal_assistant.services.handlers_base.handler_base import HandlerBase
-from goit_i_pycore_i_personal_assistant.services.handlers_base.handler_output import HandlerOutput
+from persyval.exceptions.invalid_command_error import InvalidCommandError
+from persyval.services.commands.commands_enum import COMMANDS_ORDER
+from persyval.services.handlers_base.handler_base import HandlerBase
+from persyval.services.handlers_base.handler_output import HandlerOutput
 
 
 class HelpItem(BaseModel):
@@ -29,7 +29,7 @@ class HelpIHandler(HandlerBase[None, T_HELP_LIST]):
         self,
         parsed_args: None,  # noqa: ARG002
     ) -> T_HELP_LIST:
-        from goit_i_pycore_i_personal_assistant.services.commands.commands_meta_registry import (  # noqa: PLC0415
+        from persyval.services.commands.commands_meta_registry import (  # noqa: PLC0415
             COMMANDS_META_REGISTRY,
         )
 

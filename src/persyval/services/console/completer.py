@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from pydantic import BaseModel
 
-from goit_i_pycore_i_personal_assistant.services.commands.commands_enum import COMMANDS_ORDER
+from persyval.services.commands.commands_enum import COMMANDS_ORDER
 
 if TYPE_CHECKING:
     from collections.abc import Iterable

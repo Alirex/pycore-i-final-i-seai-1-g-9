@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from goit_i_pycore_i_personal_assistant.services.console.types import RichFormattedText
+from persyval.services.console.types import RichFormattedText
 
 # TODO: (?) Add support for `prompt_toolkit`
 #   https://python-prompt-toolkit.readthedocs.io/en/3.0.52/pages/printing_text.html

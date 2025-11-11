@@ -3,11 +3,11 @@ import abc
 import rich
 from pydantic import BaseModel, ConfigDict
 
-from goit_i_pycore_i_personal_assistant.exceptions.invalid_command_error import InvalidCommandError
-from goit_i_pycore_i_personal_assistant.services.data_storage.data_storage import DataStorage
-from goit_i_pycore_i_personal_assistant.services.handlers_base.handler_output import HandlerOutput
-from goit_i_pycore_i_personal_assistant.services.parse_input.parse_input import T_ARGS
-from goit_i_pycore_i_personal_assistant.utils.format import format_error
+from persyval.exceptions.invalid_command_error import InvalidCommandError
+from persyval.services.data_storage.data_storage import DataStorage
+from persyval.services.handlers_base.handler_output import HandlerOutput
+from persyval.services.parse_input.parse_input import T_ARGS
+from persyval.utils.format import format_error
 
 
 class HandlerBase[ParsedArgs, OutputData](abc.ABC, BaseModel):

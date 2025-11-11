@@ -1,5 +1,5 @@
 [project]
-name = "goit-i-pycore-i-personal-assistant"
+name = "persyval"
 version = "0.1.0"
 description = "Personal Assistant application"
 readme = "README.md"
@@ -37,8 +37,8 @@ dev = [
 ]
 
 [project.scripts]
-persyval = "goit_i_pycore_i_personal_assistant:main"
-persy = "goit_i_pycore_i_personal_assistant:main_short"
+persyval = "persyval:main"
+persy = "persyval:main_short"
 
 [build-system]
 requires = ["uv_build>=0.9.8,<0.10.0"]

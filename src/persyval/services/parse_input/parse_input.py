@@ -3,9 +3,9 @@ from typing import TypeAlias
 from pydantic import BaseModel, Field
 from rich.markup import escape
 
-from goit_i_pycore_i_personal_assistant.exceptions.invalid_command_error import InvalidCommandError
-from goit_i_pycore_i_personal_assistant.services.commands.commands_enum import Command
-from goit_i_pycore_i_personal_assistant.services.console.types import RichFormattedText
+from persyval.exceptions.invalid_command_error import InvalidCommandError
+from persyval.services.commands.commands_enum import Command
+from persyval.services.console.types import RichFormattedText
 
 T_COMMAND: TypeAlias = str
 T_ARGS: TypeAlias = list[str]

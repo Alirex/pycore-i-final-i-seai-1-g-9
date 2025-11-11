@@ -1,7 +1,7 @@
-from goit_i_pycore_i_personal_assistant.exceptions.invalid_command_error import InvalidCommandError
-from goit_i_pycore_i_personal_assistant.services.handlers_base.handler_base import HandlerBase
-from goit_i_pycore_i_personal_assistant.services.handlers_base.handler_output import HandlerOutput
-from goit_i_pycore_i_personal_assistant.utils.format import format_good_message
+from persyval.exceptions.invalid_command_error import InvalidCommandError
+from persyval.services.handlers_base.handler_base import HandlerBase
+from persyval.services.handlers_base.handler_output import HandlerOutput
+from persyval.utils.format import format_good_message
 
 
 # noinspection PyTypeChecker

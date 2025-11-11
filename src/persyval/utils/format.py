@@ -5,7 +5,7 @@ These functions are helpful for some simple standardized formatting of console m
 
 from rich.markup import escape
 
-from goit_i_pycore_i_personal_assistant.services.console.types import RichFormattedText
+from persyval.services.console.types import RichFormattedText
 
 type T_MESSAGE_RAW = str
 
