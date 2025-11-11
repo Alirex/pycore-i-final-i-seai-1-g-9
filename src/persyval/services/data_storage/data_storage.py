@@ -5,17 +5,12 @@ from typing import TYPE_CHECKING, Annotated, NewType, Self
 
 from pydantic import BaseModel, EmailStr, Field
 
+from persyval.models.phone import Phone
+
 if TYPE_CHECKING:
     from types import TracebackType
 
 ContactName = NewType("ContactName", str)
-
-PhoneUid = NewType("PhoneUid", uuid.UUID)
-
-
-class Phone(BaseModel):
-    number: str
-
 
 ContactUid = NewType("ContactUid", uuid.UUID)
 
