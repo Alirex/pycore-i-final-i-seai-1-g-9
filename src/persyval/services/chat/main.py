@@ -1,7 +1,9 @@
 from prompt_toolkit import PromptSession
 from rich.console import Console
+from rich.markup import escape
 
 from persyval.exceptions.invalid_command_error import InvalidCommandError
+from persyval.services.commands.commands_enum import Command
 from persyval.services.commands.commands_meta_registry import COMMANDS_META_REGISTRY
 from persyval.services.console.completer import get_completer
 from persyval.services.data_storage.data_storage import DataStorage
@@ -18,7 +20,11 @@ def main_chat(
         console = Console()
         prompt_session: PromptSession = PromptSession()  # type: ignore[type-arg]
 
-        msg_intro = format_system_message("Welcome to the personal assistant chat.")
+        msg_intro = format_system_message(f"""Welcome to the personal assistant chat.
+
+Type '{escape(Command.HELP)}' or press 'Enter' for a list of available commands.
+Autocomplete for commands is enabled.
+        """)
         console.print(msg_intro)
 
         while True:
