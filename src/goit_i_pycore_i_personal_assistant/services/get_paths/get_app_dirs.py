@@ -1,11 +1,16 @@
 import pathlib
 import shutil
-from typing import Annotated, Iterable
+from typing import TYPE_CHECKING, Annotated
+
 from platformdirs import PlatformDirs
 from pydantic import BaseModel, Field
+from rich.markup import escape
 
-from goit_i_pycore_i_personal_assistant.constants.app_info import APP_NAME, APP_AUTHOR
-from goit_i_pycore_i_personal_assistant.typing.alias import T_RICH_TEXT
+from goit_i_pycore_i_personal_assistant.constants.app_info import APP_AUTHOR, APP_NAME
+from goit_i_pycore_i_personal_assistant.services.console.types import RichFormattedText
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 class DirInfo(BaseModel):
@@ -25,13 +30,15 @@ class AppDirs(BaseModel):
             # DirInfo(name="Config", path=self.config_dir),
         ]
 
-    def get_for_cli(self) -> T_RICH_TEXT:
-        return "\n".join(
-            f"[green bold]{info.name} directory:[/green bold] {str(info.path)}"
-            for info in self._get_paths_info()
+    def get_for_cli(self) -> RichFormattedText:
+        return RichFormattedText(
+            "\n".join(
+                f"[green bold]{escape(info.name)} directory:[/green bold] {escape(str(info.path))}"
+                for info in self._get_paths_info()
+            ),
         )
 
-    def remove_all(self):
+    def remove_all(self) -> None:
         for info in self._get_paths_info():
             if info.path.exists():
                 shutil.rmtree(info.path)
@@ -42,7 +49,6 @@ def get_app_dirs_in_user_space(
     ensure_exists: bool = False,
 ) -> AppDirs:
     """Get application directories in user space."""
-
     platform_dirs = PlatformDirs(
         appname=APP_NAME,
         appauthor=APP_AUTHOR,
@@ -55,3 +61,11 @@ def get_app_dirs_in_user_space(
         # config_dir=pathlib.Path(platform_dirs.user_config_dir),
         # log_dir=pathlib.Path(platform_dirs.user_log_dir),
     )
+
+
+def get_data_dir_in_user_space(
+    *,
+    ensure_exists: bool = False,
+) -> pathlib.Path:
+    """Get application data directory in user space."""
+    return get_app_dirs_in_user_space(ensure_exists=ensure_exists).data_dir

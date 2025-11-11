@@ -9,7 +9,7 @@ authors = [
 requires-python = ">=3.14.0"
 dependencies = [
     # Better classes and validation.
-    "pydantic>=2.12.3",
+    "pydantic[email]>=2.12.4",
     # Pretty terminal output.
     "rich>=14.2.0",
     # Environment variable parsing and validation.
@@ -27,14 +27,14 @@ dev = [
     # Static type checker
     "mypy>=1.18.2",
     # Tests.
-    "pytest>=8.4.2",
+    "pytest>=9.0.0",
     # Freeze time for tests.
     "freezegun>=1.5.5",
 ]
 
 [project.scripts]
-personal-assistant = "goit_i_pycore_i_personal_assistant:main"
-# typer goit_i_pycore_i_personal_assistant.cli.main run chat run
+persyval = "goit_i_pycore_i_personal_assistant:main"
+persy = "goit_i_pycore_i_personal_assistant:main_short"
 
 [build-system]
 requires = ["uv_build>=0.9.8,<0.10.0"]

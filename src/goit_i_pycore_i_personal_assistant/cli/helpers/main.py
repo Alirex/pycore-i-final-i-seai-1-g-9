@@ -1,5 +1,6 @@
-import typer
 import rich.console
+import typer
+
 from goit_i_pycore_i_personal_assistant.services.get_paths.get_app_dirs import (
     get_app_dirs_in_user_space,
 )

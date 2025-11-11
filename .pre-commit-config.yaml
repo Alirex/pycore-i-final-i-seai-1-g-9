@@ -29,7 +29,7 @@ repos:
         # Checks that all JSON files are parseable.
       - id: check-added-large-files
         # Prevent giant files from being committed.
-        args: [--maxkb=500]
+        args: [--maxkb=1500]
 
   - repo: https://github.com/koalaman/shellcheck-precommit
     rev: v0.11.0

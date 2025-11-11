@@ -2,7 +2,13 @@
 
 Course: "Python Programming: Foundations and Best Practices 2.0"
 
+Group: "SEAI-1 / Group 9"
+
 Application: "Personal assistant"
+
+Codename: "Persyval"
+
+![logo](./docs/assets/logo.png)
 
 ---
 
@@ -11,13 +17,19 @@ Application: "Personal assistant"
 Run from the project:
 
 ```shell
-personal-assistant chat run
+uv run persyval chat run
 ```
 
 Run after installation:
 
 ```shell
-personal-assistant
+persyval chat run
+```
+
+or use a short command to access the chat.
+
+```shell
+persy
 ```
 
 ### CLI help
@@ -31,7 +43,7 @@ Help for non-interactive CLI mode:
 This will install completion for the current shell. Available after restarting the shell.
 
 ```shell
-personal-assistant --install-completion
+persyval --install-completion
 ```
 
 Note: relatively safe to run multiple times. It just adds extra newlines to your shell config when run multiple times.
@@ -59,7 +71,7 @@ uv --version
 ### Install or update a project
 
 ```shell
-if ! command -v personal-assistant &> /dev/null; then
+if ! command -v persyval &> /dev/null; then
     uv tool install git+https://github.com/Alirex/goit-i-pycore-i-personal-assistant
 else
     uv tool upgrade goit-i-pycore-i-personal-assistant

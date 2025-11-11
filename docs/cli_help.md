@@ -47,6 +47,7 @@ $ chat run [OPTIONS]
 
 **Options**:
 
+* `--show-commands / --no-show-commands`: [default: no-show-commands]
 * `--help`: Show this message and exit.
 
 ## `helpers`

@@ -12,3 +12,4 @@
 - Use `pathlib` for all path manipulations.
 - Use [typer](https://typer.tiangolo.com/) for CLI commands.
 - Allow use of "grouping" for arguments by "#". Don't use docstring with arguments if annotations are enough.
+- When it is possible, separate logic from user Input/Output.
