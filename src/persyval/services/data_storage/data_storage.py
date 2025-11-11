@@ -1,44 +1,13 @@
-import datetime
 import pathlib
-import uuid
-from typing import TYPE_CHECKING, Annotated, NewType, Self
+from typing import TYPE_CHECKING, Self
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
-from persyval.models.phone import Phone
+from persyval.models.contact import Contact, ContactUid
+from persyval.models.note import Note, NoteUid
 
 if TYPE_CHECKING:
     from types import TracebackType
-
-ContactName = NewType("ContactName", str)
-
-ContactUid = NewType("ContactUid", uuid.UUID)
-
-
-class Contact(BaseModel):
-    uid: ContactUid = Field(default_factory=lambda: ContactUid(uuid.uuid7()))
-
-    name: Annotated[ContactName, Field(description="The name of the contact.", min_length=1)]
-
-    address: Annotated[str | None, Field(description="The address of the contact.")] = None
-
-    phones: list[Phone] = Field(
-        default_factory=list,
-        description="List of phone numbers associated with the contact.",
-    )
-
-    email: EmailStr
-
-    birthday: datetime.date
-
-
-NoteUid = NewType("NoteUid", uuid.UUID)
-
-
-class Note(BaseModel):
-    uid: NoteUid = Field(default_factory=lambda: NoteUid(uuid.uuid7()))
-    title: str
-    content: str
 
 
 class Data(BaseModel):
