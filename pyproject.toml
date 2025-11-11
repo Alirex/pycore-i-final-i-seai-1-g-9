@@ -4,7 +4,11 @@ version = "0.1.0"
 description = "Personal Assistant application"
 readme = "README.md"
 authors = [
-    { name = "alirex", email = "alirex.prime@gmail.com" }
+    { name = "Aleksandr Sizov", email = "alirex.prime@gmail.com" },
+    { name = "Liudmyla Deinychenko", email = "deliugri@gmail.com" },
+    { name = "Natasha Belodedenko", email = "cocokringle.1@gmail.com" },
+    { name = "Rita Bohoslavska", email = "bohoslavskar@gmail.com" },
+    { name = "Ruslan Stupak", email = "stupakruslan07@gmail.com" },
 ]
 requires-python = ">=3.14.0"
 dependencies = [
