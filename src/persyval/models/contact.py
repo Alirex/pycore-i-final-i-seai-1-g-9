@@ -22,7 +22,6 @@ FORMAT_BIRTHDAY_FOR_HUMAN: Final[str] = "YYYY-MM-DD"
 
 DEFAULT_REGION = "UA"
 
-
 def format_birthday(birthday: date) -> str:
     return birthday.isoformat()
 
