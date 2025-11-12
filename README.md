@@ -1,14 +1,14 @@
 # Final project
 
-Course: "Python Programming: Foundations and Best Practices 2.0"
+**Course**: `Python Programming: Foundations and Best Practices 2.0`
 
-Group: "SEAI-1 / Group 9"
+**Group**: `SEAI-1 / Group 9`
 
-Application: "Personal assistant"
+**Application**: `Personal assistant`
 
-Team: "The Iterators"
+**Team**: `The Iterators`
 
-App name: "Persyval"
+**App name**: `Persyval`
 
 [//]: # "![logo team](./docs/assets/logo_team.png)"
 [//]: # '<img src="./docs/assets/logo_team.png" alt="logo team" width="200">'
@@ -21,51 +21,19 @@ App name: "Persyval"
 
 ---
 
-## Usage:
+# Install
 
-Run from the project:
+For end-users.
 
-```shell
-uv run persyval chat run
-```
+Note: For developers, see the [Dev](#dev) section.
 
-Run after installation:
-
-```shell
-persyval chat run
-```
-
-or use a short command to access the chat.
-
-```shell
-persy
-```
-
-### CLI help
-
-Help for non-interactive CLI mode:
-
-[See here](docs/cli_help.md)
-
-### Install CLI completion
-
-This will install completion for the current shell. Available after restarting the shell.
-
-```shell
-persyval --install-completion
-```
-
-Note: relatively safe to run multiple times. It just adds extra newlines to your shell config when run multiple times.
-
----
-
-## Install
-
-### Uv install or update
+## Uv install or update
 
 You need this for both usage and development.
 
 https://docs.astral.sh/uv/getting-started/installation/
+
+On Windows it can be better to use `Git Bash` terminal.
 
 ```bash
 if ! command -v uv &> /dev/null; then
@@ -77,7 +45,9 @@ fi
 uv --version
 ```
 
-### Install or update a project
+## Install or update a project for system-wide usage
+
+Run it from any directory, except the project directory.
 
 ```shell
 if ! command -v persyval &> /dev/null; then
@@ -87,41 +57,102 @@ else
 fi
 ```
 
-Note: You can change the url to something like this if the repository is private:
-
-- git+ssh://your-ssh-config-profile/Alirex/pycore-i-final-i-seai-1-g-9
-
-Or, for development, change the installation command to:
-
-```shell
-uv tool install --editable .
-```
-
-And run it from the repository directory.
-
-### Remove project
-
-```shell
-uv tool uninstall pycore-i-final-i-seai-1-g-9
-```
-
-### Check project in the list
+## Check that project in the list
 
 ```shell
 uv tool list --show-python
 ```
 
+## Remove the project with all data
+
+If you need to remove the project with all data, run this command from the project directory:
+
+```shell
+persyval helpers clear-storage &&\
+uv tool uninstall pycore-i-final-i-seai-1-g-9
+```
+
 ---
 
-## Dev
+# Usage
 
-### Docs
+## Run the chat
+
+After installation, you can run the chat from any directory.
+
+```shell
+persy
+```
+
+Chat is interactive. With autocompletion in some cases.
+
+## Extra features
+
+Some extra features are available.
+
+For example, you can run the same chat as in shorthand, but by this:
+
+```shell
+persyval chat run
+```
+
+or see which folders are used by the app:
+
+```shell
+persyval helpers show-paths
+```
+
+### CLI help
+
+Help for non-interactive CLI mode:
+
+[See here](docs/cli_help.md)
+
+Also, available via commands:
+
+```shell
+persyval --help
+```
+
+or
+
+```shell
+persyval helpers --help
+```
+
+etc.
+
+### Install CLI completion (Optional)
+
+This will install completion for the current shell. Available after restarting the shell.
+
+```shell
+persyval --install-completion
+```
+
+Note: relatively safe to run multiple times. It just adds extra newlines to your shell config when run multiple times.
+
+---
+
+# Dev
+
+## Docs
 
 Here you can read some [docs](docs).
 
 Here is a [project code conventions](docs/conventions.md).
 
+## Dev deployment
+
+### Install uv
+
+Install uv for development.
+
+Use command from the [previous section](#uv-install-or-update).
+
 ### Ruff install or update
+
+Install ruff for manual linting, if needed.
 
 https://docs.astral.sh/ruff/installation/
 
@@ -131,31 +162,90 @@ if ! command -v ruff &> /dev/null; then
 else
     uv tool upgrade ruff
 fi
+
+ruff --version
 ```
 
+### Install pre-commit
+
+Needed for automatic linting.
+
+```shell
+if ! command -v pre-commit &> /dev/null; then
+    uv tool install pre-commit
+else
+    uv tool upgrade pre-commit
+fi
+
+pre-commit --version
+```
+
+### Clone the repository
+
+Make this if you haven't done it yet.
+
 ### Create venv
+
+Make this in the project directory.
 
 ```bash
 uv sync --all-packages
 ```
 
-### Install pre-commit
+It must be used automatically in the IDE (PyCharm, VSCode).
 
-```shell
-uv tool install pre-commit
-```
+It will be used automatically without manual activation with command like `uv run something`.
 
 ### Register pre-commit hooks
+
+Make this after cloning the repository.
 
 ```shell
 pre-commit install
 ```
 
+Make this each time after cloning the repository.
+
+Don't need to do it after changing the hooks, commit or pull.
+
 ### Run pre-commit hooks
+
+If needed, run them manually.
 
 ```shell
 pre-commit run --all-files
 ```
+
+Useful after changing the hooks. Or just to check if everything is fine.
+
+### Install app system-wide in Development mode
+
+For system-wide usage during development, run this command from the repository directory:
+
+```shell
+uv tool install --editable .
+```
+
+### Run the app
+
+Go to the [Usage](#usage) section. Check some commands.
+
+## Interesting locations
+
+- [main chat function](./src/persyval/services/chat/main.py)
+  - Root of many interactions by chat.
+- [commands](./src/persyval/services/commands)
+  - Add new commands with related information here.
+- [handler base class](./src/persyval/services/handlers_base/handler_base.py)
+  - See hook-based lifecycle for handlers.
+- [handlers implementations](./src/persyval/services/handlers)
+  - Implement new handlers here. Connect to command.
+- [models](./src/persyval/models)
+  - Classes with important entities.
+- [data storage](./src/persyval/services/data_storage/data_storage.py)
+  - Contains data of the app.
+- [data actions](./src/persyval/services/data_actions)
+  - Actions with data.
 
 ---
 
