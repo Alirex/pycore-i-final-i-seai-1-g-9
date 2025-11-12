@@ -77,7 +77,6 @@ class ContactListIHandler(
                 render_good_message(
                     self.console,
                     f"Contact '{contact.name}' edited successfully.",
-                    "Success",
                 )
 
             case _:

@@ -9,6 +9,8 @@ from persyval.models.note import Note, NoteUid
 if TYPE_CHECKING:
     from types import TracebackType
 
+# Note: Use `thin model` when available. So, all methods created as separated functions.
+
 
 class Data(BaseModel):
     contacts: dict[ContactUid, Contact] = Field(
@@ -20,6 +22,10 @@ class Data(BaseModel):
         default_factory=dict,
         description="Dictionary of notes indexed by their unique identifiers.",
     )
+
+    def clear(self) -> None:
+        self.contacts.clear()
+        self.notes.clear()
 
 
 class DataStorage(BaseModel):
@@ -60,3 +66,6 @@ class DataStorage(BaseModel):
     ) -> bool | None:
         self.save()
         return None
+
+    def clear(self) -> None:
+        self.data.clear()

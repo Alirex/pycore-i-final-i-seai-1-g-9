@@ -39,6 +39,8 @@ Run the personal assistant chat.
 
 Provides interactive chat with the personal assistant.
 
+Also, can be used as a command line tool.
+
 **Usage**:
 
 ```console
@@ -48,6 +50,10 @@ $ chat run [OPTIONS]
 **Options**:
 
 * `--show-commands / --no-show-commands`: [default: no-show-commands]
+* `--hide-intro / --no-hide-intro`: [default: no-hide-intro]
+* `--non-interactive / --no-non-interactive`: [default: no-non-interactive]
+* `--plain-render / --no-plain-render`: [default: no-plain-render]
+* `--predefined-input TEXT`
 * `--help`: Show this message and exit.
 
 ## `helpers`

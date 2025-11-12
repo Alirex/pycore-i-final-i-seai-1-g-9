@@ -42,7 +42,11 @@ def format_bad_message(message: T_MESSAGE_RAW) -> RichFormattedText:
     return pack_colored_message(message, "red")
 
 
-def render_good_message(console: Console, message: T_MESSAGE_RAW, title: T_MESSAGE_RAW | None = None) -> None:
+def render_good_message(
+    console: Console,
+    message: T_MESSAGE_RAW,
+    title: T_MESSAGE_RAW | None = "Success",
+) -> None:
     panel = Panel(
         escape(message),
         title=f"{escape(title)}" if title else None,
@@ -53,7 +57,26 @@ def render_good_message(console: Console, message: T_MESSAGE_RAW, title: T_MESSA
     console.print(panel)
 
 
-def render_error(console: Console, message: T_MESSAGE_RAW, title: T_MESSAGE_RAW | None = None) -> None:
+def render_canceled_message(
+    console: Console,
+    message: T_MESSAGE_RAW,
+    title: T_MESSAGE_RAW | None = "Canceled",
+) -> None:
+    panel = Panel(
+        escape(message),
+        title=f"{escape(title)}" if title else None,
+        title_align="left",
+        border_style="yellow",
+        expand=False,
+    )
+    console.print(panel)
+
+
+def render_error(
+    console: Console,
+    message: T_MESSAGE_RAW,
+    title: T_MESSAGE_RAW | None = "Error",
+) -> None:
     panel = Panel(
         escape(message),
         title=f"{escape(title)}" if title else None,

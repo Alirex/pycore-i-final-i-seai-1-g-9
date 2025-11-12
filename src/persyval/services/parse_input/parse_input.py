@@ -28,6 +28,8 @@ class UserInput(BaseModel):
 
 
 def parse_input(user_input: str) -> UserInput:
+    # TODO: Implement advanced split. Split with regards to quotes (", '). For better multiword input.
+
     _parts = user_input.strip().split()
 
     try:

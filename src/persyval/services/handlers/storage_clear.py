@@ -1,13 +1,17 @@
+from typing import TYPE_CHECKING
+
 from prompt_toolkit.shortcuts import yes_no_dialog
 
 from persyval.exceptions.main import InvalidCommandError
 from persyval.services.handlers_base.handler_base import HandlerBase
-from persyval.services.handlers_base.handler_output import HandlerOutput
 from persyval.utils.convert_command_part_to_bool import convert_command_part_to_bool
 from persyval.utils.format import render_canceled_message, render_good_message
 
+if TYPE_CHECKING:
+    from persyval.services.handlers_base.handler_output import HandlerOutput
 
-class ExitIHandler(
+
+class StorageClearIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
@@ -19,16 +23,28 @@ class ExitIHandler(
 
         if is_force is None:
             is_force = yes_no_dialog(
-                title="Exit",
-                text="Are you sure you want to exit?",
+                title="Confirm Storage Clear",
+                text="Are you sure you want to clear the storage? This action cannot be undone.",
             ).run()
 
         if not is_force:
             render_canceled_message(
-                self.console,
-                "I'm glad that you decided to stay with me.",
+                console=self.console,
+                message="Storage clear operation cancelled by user.",
             )
             return None
 
-        render_good_message(self.console, "Goodbye!", "Exit")
-        return HandlerOutput(is_exit=True)
+        # ---
+
+        self.data_storage.clear()
+
+        # ---
+
+        message = "Storage cleared successfully."
+
+        render_good_message(
+            console=self.console,
+            message=message,
+        )
+
+        return None

@@ -1,7 +1,8 @@
 import abc
+from typing import Annotated
 
 import rich
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from persyval.exceptions.main import InvalidCommandError
 from persyval.services.data_storage.data_storage import DataStorage
@@ -23,6 +24,12 @@ class HandlerBase(abc.ABC, BaseModel):
     data_storage: DataStorage
 
     console: rich.console.Console
+
+    non_interactive: Annotated[bool, Field(description="For explicit non-interactive mode, if needed.")] = False
+    plain_render: Annotated[
+        bool,
+        Field(description="For plain rendering, without extra-formatting. For non-interactive CLI."),
+    ] = False
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,

@@ -34,6 +34,7 @@ dev = [
     "pytest>=9.0.0",
     # Freeze time for tests.
     "freezegun>=1.5.5",
+    "pexpect>=4.9.0",
 ]
 
 [project.scripts]

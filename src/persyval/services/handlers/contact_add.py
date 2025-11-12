@@ -36,7 +36,6 @@ class ContactAddIHandler(
         render_good_message(
             self.console,
             f"Contact '{contact.name}' added successfully.",
-            "Success",
         )
 
         return None

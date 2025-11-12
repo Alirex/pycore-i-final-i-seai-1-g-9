@@ -1,63 +1,46 @@
 from prompt_toolkit import PromptSession
 from rich.console import Console
 
-from persyval.exceptions.main import InvalidCommandError
-from persyval.services.commands.commands_meta_registry import COMMANDS_META_REGISTRY
-from persyval.services.console.completer import get_completer
+from persyval.services.chat.get_input import get_input
+from persyval.services.chat.parse_input_and_make_action import LoopAction, parse_input_and_make_action
 from persyval.services.data_storage.data_storage import DataStorage
 from persyval.services.get_paths.get_app_dirs import get_data_dir_in_user_space
 from persyval.services.intro.render_intro import render_intro
-from persyval.services.parse_input.parse_input import parse_input
-from persyval.utils.format import format_prompt_message, render_error
 
 
 def main_chat(
     *,
     show_commands: bool = False,
+    hide_intro: bool = False,
+    non_interactive: bool = False,
+    plain_render: bool = False,
+    predefined_input: str | None = None,
 ) -> None:
     with DataStorage.load(dir_path=get_data_dir_in_user_space()) as data_storage:
         console = Console()
         prompt_session: PromptSession = PromptSession()  # type: ignore[type-arg]
 
-        render_intro(console)
+        if not hide_intro:
+            render_intro(console)
 
         while True:
-            input_prompt_msg = format_prompt_message("Enter command: ")
-            console.print(input_prompt_msg)
+            user_input = predefined_input or get_input(console=console, prompt_session=prompt_session)
 
-            user_input = prompt_session.prompt(
-                message="> ",
-                completer=get_completer(),
-                show_frame=True,
-            )
-
-            try:
-                parsed_input = parse_input(user_input)
-            except InvalidCommandError as exc:
-                render_error(
-                    console=console,
-                    message=str(exc),
-                    title="Invalid Command",
-                )
-                continue
-
-            if show_commands:
-                console.print(parsed_input.get_rich_cli())
-
-            command_meta = COMMANDS_META_REGISTRY[parsed_input.command]
-
-            handler_obj = command_meta.handler(
-                args=parsed_input.args,
-                #
+            loop_action = parse_input_and_make_action(
+                console=console,
                 data_storage=data_storage,
                 #
-                console=console,
+                user_input=user_input,
+                show_commands=show_commands,
+                non_interactive=non_interactive,
+                plain_render=plain_render,
             )
-            handler_output = handler_obj.run()
 
-            if handler_output is not None:
-                if handler_output.message_rich:
-                    console.print(handler_output.message_rich)
+            if predefined_input:
+                break
 
-                if handler_output.is_exit:
+            match loop_action:
+                case LoopAction.EXIT:
                     break
+                case _:
+                    continue
