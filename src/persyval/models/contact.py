@@ -1,6 +1,6 @@
 import re
 import uuid
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from typing import TYPE_CHECKING, Annotated, Final, NewType
 
 import phonenumbers
@@ -8,7 +8,7 @@ from email_validator import EmailNotValidError, validate_email
 from prompt_toolkit import HTML
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from persyval.constants.numeric_contants import ONE_HUNDRED, YEAR
+from persyval.constants.numeric_contants import FIVE, ONE_HUNDRED, SIX, YEAR
 
 from persyval.exceptions.main import InvalidDataError
 
@@ -105,6 +105,36 @@ def validate_email_list(emails: list[str]) -> list[str]:
             raise InvalidDataError(msg) from e
 
     return list(set(validated))
+
+def get_nearest_anniversary(birthday_date: date, current_date: date) -> date:
+    contact_birthday_nearest_year = datetime(
+        year=current_date.year,
+        month=birthday_date.month,
+        day=birthday_date.day,
+        tzinfo=UTC,
+    ).date()
+    is_birthday_this_year_passed = contact_birthday_nearest_year < current_date
+
+    # Check user's birthday has already passed, set the birthday to next year
+    if is_birthday_this_year_passed:
+        contact_birthday_nearest_year = datetime(
+            year=current_date.year + 1,
+            month=birthday_date.month,
+            day=birthday_date.day,
+            tzinfo=UTC,
+        ).date()
+
+    return contact_birthday_nearest_year
+
+
+def process_weekend_birthday(birthday_date: date) -> date:
+    day_of_week = birthday_date.weekday()
+
+    if day_of_week in {FIVE, SIX}:
+        interval = 2 if day_of_week == FIVE else 1
+        birthday_date += timedelta(days=interval)
+
+    return birthday_date
 
 
 TRIM_ADDRESS: Final[int] = 10
