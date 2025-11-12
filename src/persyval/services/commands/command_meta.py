@@ -8,7 +8,7 @@ class CommandMeta(BaseModel):
     command: Command
     args: list[str] = Field(default_factory=list)
     description: str = Field(default="")
-    handler: type[HandlerBase]  # type: ignore[type-arg]
+    handler: type[HandlerBase]
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,

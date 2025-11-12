@@ -3,9 +3,15 @@
 These functions are helpful for some simple standardized formatting of console messages.
 """
 
+from typing import TYPE_CHECKING
+
 from rich.markup import escape
+from rich.panel import Panel
 
 from persyval.services.console.types import RichFormattedText
+
+if TYPE_CHECKING:
+    from rich.console import Console
 
 type T_MESSAGE_RAW = str
 
@@ -36,5 +42,23 @@ def format_bad_message(message: T_MESSAGE_RAW) -> RichFormattedText:
     return pack_colored_message(message, "red")
 
 
-def format_error(error: T_MESSAGE_RAW, message: T_MESSAGE_RAW) -> RichFormattedText:
-    return RichFormattedText(f"{format_bad_message(error)}: {escape(message)}")
+def render_good_message(console: Console, message: T_MESSAGE_RAW, title: T_MESSAGE_RAW | None = None) -> None:
+    panel = Panel(
+        escape(message),
+        title=f"{escape(title)}" if title else None,
+        title_align="left",
+        border_style="green",
+        expand=False,
+    )
+    console.print(panel)
+
+
+def render_error(console: Console, message: T_MESSAGE_RAW, title: T_MESSAGE_RAW | None = None) -> None:
+    panel = Panel(
+        escape(message),
+        title=f"{escape(title)}" if title else None,
+        title_align="left",
+        border_style="red",
+        expand=False,
+    )
+    console.print(panel)

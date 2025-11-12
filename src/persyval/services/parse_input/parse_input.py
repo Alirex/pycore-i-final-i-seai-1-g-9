@@ -3,7 +3,7 @@ from typing import TypeAlias
 from pydantic import BaseModel, Field
 from rich.markup import escape
 
-from persyval.exceptions.invalid_command_error import InvalidCommandError
+from persyval.exceptions.main import InvalidCommandError
 from persyval.services.commands.commands_enum import Command
 from persyval.services.console.types import RichFormattedText
 

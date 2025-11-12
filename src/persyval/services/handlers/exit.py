@@ -1,21 +1,30 @@
-from persyval.exceptions.invalid_command_error import InvalidCommandError
+from prompt_toolkit.shortcuts import yes_no_dialog
+
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.services.handlers_base.handler_output import HandlerOutput
-from persyval.utils.format import format_good_message
+from persyval.services.handlers_base.helpers.no_direct_args_check import (
+    no_direct_args_check,
+)
+from persyval.utils.format import render_good_message
 
 
-# noinspection PyTypeChecker
-class ExitIHandler(HandlerBase[None, None]):
-    def _parse_args(self) -> None:
-        if self.args:
-            msg = "Command does not take any arguments."
-            raise InvalidCommandError(msg)
+class ExitIHandler(
+    HandlerBase,
+):
+    def _handler(self) -> HandlerOutput | None:
+        no_direct_args_check(self.args)
 
-    def _make_action(self, parsed_args: None) -> None:
-        pass
+        if yes_no_dialog(
+            title="Exit",
+            text="Are you sure you want to exit?",
+        ).run():
+            render_good_message(self.console, "Goodbye!", "Exit")
+            return HandlerOutput(is_exit=True)
 
-    def _get_or_render_output(
-        self,
-        output_data: None,  # noqa: ARG002
-    ) -> HandlerOutput:
-        return HandlerOutput(message_rich=format_good_message("Goodbye!"), is_exit=True)
+        render_good_message(
+            self.console,
+            "I'm glad that you decided to stay with me.",
+            "Exit disabled",
+        )
+
+        return None
