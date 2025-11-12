@@ -4,8 +4,6 @@ from typing import TYPE_CHECKING, Annotated, Final, NewType
 from prompt_toolkit import HTML
 from pydantic import BaseModel, ConfigDict, Field
 
-from persyval.models.contact import ContactUid
-
 if TYPE_CHECKING:
     from persyval.services.console.types import PromptToolkitFormattedText
 
@@ -18,7 +16,6 @@ NoteUid = NewType("NoteUid", uuid.UUID)
 
 class Note(BaseModel):
     uid: NoteUid = Field(default_factory=lambda: NoteUid(uuid.uuid7()))
-    contact_uid: ContactUid
     title: Annotated[
         str | None,
         Field(description="The optional title for the note."),
