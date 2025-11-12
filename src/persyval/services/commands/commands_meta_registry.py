@@ -41,6 +41,12 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             description="Clear the storage.",
             handler=StorageClearIHandler,
         ),
+        #         CommandMeta(
+        #     command=Command.NOTE_ADD,
+        #     args_config=NOTE_ADD_I_ARGS_CONFIG,
+        #     description="Add a note.",
+        #     handler=NoteAddIHandler,
+        # ),
         #
         CommandMeta(
             command=Command.HELP,
