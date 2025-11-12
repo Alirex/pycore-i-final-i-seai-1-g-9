@@ -13,6 +13,8 @@ from persyval.utils.format import render_good_message
 if TYPE_CHECKING:
     from persyval.services.handlers_base.handler_output import HandlerOutput
 
+# contact_add_i_handler_args
+
 
 class ContactAddIHandler(
     HandlerBase,

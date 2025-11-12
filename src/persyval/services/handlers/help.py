@@ -36,6 +36,8 @@ def render_help(
         COMMANDS_META_REGISTRY,
     )
 
+    # Note: Moved from handler because it is relatively clear.
+
     table = Table(title="Available Commands", title_justify="left")
     table.add_column("Command", justify="left", style="cyan", no_wrap=True)
     table.add_column("Description", justify="left")
@@ -44,9 +46,9 @@ def render_help(
         command_meta = COMMANDS_META_REGISTRY[command]
 
         command_full = str(command_meta.command)
-        if command_meta.args:
+        if command_meta.args_config:
             args: list[str] = []
-            for arg in command_meta.args:
+            for arg in command_meta.args_config.args:
                 arg_obj = ArgMetaConfig(name=arg, required=False) if isinstance(arg, str) else arg
 
                 is_required_char = "*" if arg_obj.required else "?"

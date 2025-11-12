@@ -1,29 +1,28 @@
 from prompt_toolkit.shortcuts import yes_no_dialog
 
-from persyval.exceptions.main import InvalidCommandError
+from persyval.services.handlers.shared.args_i_force import ARGS_CONFIG_I_FORCE
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.services.handlers_base.handler_output import HandlerOutput
-from persyval.utils.convert_command_part_to_bool import convert_command_part_to_bool
 from persyval.utils.format import render_canceled_message, render_good_message
+
+EXIT_I_ARGS_CONFIG = ARGS_CONFIG_I_FORCE
 
 
 class ExitIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        if len(self.args) > 1:
-            msg = "Invalid number of arguments."
-            raise InvalidCommandError(msg)
+        parse_result = EXIT_I_ARGS_CONFIG.parse(self.args)
 
-        is_force = convert_command_part_to_bool(self.args[0]) if self.args else None
-
-        if is_force is None:
-            is_force = yes_no_dialog(
+        if parse_result.force is None:
+            is_do = yes_no_dialog(
                 title="Exit",
                 text="Are you sure you want to exit?",
             ).run()
+        else:
+            is_do = parse_result.force
 
-        if not is_force:
+        if not is_do:
             render_canceled_message(
                 self.console,
                 "I'm glad that you decided to stay with me.",

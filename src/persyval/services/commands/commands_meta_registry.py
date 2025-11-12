@@ -1,10 +1,10 @@
-from persyval.services.commands.command_meta import ArgMetaConfig, ArgType, CommandMeta
+from persyval.services.commands.command_meta import CommandMeta
 from persyval.services.commands.commands_enum import Command
 from persyval.services.handlers.contact_add import ContactAddIHandler
 from persyval.services.handlers.contact_list import ContactListIHandler
-from persyval.services.handlers.exit import ExitIHandler
+from persyval.services.handlers.exit import EXIT_I_ARGS_CONFIG, ExitIHandler
 from persyval.services.handlers.help import HelpIHandler
-from persyval.services.handlers.storage_clear import StorageClearIHandler
+from persyval.services.handlers.storage_clear import STORAGE_CLEAR_I_ARGS_CONFIG, StorageClearIHandler
 from persyval.services.handlers.storage_stats import StorageStatsIHandler
 
 COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
@@ -28,12 +28,7 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
         ),
         CommandMeta(
             command=Command.STORAGE_CLEAR,
-            args=[
-                ArgMetaConfig(
-                    name="force",
-                    type_=ArgType.BOOL,
-                ),
-            ],
+            args_config=STORAGE_CLEAR_I_ARGS_CONFIG,
             description="Clear the storage.",
             handler=StorageClearIHandler,
         ),
@@ -45,12 +40,7 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
         ),
         CommandMeta(
             command=Command.EXIT,
-            args=[
-                ArgMetaConfig(
-                    name="force",
-                    type_=ArgType.BOOL,
-                ),
-            ],
+            args_config=EXIT_I_ARGS_CONFIG,
             description="Exit the personal assistant chat.",
             handler=ExitIHandler,
         ),
