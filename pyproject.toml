@@ -24,6 +24,8 @@ dependencies = [
     "typer>=0.20.0",
     # User folders path handling.
     "platformdirs>=4.5.0",
+    "phonenumbers>=9.0.18",
+    "email-validator>=2.3.0",
 ]
 
 [dependency-groups]

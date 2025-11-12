@@ -6,7 +6,15 @@ from prompt_toolkit import HTML, choice, print_formatted_text, prompt
 from pydantic import BaseModel, Field
 
 from persyval.exceptions.main import InvalidCommandError
-from persyval.models.contact import ALLOWED_KEYS_TO_FILTER, Contact, ContactUid, format_birthday, parse_birthday
+from persyval.models.contact import (
+    ALLOWED_KEYS_TO_FILTER,
+    Contact,
+    ContactUid,
+    format_birthday,
+    parse_birthday,
+    validate_email_list,
+    validate_phone_list,
+)
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contact_get import contact_get
 from persyval.services.data_actions.contact_list import (
@@ -182,9 +190,25 @@ def contact_edit(
         default=format_birthday(contact.birthday) if contact.birthday else "",
     )
 
+    phones_input = prompt(
+        message=HTML("<b>Phones</b>: "),
+        default=",".join(contact.phones) if contact.phones else "",
+    )
+
+    phones_list = [phone.strip() for phone in phones_input.split(",") if phone.strip()]
+
+    emails_input = prompt(
+        message=HTML("<b>Emails</b>: "),
+        default=",".join(contact.emails) if contact.emails else "",
+    )
+
+    emails_list = [email.strip() for email in emails_input.split(",") if email.strip()]
+
     contact.name = name
     contact.address = address
     contact.birthday = parse_birthday(birthday) if birthday else None
+    contact.phones = validate_phone_list(phones_list)
+    contact.emails = validate_email_list(emails_list)
 
     return contact_update(
         data_storage=data_storage,
