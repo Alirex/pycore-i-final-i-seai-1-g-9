@@ -62,7 +62,7 @@ class ContactAddIHandler(
     def _handler(self) -> HandlerOutput | None:
         parse_result = CONTACT_ADD_I_ARGS_CONFIG.parse(self.args)
 
-        # TODO: Implement.
+        # TODO: Implement interactive prompts if args are missing.
 
         # name = prompt(HTML("Enter <b>name</b>: "))
         # address = prompt(HTML("Enter <b>address</b> <i>(Optional)</i>: ")) or None
