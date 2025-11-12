@@ -53,7 +53,7 @@ Run it from any directory, except the project directory.
 if ! command -v persyval &> /dev/null; then
     uv tool install git+https://github.com/Alirex/pycore-i-final-i-seai-1-g-9
 else
-    uv tool upgrade pycore-i-final-i-seai-1-g-9
+    uv tool upgrade persyval
 fi
 ```
 
@@ -69,7 +69,7 @@ If you need to remove the project with all data, run this command from the proje
 
 ```shell
 persyval helpers clear-storage &&\
-uv tool uninstall pycore-i-final-i-seai-1-g-9
+uv tool uninstall persyval
 ```
 
 ---
