@@ -9,7 +9,7 @@ class Command(enum.StrEnum):
     CONTACT_DELETE = "contact_delete"
 
     NOTE_ADD = "note_add"
-    # NOTE_DELETE = "note_delete"
+    NOTE_DELETE = "note_delete"
 
     STORAGE_STATS = "storage_stats"
     STORAGE_CLEAR = "storage_clear"
@@ -29,7 +29,7 @@ COMMANDS_ORDER: Final[list[Command]] = [
     Command.CONTACT_DELETE,
     #
     Command.NOTE_ADD,
-    # Command.NOTE_DELETE,
+    Command.NOTE_DELETE,
     # #
     Command.STORAGE_STATS,
     Command.STORAGE_CLEAR,
