@@ -1,4 +1,5 @@
 import enum
+from collections.abc import Callable
 from typing import TYPE_CHECKING, Annotated, Any
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field
@@ -17,11 +18,19 @@ class ArgType(enum.StrEnum):
     INT = "int"
     BOOL = "bool"
 
+    DATE = "date"
+
+    LIST_BY_COMMA = "list_by_comma"
+
 
 class ArgMetaConfig(BaseModel):
     name: str
     type_: ArgType = ArgType.TEXT
     required: bool = False
+
+    format: str | None = None
+    parser_func: Callable[[str], Any] | None = None
+    validator_func: Callable[[Any], Any] | None = None
 
 
 type T_ARGS_CONFIG = list[ArgMetaConfig]
@@ -60,23 +69,31 @@ class ArgsConfig[ParseResult](BaseModel):
             msg = "Not enough arguments provided."
             raise InvalidCommandError(msg)
 
-        result_dict: dict[str, str | int | bool] = {}
+        result_dict: dict[str, Any] = {}
         for arg_meta_config, arg in zip(self.args, args, strict=False):
             arg_type = arg_meta_config.type_
 
-            arg_result: str | int | bool
+            arg_result: Any
 
-            # noinspection PyUnreachableCode
-            match arg_type:
-                case ArgType.TEXT:
-                    arg_result = arg
-                case ArgType.INT:
-                    arg_result = int(arg)
-                case ArgType.BOOL:
-                    arg_result = convert_command_part_to_bool(arg)
-                case _:
-                    msg = f"Unknown arg type: {arg_type}"
-                    raise ValueError(msg)
+            if arg_meta_config.parser_func:
+                arg_result = arg_meta_config.parser_func(arg)
+            else:
+                # noinspection PyUnreachableCode
+                match arg_type:
+                    case ArgType.TEXT:
+                        arg_result = arg
+                    case ArgType.INT:
+                        arg_result = int(arg)
+                    case ArgType.BOOL:
+                        arg_result = convert_command_part_to_bool(arg)
+                    case ArgType.LIST_BY_COMMA:
+                        arg_result = arg.split(",")
+                    case _:
+                        msg = f"Unknown arg type: {arg_type}"
+                        raise ValueError(msg)
+
+            if arg_meta_config.validator_func:
+                arg_result = arg_meta_config.validator_func(arg_result)
 
             # noinspection PyUnboundLocalVariable
             result_dict[arg_meta_config.name] = arg_result

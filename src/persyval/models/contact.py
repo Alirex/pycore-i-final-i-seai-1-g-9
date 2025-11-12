@@ -10,6 +10,9 @@ if TYPE_CHECKING:
 
 ContactUid = NewType("ContactUid", uuid.UUID)
 
+FORMAT_BIRTHDAY_FOR_HUMAN: Final[str] = "YYYY-MM-DD"
+"""ISO-8601 format for birthday."""
+
 
 def parse_birthday(birthday: str) -> datetime.date:
     return datetime.date.fromisoformat(birthday)
@@ -37,12 +40,15 @@ class Contact(BaseModel):
 
     # TODO: Use fields: email, phone (maybe multiple)
 
-    # phones: list[Phone] = Field(
-    #     default_factory=list,
-    #     description="List of phone numbers associated with the contact.",
-    # )
+    phones: list[str] = Field(
+        default_factory=list,
+        description="List of phone numbers associated with the contact.",
+    )
     #
-    # email: EmailStr
+    emails: list[str] = Field(
+        default_factory=list,
+        description="List of email addresses associated with the contact.",
+    )
 
     birthday: Annotated[datetime.date | None, AfterValidator(validate_birthday)] = None
 

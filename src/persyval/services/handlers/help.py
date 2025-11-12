@@ -56,9 +56,12 @@ def render_help(
                 arg_type_as_str = str(arg_obj.type_)
 
                 arg_str = (
-                    f"[[bold]{escape(is_required_char)}[/bold]"
+                    "["
+                    f"[bold]{escape(is_required_char)}[/bold]"
                     f"{escape(arg_obj.name)}"
-                    f":[italic]{escape(arg_type_as_str)}[/italic]]"
+                    f":[italic]{escape(arg_type_as_str)}[/italic]"
+                    f"{f'({escape(arg_obj.format)})' if arg_obj.format else ''}"
+                    "]"
                 )
                 args.append(arg_str)
 

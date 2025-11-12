@@ -1,36 +1,79 @@
-from typing import TYPE_CHECKING
+import datetime
+from typing import TYPE_CHECKING, Annotated
 
-from prompt_toolkit import HTML, prompt
+from pydantic import BaseModel, Field
 
-from persyval.models.contact import Contact, parse_birthday
+from persyval.models.contact import (
+    FORMAT_BIRTHDAY_FOR_HUMAN,
+    Contact,
+    parse_birthday,
+    validate_birthday,
+)
+from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contact_add import contact_add
 from persyval.services.handlers_base.handler_base import HandlerBase
-from persyval.services.handlers_base.helpers.no_direct_args_check import (
-    no_direct_args_check,
-)
 from persyval.utils.format import render_good_message
 
 if TYPE_CHECKING:
     from persyval.services.handlers_base.handler_output import HandlerOutput
 
-# contact_add_i_handler_args
+
+class PhoneAddIArgs(BaseModel):
+    name: str
+    address: str | None = None
+    birthday: datetime.date | None = None
+
+    phones: Annotated[list[str], Field(default_factory=list)]
+    emails: Annotated[list[str], Field(default_factory=list)]
+
+
+CONTACT_ADD_I_ARGS_CONFIG = ArgsConfig[PhoneAddIArgs](
+    result_cls=PhoneAddIArgs,
+    args=[
+        ArgMetaConfig(
+            name="name",
+            required=True,
+        ),
+        ArgMetaConfig(
+            name="address",
+        ),
+        ArgMetaConfig(
+            name="birthday",
+            type_=ArgType.DATE,
+            format=FORMAT_BIRTHDAY_FOR_HUMAN,
+            parser_func=parse_birthday,
+            validator_func=validate_birthday,
+        ),
+        ArgMetaConfig(
+            name="phones",
+            type_=ArgType.LIST_BY_COMMA,
+        ),
+        ArgMetaConfig(
+            name="emails",
+            type_=ArgType.LIST_BY_COMMA,
+        ),
+    ],
+)
 
 
 class ContactAddIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        # TODO: (?) Use optional direct args?
-        no_direct_args_check(self.args)
+        parse_result = CONTACT_ADD_I_ARGS_CONFIG.parse(self.args)
 
-        name = prompt(HTML("Enter <b>name</b>: "))
-        address = prompt(HTML("Enter <b>address</b> <i>(Optional)</i>: ")) or None
-        birthday = prompt(HTML("Enter <b>birthday</b> <i>(Optional)(YYYY-MM-DD)</i>: ")) or None
+        # TODO: Implement.
+
+        # name = prompt(HTML("Enter <b>name</b>: "))
+        # address = prompt(HTML("Enter <b>address</b> <i>(Optional)</i>: ")) or None
+        # birthday = prompt(HTML("Enter <b>birthday</b> <i>(Optional)(YYYY-MM-DD)</i>: ")) or None
 
         contact = Contact(
-            name=name,
-            address=address,
-            birthday=parse_birthday(birthday) if birthday else None,
+            name=parse_result.name,
+            address=parse_result.address,
+            birthday=parse_result.birthday,
+            phones=parse_result.phones,
+            emails=parse_result.emails,
         )
 
         contact_add(data_storage=self.data_storage, contact=contact)
