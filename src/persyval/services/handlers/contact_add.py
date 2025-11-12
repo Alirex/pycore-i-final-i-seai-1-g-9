@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field
 from persyval.models.contact import (
     FORMAT_BIRTHDAY_FOR_HUMAN,
     Contact,
-    parse_birthday,
     validate_birthday,
     validate_email_list,
     validate_phone_list,
@@ -43,8 +42,7 @@ CONTACT_ADD_I_ARGS_CONFIG = ArgsConfig[PhoneAddIArgs](
             name="birthday",
             type_=ArgType.DATE,
             format=FORMAT_BIRTHDAY_FOR_HUMAN,
-            parser_func=parse_birthday,
-            validator_func=validate_birthday,
+            parser_func=validate_birthday,
         ),
         ArgMetaConfig(
             name="phones",
