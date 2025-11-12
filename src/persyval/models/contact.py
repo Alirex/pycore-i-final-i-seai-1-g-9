@@ -30,6 +30,8 @@ def validate_birthday(birthday: datetime.date) -> datetime.date:
 TRIM_ADDRESS: Final[int] = 10
 LONG_PLACEHOLDER: Final[str] = "..."
 
+ALLOWED_KEYS_TO_FILTER: Final[set[str]] = {"uid", "name", "address", "phones", "emails"}
+
 
 class Contact(BaseModel):
     uid: ContactUid = Field(default_factory=lambda: ContactUid(uuid.uuid7()))
@@ -69,5 +71,7 @@ class Contact(BaseModel):
 
         if self.birthday:
             text += f" ({format_birthday(self.birthday)})"
+
+        text += f"  (<i>{self.uid}</i>)"
 
         return HTML(text)

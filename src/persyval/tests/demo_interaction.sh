@@ -15,8 +15,24 @@ set -o nounset
 
 
 persy_exec() {
-  persy --show-commands --non-interactive --hide-intro --predefined-input "$1"
+  persy \
+    --show-commands \
+    --non-interactive \
+    --hide-intro \
+    --predefined-input \
+    "$1"
 }
+
+persy_exec_plain() {
+  persy \
+    --show-commands \
+    --non-interactive \
+    --hide-intro \
+    --plain-render \
+    --predefined-input \
+    "$1"
+}
+
 
 # Show help message
 persy --show-commands --non-interactive --predefined-input help
@@ -44,11 +60,15 @@ for i in {1..9}; do
   persy_exec "contact_add x$((i)) address-$((i)) ${birthday} +38088000000$((i)),+38088000001$((i)) user_$((i))@example.com,user_$((i))@gmail.com"
 done
 
+
 # Show storage stats
 persy_exec "storage_stats"
 
 # Show all contacts
-persy_exec "contact_list"
+persy_exec "contact_list all"
+
+# Show filtered
+persy_exec_plain "contact_list filter name=x1"
 
 
 #echo "----- Restarting -----"

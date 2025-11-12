@@ -1,7 +1,7 @@
 from persyval.services.commands.command_meta import CommandMeta
 from persyval.services.commands.commands_enum import Command
 from persyval.services.handlers.contact_add import CONTACT_ADD_I_ARGS_CONFIG, ContactAddIHandler
-from persyval.services.handlers.contact_list import ContactListIHandler
+from persyval.services.handlers.contact_list import CONTACT_LIST_I_ARGS_CONFIG, ContactListIHandler
 from persyval.services.handlers.exit import EXIT_I_ARGS_CONFIG, ExitIHandler
 from persyval.services.handlers.help import HelpIHandler
 from persyval.services.handlers.storage_clear import STORAGE_CLEAR_I_ARGS_CONFIG, StorageClearIHandler
@@ -18,6 +18,7 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
         ),
         CommandMeta(
             command=Command.CONTACT_LIST,
+            args_config=CONTACT_LIST_I_ARGS_CONFIG,
             description="List contacts. With filtering and actions on the selected contact.",
             handler=ContactListIHandler,
         ),

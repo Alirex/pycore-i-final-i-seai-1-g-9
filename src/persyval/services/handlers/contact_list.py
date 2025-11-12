@@ -1,15 +1,22 @@
 import copy
 import enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
 
-from prompt_toolkit import HTML, choice, prompt
+from prompt_toolkit import HTML, choice, print_formatted_text, prompt
+from pydantic import BaseModel, Field
 
-from persyval.models.contact import Contact, ContactUid, format_birthday, parse_birthday
+from persyval.exceptions.main import InvalidCommandError
+from persyval.models.contact import ALLOWED_KEYS_TO_FILTER, Contact, ContactUid, format_birthday, parse_birthday
+from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contact_get import contact_get
-from persyval.services.data_actions.contact_list import LIST_FILTER_MODE_REGISTRY, ContactsListConfig, contact_list
+from persyval.services.data_actions.contact_list import (
+    LIST_FILTER_MODE_REGISTRY,
+    ContactsListConfig,
+    ListFilterModeEnum,
+    contact_list,
+)
 from persyval.services.data_actions.contact_update import contact_update
 from persyval.services.handlers_base.handler_base import HandlerBase
-from persyval.services.handlers_base.helpers.no_direct_args_check import no_direct_args_check
 from persyval.utils.format import render_good_message
 
 if TYPE_CHECKING:
@@ -24,26 +31,92 @@ class ContactItemAction(enum.StrEnum):
     VIEW = "view"
 
 
+class FilterModeEnum(enum.StrEnum):
+    ALL = "all"
+    FILTER = "filter"
+
+
+class PhoneListIArgs(BaseModel):
+    filter_mode: ListFilterModeEnum | None = None
+    queries: Annotated[list[str], Field(default_factory=list)]
+
+
+CONTACT_LIST_I_ARGS_CONFIG = ArgsConfig[PhoneListIArgs](
+    result_cls=PhoneListIArgs,
+    args=[
+        ArgMetaConfig(
+            name="filter_mode",
+            parser_func=lambda x: ListFilterModeEnum(x) if x else None,
+        ),
+        ArgMetaConfig(
+            name="queries",
+            type_=ArgType.LIST_BY_COMMA,
+        ),
+    ],
+)
+
+
+def parse_queries(queries: list[str]) -> dict[str, str]:
+    result = {}
+    for part in queries:
+        key, value = part.split("=")
+        result[key] = value
+
+    return result
+
+
 class ContactListIHandler(
     HandlerBase,
 ):
-    def _handler(self) -> HandlerOutput | None:
-        # TODO: (?) Use optional direct args?
-        no_direct_args_check(self.args)
+    def _handler(self) -> HandlerOutput | None:  # noqa: C901, PLR0912
+        # TODO: Refactor this function.
+        parsed_args = CONTACT_LIST_I_ARGS_CONFIG.parse(self.args)
 
-        choice_filter = choice(
-            message="Choose filter mode:",
-            options=[(item.mode, item.title) for item in LIST_FILTER_MODE_REGISTRY.values()],
-        )
+        if parsed_args.filter_mode is None and self.non_interactive:
+            msg = "Filter mode is required."
+            raise InvalidCommandError(msg)
+        if parsed_args.filter_mode is not None:
+            choice_filter = parsed_args.filter_mode
+        else:
+            choice_filter = choice(
+                message="Choose filter mode:",
+                options=[(item.mode, item.title) for item in LIST_FILTER_MODE_REGISTRY.values()],
+            )
+
+        if choice_filter is ListFilterModeEnum.FILTER:
+            queries = parsed_args.queries
+            if not queries:
+                msg = "Queries are required."
+                raise InvalidCommandError(msg)
+            parsed_queries = parse_queries(queries)
+            for key in parsed_queries:
+                if key not in ALLOWED_KEYS_TO_FILTER:
+                    msg = f"Filtering by '{key}' is not allowed."
+                    raise InvalidCommandError(msg)
+
+        else:
+            parsed_queries = {}
 
         list_config = ContactsListConfig(
             filter_mode=choice_filter,
+            queries_as_map=parsed_queries,
         )
 
         contacts = contact_list(
             data_storage=self.data_storage,
             list_config=list_config,
         )
+
+        if self.plain_render:
+            for contact in contacts:
+                print(contact.uid)
+            return None
+
+        if self.non_interactive:
+            for contact in contacts:
+                print_formatted_text(contact.get_prompt_toolkit_output())
+
+            return None
 
         options_list: list[tuple[ContactUid | None, PromptToolkitFormattedText]] = [
             (None, "Exit"),
