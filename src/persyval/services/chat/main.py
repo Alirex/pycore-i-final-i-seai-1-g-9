@@ -36,7 +36,7 @@ def main_chat(
                 plain_render=plain_render,
             )
 
-            if predefined_input:
+            if non_interactive:
                 break
 
             match loop_action:

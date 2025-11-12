@@ -13,23 +13,28 @@ set -o nounset
 
 # Note: EOF-style input does not work. So demonstrating only predefined-input style.
 
+
+persy_exec() {
+  persy --show-commands --non-interactive --hide-intro --predefined-input "$1"
+}
+
 # Show help message
-uv run persy --show-commands --predefined-input help
+persy --show-commands --non-interactive --predefined-input help
 
 # Wrong argument in help command
-uv run persy --show-commands --hide-intro --predefined-input "help bla"
+persy_exec "help bla"
 
 # Wrong command
-uv run persy --show-commands --hide-intro --predefined-input "he123"
+persy_exec "he123"
 
 # Exit
-uv run persy --show-commands --hide-intro --predefined-input "exit true"
+persy_exec "exit true"
 
 # Show storage stats
-uv run persy --show-commands --hide-intro --predefined-input "storage_stats"
+persy_exec "storage_stats"
 
 # Clear storage
-uv run persy --show-commands --hide-intro --predefined-input "storage_clear true"
+persy_exec "storage_clear true"
 
 
 

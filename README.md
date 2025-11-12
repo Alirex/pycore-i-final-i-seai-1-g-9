@@ -230,6 +230,16 @@ uv tool install --editable .
 
 Go to the [Usage](#usage) section. Check some commands.
 
+### Run demo
+
+Run a script with some demo interactions.
+
+!WARNING! This script will clear the storage.
+
+```shell
+bash ./src/persyval/tests/demo_interaction.sh
+```
+
 ## Interesting locations
 
 - [main chat function](./src/persyval/services/chat/main.py)
