@@ -54,12 +54,11 @@ persy_exec "storage_clear true"
 
 
 # Add multiple contacts
-for i in {1..9}; do
+for i in {1..3}; do
   birthday="1990-0$((i))-0$((i))"
 
   persy_exec "contact_add x$((i)) address-$((i)) ${birthday} +38088000000$((i)),+38088000001$((i)) user_$((i))@example.com,user_$((i))@gmail.com"
 done
-
 
 # Show storage stats
 persy_exec "storage_stats"
@@ -68,7 +67,16 @@ persy_exec "storage_stats"
 persy_exec "contact_list all"
 
 # Show filtered
-persy_exec_plain "contact_list filter name=x1"
+persy_exec_plain "contact_list filter name=x2"
+
+# Get last line from output
+last_line=$(persy_exec_plain "contact_list filter name=x2" | tail --lines 1)
+
+# Remove contact based on last line
+persy_exec "contact_delete ${last_line} true"
+
+# Show all contacts
+persy_exec "contact_list all"
 
 
 #echo "----- Restarting -----"
