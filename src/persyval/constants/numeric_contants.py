@@ -1,0 +1,6 @@
+YEAR = 365
+
+ONE_HUNDRED = 100
+
+FIVE = 5
+SIX = 6

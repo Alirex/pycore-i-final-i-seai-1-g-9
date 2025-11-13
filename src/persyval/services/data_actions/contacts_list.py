@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Annotated
 
 from pydantic import BaseModel, Field
 
-from persyval.models.contact import parse_birthday
+from persyval.models.contact import validate_birthday
 
 if TYPE_CHECKING:
     from persyval.models.contact import Contact
@@ -73,7 +73,7 @@ def contacts_list(  # noqa: C901, PLR0912
 
     try:
         birthday_raw = queries_as_map.pop("birthday")
-        birthday = parse_birthday(birthday_raw) if birthday_raw else None
+        birthday = validate_birthday(birthday_raw) if birthday_raw else None
     except KeyError:
         birthday = None
 

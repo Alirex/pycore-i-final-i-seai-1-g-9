@@ -13,6 +13,7 @@ class Command(enum.StrEnum):
 
     STORAGE_STATS = "storage_stats"
     STORAGE_CLEAR = "storage_clear"
+    STORAGE_SHOW_BIRTHDAYS = "storage_show_birthdays"
 
     HELP = "help"
 
@@ -33,6 +34,7 @@ COMMANDS_ORDER: Final[list[Command]] = [
     # #
     Command.STORAGE_STATS,
     Command.STORAGE_CLEAR,
+    Command.STORAGE_SHOW_BIRTHDAYS,
     #
     Command.HELP,
     #

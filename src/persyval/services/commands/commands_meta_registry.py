@@ -8,6 +8,10 @@ from persyval.services.handlers.help import HelpIHandler
 from persyval.services.handlers.note_add import NOTE_ADD_I_ARGS_CONFIG, NoteAddIHandler
 from persyval.services.handlers.note_delete import NOTE_DELETE_I_ARGS_CONFIG, NoteDeleteIHandler
 from persyval.services.handlers.storage_clear import STORAGE_CLEAR_I_ARGS_CONFIG, StorageClearIHandler
+from persyval.services.handlers.storage_show_birthdays import (
+    STORAGE_SHOW_BIRTHDAYS_I_ARGS_CONFIG,
+    StorageShowBirthdaysIHandler,
+)
 from persyval.services.handlers.storage_stats import StorageStatsIHandler
 
 COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
@@ -54,6 +58,13 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             description="Clear the storage.",
             handler=StorageClearIHandler,
         ),
+        CommandMeta(
+            command=Command.STORAGE_SHOW_BIRTHDAYS,
+            args_config=STORAGE_SHOW_BIRTHDAYS_I_ARGS_CONFIG,
+            description="Show upcomming birthdays from the contacts book.",
+            handler=StorageShowBirthdaysIHandler,
+        ),
+        #
         CommandMeta(
             command=Command.HELP,
             description="Display help information.",

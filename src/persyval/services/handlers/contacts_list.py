@@ -10,8 +10,8 @@ from persyval.models.contact import (
     ALLOWED_KEYS_TO_FILTER,
     Contact,
     ContactUid,
-    format_birthday,
     parse_birthday,
+    validate_birthday,
     validate_email_list,
     validate_phone_list,
 )
@@ -187,7 +187,7 @@ def contact_edit(
     )
     birthday = prompt(
         message=HTML("<b>Birthday</b> (YYYY-MM-DD): "),
-        default=format_birthday(contact.birthday) if contact.birthday else "",
+        default=parse_birthday(contact.birthday) if contact.birthday else "",
     )
 
     phones_input = prompt(
@@ -206,7 +206,7 @@ def contact_edit(
 
     contact.name = name
     contact.address = address
-    contact.birthday = parse_birthday(birthday) if birthday else None
+    contact.birthday = validate_birthday(birthday) if birthday else None
     contact.phones = validate_phone_list(phones_list)
     contact.emails = validate_email_list(emails_list)
 
