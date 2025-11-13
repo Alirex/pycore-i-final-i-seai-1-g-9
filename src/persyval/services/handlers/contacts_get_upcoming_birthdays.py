@@ -27,7 +27,7 @@ class ShowContactsIArgs(BaseModel):
     days: int = 7
 
 
-STORAGE_SHOW_BIRTHDAYS_I_ARGS_CONFIG = ArgsConfig[ShowContactsIArgs](
+CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG = ArgsConfig[ShowContactsIArgs](
     result_cls=ShowContactsIArgs,
     args=[
         ArgMetaConfig(
@@ -39,11 +39,11 @@ STORAGE_SHOW_BIRTHDAYS_I_ARGS_CONFIG = ArgsConfig[ShowContactsIArgs](
 )
 
 
-class StorageShowBirthdaysIHandler(
+class ContactsGetUpcomingBirthdaysIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        parse_result = STORAGE_SHOW_BIRTHDAYS_I_ARGS_CONFIG.parse(self.args)
+        parse_result = CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG.parse(self.args)
 
         upcoming_birthdays = self.data_storage.get_upcoming_birthdays(parse_result.days)
         if not upcoming_birthdays:

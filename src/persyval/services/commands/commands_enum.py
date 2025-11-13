@@ -7,13 +7,13 @@ class Command(enum.StrEnum):
     CONTACTS_LIST = "contacts_list"
     CONTACT_ADD = "contact_add"
     CONTACT_DELETE = "contact_delete"
+    CONTACTS_GET_UPCOMING_BIRTHDAYS = "contacts_get_upcoming_birthdays"
 
     NOTE_ADD = "note_add"
     NOTE_DELETE = "note_delete"
 
     STORAGE_STATS = "storage_stats"
     STORAGE_CLEAR = "storage_clear"
-    STORAGE_SHOW_BIRTHDAYS = "storage_show_birthdays"
 
     HELP = "help"
 
@@ -28,13 +28,13 @@ COMMANDS_ORDER: Final[list[Command]] = [
     Command.CONTACTS_LIST,
     Command.CONTACT_ADD,
     Command.CONTACT_DELETE,
+    Command.CONTACTS_GET_UPCOMING_BIRTHDAYS,
     #
     Command.NOTE_ADD,
     Command.NOTE_DELETE,
     # #
     Command.STORAGE_STATS,
     Command.STORAGE_CLEAR,
-    Command.STORAGE_SHOW_BIRTHDAYS,
     #
     Command.HELP,
     #
