@@ -23,7 +23,7 @@ def run(  # noqa: PLR0913
         typer.Argument(
             help=f"Predefined input to be used instead of prompting the user. {CLI_DOC_NEWLINE}"
             "Useful for testing and automation purposes. "
-            f"Related env: '{ENV_VAR_NAME_I_PREDEFINED_INPUT}' {CLI_DOC_NEWLINE_AT_END}",
+            f"Related env var: '{ENV_VAR_NAME_I_PREDEFINED_INPUT}' {CLI_DOC_NEWLINE_AT_END}",
         ),
     ] = None,
     #
@@ -69,7 +69,7 @@ def run(  # noqa: PLR0913
         pathlib.Path | None,
         typer.Option(
             help=f"Storage directory. {CLI_DOC_NEWLINE} "
-            f"Use {ENV_VAR_NAME_I_NO_PERSISTENCE} if you want to disable storing data to the file system. "
+            f"Use env var '{ENV_VAR_NAME_I_NO_PERSISTENCE}' if you want to disable storing data to the file system. "
             f"{CLI_DOC_NEWLINE_AT_END}",
         ),
     ] = None,

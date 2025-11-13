@@ -51,7 +51,7 @@ $ chat run [OPTIONS] [PREDEFINED_INPUT]
 
 * `[PREDEFINED_INPUT]`: Predefined input to be used instead of prompting the user. 
 
-Useful for testing and automation purposes. Related env: &#x27;PERSYVAL_I_PREDEFINED_INPUT&#x27;
+Useful for testing and automation purposes. Related env var: &#x27;PERSYVAL_I_PREDEFINED_INPUT&#x27;
 
 .
 
@@ -82,7 +82,7 @@ Useful for testing and automation purposes. Also, useful for some debugging tool
 .
 * `--storage-dir PATH`: Storage directory. 
 
- Use PERSYVAL_I_NO_PERSISTENCE if you want to disable storing data to the file system.
+ Use env var &#x27;PERSYVAL_I_NO_PERSISTENCE&#x27; if you want to disable storing data to the file system.
 
 .
 * `--help`: Show this message and exit.
