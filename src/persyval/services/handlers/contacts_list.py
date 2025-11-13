@@ -11,7 +11,7 @@ from persyval.models.contact import (
     Contact,
     ContactUid,
 )
-from persyval.services.birthday.parse_and_format import format_birthday, parse_birthday
+from persyval.services.birthday.parse_and_format import FORMAT_BIRTHDAY_FOR_EDIT, format_birthday, parse_birthday
 from persyval.services.birthday.validate_birthday import validate_birthday
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contact_get import contact_get
@@ -187,7 +187,7 @@ def contact_edit(
     )
     birthday = prompt(
         message=HTML("<b>Birthday</b> (YYYY-MM-DD): "),
-        default=format_birthday(contact.birthday) if contact.birthday else "",
+        default=format_birthday(contact.birthday, FORMAT_BIRTHDAY_FOR_EDIT) if contact.birthday else "",
     )
 
     phones_input = prompt(
