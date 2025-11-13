@@ -22,3 +22,9 @@ def clear_storage() -> None:
 
     console = rich.console.Console()
     console.print("All stored data has been cleared.")
+
+
+@app.command()
+def debug() -> None:
+    """Debug the application."""
+    print("debug")

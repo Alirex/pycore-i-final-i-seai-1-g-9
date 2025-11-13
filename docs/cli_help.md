@@ -98,6 +98,7 @@ $ helpers [OPTIONS] COMMAND [ARGS]...
 
 * `show-paths`: Show the paths that used for storage.
 * `clear-storage`: Clear all stored data.
+* `debug`: Debug the application.
 
 ### `helpers show-paths`
 
@@ -121,6 +122,20 @@ Clear all stored data.
 
 ```console
 $ helpers clear-storage [OPTIONS]
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+### `helpers debug`
+
+Debug the application.
+
+**Usage**:
+
+```console
+$ helpers debug [OPTIONS]
 ```
 
 **Options**:
