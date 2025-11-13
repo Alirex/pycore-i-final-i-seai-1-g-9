@@ -1,3 +1,4 @@
+import copy
 from typing import TYPE_CHECKING
 
 import pytest
@@ -7,6 +8,7 @@ from persyval.models.contact import Contact
 from persyval.services.data_actions.contact_add import contact_add
 from persyval.services.data_actions.contact_delete import contact_delete
 from persyval.services.data_actions.contact_get import contact_get
+from persyval.services.data_actions.contact_update import contact_update
 from persyval.services.data_storage.data_storage import DataStorage
 
 if TYPE_CHECKING:
@@ -39,6 +41,8 @@ def test_contact_i_add_i_get_i_remove(
     contact: Contact,
     data_storage_fixture: DataStorage,
 ) -> None:
+    contact_uid = contact.uid
+
     contact_add(
         data_storage=data_storage_fixture,
         contact=contact,
@@ -46,10 +50,26 @@ def test_contact_i_add_i_get_i_remove(
 
     retrieved_contact = contact_get(
         data_storage=data_storage_fixture,
-        contact_uid=contact.uid,
+        contact_uid=contact_uid,
     )
 
     assert contact == retrieved_contact
+
+    contact_copy = copy.deepcopy(contact)
+    name = "Test 2"
+    contact_copy.name = name
+
+    contact_update(
+        data_storage=data_storage_fixture,
+        contact=contact_copy,
+    )
+
+    retrieved_contact_updated = contact_get(
+        data_storage=data_storage_fixture,
+        contact_uid=contact_uid,
+    )
+
+    assert retrieved_contact_updated.name == name
 
     try:
         contact_add(
@@ -63,13 +83,13 @@ def test_contact_i_add_i_get_i_remove(
 
     contact_delete(
         data_storage=data_storage_fixture,
-        contact_uid=contact.uid,
+        contact_uid=contact_uid,
     )
 
     try:
         contact_delete(
             data_storage=data_storage_fixture,
-            contact_uid=contact.uid,
+            contact_uid=contact_uid,
         )
     except NotFoundError:
         pass
@@ -79,7 +99,7 @@ def test_contact_i_add_i_get_i_remove(
     try:
         contact_get(
             data_storage=data_storage_fixture,
-            contact_uid=contact.uid,
+            contact_uid=contact_uid,
         )
     except NotFoundError:
         pass
