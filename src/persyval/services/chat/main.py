@@ -31,6 +31,9 @@ def main_chat(  # noqa: PLR0913
         while True:
             user_input = predefined_input or get_input(console=console, prompt_session=prompt_session)
 
+            if predefined_input:
+                predefined_input = None
+
             loop_action = parse_input_and_make_action(
                 console=console,
                 data_storage=data_storage,

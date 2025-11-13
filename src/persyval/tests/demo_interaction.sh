@@ -19,7 +19,6 @@ persy_exec() {
     --show-commands \
     --non-interactive \
     --hide-intro \
-    --predefined-input \
     "$1"
 }
 
@@ -29,13 +28,12 @@ persy_exec_plain() {
     --non-interactive \
     --hide-intro \
     --plain-render \
-    --predefined-input \
     "$1"
 }
 
 
 # Show help message
-persy --show-commands --non-interactive --predefined-input help
+persy --show-commands --non-interactive help
 
 # Wrong argument in help command
 persy_exec "help bla"

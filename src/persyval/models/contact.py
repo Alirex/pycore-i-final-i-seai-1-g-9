@@ -9,7 +9,6 @@ from prompt_toolkit import HTML
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from persyval.constants.numeric_contants import FIVE, ONE_HUNDRED, SIX, YEAR
-
 from persyval.exceptions.main import InvalidDataError
 
 if TYPE_CHECKING:
@@ -21,6 +20,7 @@ FORMAT_BIRTHDAY_FOR_HUMAN: Final[str] = "YYYY-MM-DD"
 """ISO-8601 format for birthday."""
 
 DEFAULT_REGION = "UA"
+
 
 def format_birthday(birthday: date) -> str:
     return birthday.isoformat()
@@ -105,6 +105,7 @@ def validate_email_list(emails: list[str]) -> list[str]:
             raise InvalidDataError(msg) from e
 
     return list(set(validated))
+
 
 def get_nearest_anniversary(birthday_date: date, current_date: date) -> date:
     contact_birthday_nearest_year = datetime(

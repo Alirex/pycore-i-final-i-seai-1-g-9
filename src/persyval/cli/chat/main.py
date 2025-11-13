@@ -9,49 +9,60 @@ app = typer.Typer()
 
 ENV_VAR_NAME_I_PREDEFINED_INPUT: Final[str] = "PERSYVAL_I_PREDEFINED_INPUT"
 
+DOC_NEWLINE: Final[str] = "\n\n"
+DOC_NEWLINE_AT_END: Final[str] = "\n\n."
+
 
 @app.command()
 def run(  # noqa: PLR0913
     *,
+    predefined_input: Annotated[
+        str | None,
+        typer.Argument(
+            help=f"Predefined input to be used instead of prompting the user. {DOC_NEWLINE}"
+            "Useful for testing and automation purposes. "
+            f"Related env: '{ENV_VAR_NAME_I_PREDEFINED_INPUT}' {DOC_NEWLINE_AT_END}",
+        ),
+    ] = None,
+    #
     show_commands: Annotated[
         bool,
-        typer.Option(help="Show input commands. \n\nUseful for debugging purposes.\n\n."),
+        typer.Option(
+            "--show-commands",
+            help=f"Show input commands. {DOC_NEWLINE}Useful for debugging purposes.{DOC_NEWLINE_AT_END}",
+        ),
     ] = False,
     hide_intro: Annotated[
         bool,
-        typer.Option(help="Hide the introduction message.\n\n."),
+        typer.Option("--hide-intro", help=f"Hide the introduction message.{DOC_NEWLINE_AT_END}"),
     ] = False,
     #
     non_interactive: Annotated[
         bool,
         typer.Option(
-            help="Run in non-interactive mode. \n\nDo not prompt for user input. Exit after completion of action.\n\n.",
+            "--non-interactive",
+            help=f"Run in non-interactive mode. {DOC_NEWLINE}"
+            f"Do not prompt for user input. Exit after completion of action.{DOC_NEWLINE_AT_END}",
         ),
     ] = False,
     plain_render: Annotated[
         bool,
         typer.Option(
-            help="Render plain text without any special formatting (e.g., colors, styles). \n\n"
-            "Useful for simple terminals and CLI automations scripts.\n\n.",
+            "--plain-render",
+            help=f"Render plain text without any special formatting (e.g., colors, styles). {DOC_NEWLINE}"
+            f"Useful for simple terminals and CLI automations scripts.{DOC_NEWLINE_AT_END}",
         ),
     ] = False,
     terminal_simplified: Annotated[
         bool,
         typer.Option(
-            help="Use simplified terminal input. \n\n"
+            "--terminal-simplified",
+            help=f"Use simplified terminal input. {DOC_NEWLINE}"
             "Useful for testing and automation purposes. "
-            "Also, useful for some debugging tools.\n\n.",
+            f"Also, useful for some debugging tools.{DOC_NEWLINE_AT_END}",
         ),
     ] = False,
     #
-    predefined_input: Annotated[
-        str | None,
-        typer.Option(
-            help="Predefined input to be used instead of prompting the user. \n\n"
-            "Useful for testing and automation purposes. "
-            f"Related env: '{ENV_VAR_NAME_I_PREDEFINED_INPUT}'\n\n.",
-        ),
-    ] = None,
 ) -> None:
     """Run the personal assistant chat.
 
