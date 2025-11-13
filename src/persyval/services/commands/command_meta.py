@@ -71,13 +71,13 @@ class ArgsConfig[ParseResult](BaseModel):
 
         result_dict: dict[str, Any] = {}
         for arg_meta_config, arg in zip(self.args, args, strict=False):
-            arg_type = arg_meta_config.type_
-
             arg_result: Any
 
             if arg_meta_config.parser_func:
                 arg_result = arg_meta_config.parser_func(arg)
             else:
+                arg_type = arg_meta_config.type_
+
                 # noinspection PyUnreachableCode
                 match arg_type:
                     case ArgType.TEXT:
@@ -93,6 +93,7 @@ class ArgsConfig[ParseResult](BaseModel):
                         raise ValueError(msg)
 
             if arg_meta_config.validator_func:
+                # noinspection PyUnboundLocalVariable
                 arg_result = arg_meta_config.validator_func(arg_result)
 
             # noinspection PyUnboundLocalVariable
