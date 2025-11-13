@@ -19,6 +19,11 @@ class HintsCompleter(Completer, BaseModel):
         document: Document,
         complete_event: CompleteEvent,  # noqa: ARG002
     ) -> Iterable[Completion]:
+        text = document.text_before_cursor
+
+        if " " in text.lstrip():
+            return
+
         word = document.get_word_before_cursor().lower()
 
         for hint in self.hints:
