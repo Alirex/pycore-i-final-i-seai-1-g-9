@@ -50,6 +50,7 @@ persy_exec "storage_stats"
 # Clear storage
 persy_exec "storage_clear true"
 
+persy_exec "contact_add Some"
 
 # Add multiple contacts
 for i in {1..3}; do
