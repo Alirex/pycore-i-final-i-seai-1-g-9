@@ -20,13 +20,16 @@ older than this limit.
 """
 
 
-def validate_birthday(date: datetime.date) -> datetime.date:
+def validate_birthday(date: datetime.date | None) -> datetime.date | None:
     """Validate birthday date.
 
     It must be:
     - not in the future
     - respect the age limit
     """
+    if not date:
+        return None
+
     # Ignore time zone for this case.
     current_date = datetime.datetime.now().date()  # noqa: DTZ005
 
