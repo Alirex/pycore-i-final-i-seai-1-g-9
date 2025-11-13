@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from persyval.services.data_storage.data_storage import DataStorage
 
 
-def contact_remove(
+def contact_delete(
     data_storage: DataStorage,
     contact_uid: ContactUid,
 ) -> None:

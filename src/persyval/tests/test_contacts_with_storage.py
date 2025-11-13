@@ -2,9 +2,10 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from persyval.exceptions.main import AlreadyExistsError
+from persyval.exceptions.main import AlreadyExistsError, NotFoundError
 from persyval.models.contact import Contact
 from persyval.services.data_actions.contact_add import contact_add
+from persyval.services.data_actions.contact_delete import contact_delete
 from persyval.services.data_actions.contact_get import contact_get
 from persyval.services.data_storage.data_storage import DataStorage
 
@@ -34,7 +35,7 @@ def data_storage_long_fixture() -> Generator[DataStorage]:
         ),
     ],
 )
-def test_contact_add_i_get_i_add_duplicate(
+def test_contact_i_add_i_get_i_remove(
     contact: Contact,
     data_storage_fixture: DataStorage,
 ) -> None:
@@ -59,3 +60,18 @@ def test_contact_add_i_get_i_add_duplicate(
         pass
     else:
         pytest.fail("Expected AlreadyExistsError")
+
+    contact_delete(
+        data_storage=data_storage_fixture,
+        contact_uid=contact.uid,
+    )
+
+    try:
+        contact_delete(
+            data_storage=data_storage_fixture,
+            contact_uid=contact.uid,
+        )
+    except NotFoundError:
+        pass
+    else:
+        pytest.fail("Expected NotFoundError")

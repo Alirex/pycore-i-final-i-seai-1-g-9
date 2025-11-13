@@ -7,7 +7,7 @@ from persyval.models.contact import (
     ContactUid,
 )
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
-from persyval.services.data_actions.contact_remove import contact_remove
+from persyval.services.data_actions.contact_delete import contact_delete
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message, render_good_message
 
@@ -57,7 +57,7 @@ class ContactDeleteIHandler(
             )
             return None
 
-        contact_remove(data_storage=self.data_storage, contact_uid=parse_result.uid)
+        contact_delete(data_storage=self.data_storage, contact_uid=parse_result.uid)
 
         render_good_message(
             self.console,
