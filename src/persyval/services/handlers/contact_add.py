@@ -8,6 +8,8 @@ from persyval.models.contact import (
     Contact,
     parse_birthday,
     validate_birthday,
+    validate_email_list,
+    validate_phone_list,
 )
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contact_add import contact_add
@@ -47,10 +49,12 @@ CONTACT_ADD_I_ARGS_CONFIG = ArgsConfig[PhoneAddIArgs](
         ArgMetaConfig(
             name="phones",
             type_=ArgType.LIST_BY_COMMA,
+            validator_func=validate_phone_list,
         ),
         ArgMetaConfig(
             name="emails",
             type_=ArgType.LIST_BY_COMMA,
+            validator_func=validate_email_list,
         ),
     ],
 )

@@ -179,7 +179,9 @@ name = "persyval"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "email-validator" },
     { name = "environs" },
+    { name = "phonenumbers" },
     { name = "platformdirs" },
     { name = "prompt-toolkit" },
     { name = "pydantic", extra = ["email"] },
@@ -197,7 +199,9 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "email-validator", specifier = ">=2.3.0" },
     { name = "environs", specifier = ">=14.5.0" },
+    { name = "phonenumbers", specifier = ">=9.0.18" },
     { name = "platformdirs", specifier = ">=4.5.0" },
     { name = "prompt-toolkit", specifier = ">=3.0.52" },
     { name = "pydantic", extras = ["email"], specifier = ">=2.12.4" },
@@ -223,6 +227,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9e/c3/059298687310d527a58bb01f3b1965787ee3b40dce76752eda8b44e9a2c5/pexpect-4.9.0-py2.py3-none-any.whl", hash = "sha256:7236d1e080e4936be2dc3e326cec0af72acf9212a7e1d060210e70a47e253523", size = 63772, upload-time = "2023-11-25T06:56:14.81Z" },
+]
+
+[[package]]
+name = "phonenumbers"
+version = "9.0.18"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/01/c6/0e3e736ddae9f64cba0ffacd898e274dca36d062a996abd35c8fe815646e/phonenumbers-9.0.18.tar.gz", hash = "sha256:5537c61ba95b11b992c95e804da6e49193cc06b1224f632ade64631518a48ed1", size = 2298264, upload-time = "2025-11-07T07:37:07.322Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/19/b6/b17cf7488db707fee67022ea7eea6a33e8bbcf4b0cb5c9412878e8b182d3/phonenumbers-9.0.18-py2.py3-none-any.whl", hash = "sha256:d3354454ac31c97f8a08121df97a7145b8dca641f734c6f1518a41c2f60c5764", size = 2584121, upload-time = "2025-11-07T07:37:04.897Z" },
 ]
 
 [[package]]
