@@ -17,13 +17,13 @@ from persyval.models.contact import (
 )
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contact_get import contact_get
-from persyval.services.data_actions.contact_list import (
+from persyval.services.data_actions.contact_update import contact_update
+from persyval.services.data_actions.contacts_list import (
     LIST_FILTER_MODE_REGISTRY,
     ContactsListConfig,
     ListFilterModeEnum,
-    contact_list,
+    contacts_list,
 )
-from persyval.services.data_actions.contact_update import contact_update
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_good_message
 
@@ -73,7 +73,7 @@ def parse_queries(queries: list[str]) -> dict[str, str]:
     return result
 
 
-class ContactListIHandler(
+class ContactsListIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:  # noqa: C901, PLR0912
@@ -110,7 +110,7 @@ class ContactListIHandler(
             queries_as_map=parsed_queries,
         )
 
-        contacts = contact_list(
+        contacts = contacts_list(
             data_storage=self.data_storage,
             list_config=list_config,
         )

@@ -4,8 +4,8 @@ from typing import Final
 
 @enum.unique
 class Command(enum.StrEnum):
+    CONTACTS_LIST = "contacts_list"
     CONTACT_ADD = "contact_add"
-    CONTACT_LIST = "contact_list"
     CONTACT_DELETE = "contact_delete"
 
     NOTE_ADD = "note_add"
@@ -24,8 +24,8 @@ class Command(enum.StrEnum):
 
 
 COMMANDS_ORDER: Final[list[Command]] = [
+    Command.CONTACTS_LIST,
     Command.CONTACT_ADD,
-    Command.CONTACT_LIST,
     Command.CONTACT_DELETE,
     #
     Command.NOTE_ADD,

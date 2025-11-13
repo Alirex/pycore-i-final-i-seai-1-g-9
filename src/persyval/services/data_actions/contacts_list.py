@@ -47,7 +47,7 @@ class ContactsListConfig(BaseModel):
 # TODO: Refactor this function.
 
 
-def contact_list(  # noqa: C901, PLR0912
+def contacts_list(  # noqa: C901, PLR0912
     data_storage: DataStorage,
     list_config: ContactsListConfig,
 ) -> list[Contact]:
