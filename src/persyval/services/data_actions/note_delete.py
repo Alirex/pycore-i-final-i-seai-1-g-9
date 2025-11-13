@@ -12,7 +12,8 @@ def note_delete(
     note_uid: NoteUid,
 ) -> None:
     try:
-        del data_storage.data.notes[note_uid]
+        with data_storage.autosave():
+            del data_storage.data.notes[note_uid]
     except KeyError as exc:
         msg = f"Note with uid {note_uid} not found."
         raise NotFoundError(msg) from exc

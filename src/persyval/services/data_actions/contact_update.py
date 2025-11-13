@@ -12,7 +12,8 @@ def contact_update(
     contact: Contact,
 ) -> Contact:
     try:
-        data_storage.data.contacts[contact.uid] = contact
+        with data_storage.autosave():
+            data_storage.data.contacts[contact.uid] = contact
     except KeyError as exc:
         msg = f"Contact with uid {contact.uid} not found."
         raise NotFoundError(msg) from exc

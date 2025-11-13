@@ -1,5 +1,5 @@
 import pathlib
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Annotated, Self
 
 from pydantic import BaseModel, Field
 
@@ -29,16 +29,40 @@ class Data(BaseModel):
         self.notes.clear()
 
 
+class DataStorageAutosaver(BaseModel):
+    data_storage: DataStorage
+
+    def __enter__(self) -> None:
+        return
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> bool | None:
+        # Save only if there is no exception.
+        if exc_type is None:
+            self.data_storage.save()
+        return None
+
+
 class DataStorage(BaseModel):
-    path: pathlib.Path
+    path: Annotated[
+        pathlib.Path | None,
+        Field(description="Path to the data file. If `None`, storage is temporary. `None` must be explicit."),
+    ]
 
     data: Data
 
     @classmethod
     def load(
         cls,
-        dir_path: pathlib.Path,
+        dir_path: pathlib.Path | None,
     ) -> Self:
+        if dir_path is None:
+            return cls(path=None, data=Data())
+
         path = dir_path / "data.json"
 
         try:
@@ -50,11 +74,17 @@ class DataStorage(BaseModel):
         return cls(path=path, data=data)
 
     def save(self) -> None:
+        if self.path is None:
+            return
+
         dir_path = self.path.parent
         dir_path.mkdir(parents=True, exist_ok=True)
 
         with self.path.open("w", encoding="utf-8") as file:
             file.write(self.data.model_dump_json(indent=4, ensure_ascii=False))
+
+    def autosave(self) -> DataStorageAutosaver:
+        return DataStorageAutosaver(data_storage=self)
 
     def __enter__(self) -> Self:
         return self

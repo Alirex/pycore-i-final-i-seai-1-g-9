@@ -12,7 +12,8 @@ def contact_remove(
     contact_uid: ContactUid,
 ) -> None:
     try:
-        del data_storage.data.contacts[contact_uid]
+        with data_storage.autosave():
+            del data_storage.data.contacts[contact_uid]
     except KeyError as exc:
         msg = f"Contact with uid {contact_uid} not found."
         raise NotFoundError(msg) from exc
