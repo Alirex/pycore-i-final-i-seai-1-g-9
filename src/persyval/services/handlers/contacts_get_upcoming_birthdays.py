@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Annotated, Final
 from pydantic import AfterValidator, BaseModel
 from rich.table import Table
 
-from persyval.services.birthday.parse_and_format import format_birthday
+from persyval.services.birthday.parse_and_format import format_birthday_for_output
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contacts_get_upcoming_birthdays import contacts_get_upcoming_birthdays
 from persyval.services.handlers_base.handler_base import HandlerBase
@@ -63,8 +63,8 @@ class ContactsGetUpcomingBirthdaysIHandler(
         for anniversary_info in upcoming_birthdays:
             table.add_row(
                 anniversary_info.name,
-                format_birthday(anniversary_info.congratulation_date),
-                format_birthday(anniversary_info.non_weekend_congratulation_date),
+                format_birthday_for_output(anniversary_info.congratulation_date),
+                format_birthday_for_output(anniversary_info.non_weekend_congratulation_date),
             )
 
         self.console.print(table)

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Annotated, Final, NewType
 from prompt_toolkit import HTML
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 
-from persyval.services.birthday.parse_and_format import format_birthday
+from persyval.services.birthday.parse_and_format import format_birthday_for_output
 from persyval.services.birthday.validate_birthday import validate_birthday
 
 if TYPE_CHECKING:
@@ -57,7 +57,7 @@ class Contact(BaseModel):
             text += f", {address}"
 
         if self.birthday:
-            text += f" ({format_birthday(self.birthday)})"
+            text += f" ({format_birthday_for_output(self.birthday)})"
 
         # TODO: Need to decide Do we need to show phones and emails in prompt?
         # if self.phones:
