@@ -75,3 +75,13 @@ def test_contact_i_add_i_get_i_remove(
         pass
     else:
         pytest.fail("Expected NotFoundError")
+
+    try:
+        contact_get(
+            data_storage=data_storage_fixture,
+            contact_uid=contact.uid,
+        )
+    except NotFoundError:
+        pass
+    else:
+        pytest.fail("Expected NotFoundError")
