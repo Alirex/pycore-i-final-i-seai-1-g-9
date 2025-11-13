@@ -1,11 +1,18 @@
+from typing import TYPE_CHECKING
+
 from prompt_toolkit import PromptSession
 from rich.console import Console
 
 from persyval.services.chat.get_input import get_input
-from persyval.services.chat.parse_input_and_make_action import LoopAction, parse_input_and_make_action
+from persyval.services.chat.parse_input_and_make_action import (
+    LoopAction,
+    parse_input_and_make_action,
+)
 from persyval.services.data_storage.data_storage import DataStorage
-from persyval.services.get_paths.get_app_dirs import get_data_dir_in_user_space
 from persyval.services.intro.render_intro import render_intro
+
+if TYPE_CHECKING:
+    import pathlib
 
 # TODO: (?) Group some args to class
 
@@ -20,8 +27,13 @@ def main_chat(  # noqa: PLR0913
     terminal_simplified: bool = False,
     #
     predefined_input: str | None = None,
+    #
+    storage_dir: pathlib.Path | None = None,
 ) -> None:
-    with DataStorage.load(dir_path=get_data_dir_in_user_space()) as data_storage:
+    print(storage_dir)
+    with DataStorage.load(
+        dir_path=storage_dir,
+    ) as data_storage:
         console = Console()
         prompt_session: PromptSession | None = None if terminal_simplified else PromptSession()  # type: ignore[type-arg]
 

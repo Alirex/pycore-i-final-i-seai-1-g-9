@@ -1,3 +1,4 @@
+import pathlib  # noqa: TC003
 from typing import Annotated, Final
 
 import environs
@@ -5,10 +6,13 @@ import typer
 
 from persyval.cli.constants import CLI_DOC_NEWLINE, CLI_DOC_NEWLINE_AT_END
 from persyval.services.chat.main import main_chat
+from persyval.services.get_paths.get_app_dirs import get_data_dir_in_user_space
 
 app = typer.Typer()
 
 ENV_VAR_NAME_I_PREDEFINED_INPUT: Final[str] = "PERSYVAL_I_PREDEFINED_INPUT"
+
+ENV_VAR_NAME_I_NO_PERSISTENCE: Final[str] = "PERSYVAL_I_NO_PERSISTENCE"
 
 
 @app.command()
@@ -61,6 +65,14 @@ def run(  # noqa: PLR0913
         ),
     ] = False,
     #
+    storage_dir: Annotated[
+        pathlib.Path | None,
+        typer.Option(
+            help=f"Storage directory. {CLI_DOC_NEWLINE} "
+            f"Use {ENV_VAR_NAME_I_NO_PERSISTENCE} if you want to disable storing data to the file system. "
+            f"{CLI_DOC_NEWLINE_AT_END}",
+        ),
+    ] = None,
 ) -> None:
     """Run the personal assistant chat.
 
@@ -78,11 +90,25 @@ def run(  # noqa: PLR0913
     term = environs.env.str("TERM", "")
     terminal_simplified = terminal_simplified or (not term)
 
+    persyval_i_no_persistence = environs.env.bool(ENV_VAR_NAME_I_NO_PERSISTENCE, False)
+
+    get_data_dir_in_user_space()
+    if persyval_i_no_persistence:
+        storage_dir_fact = None
+    elif storage_dir is None:
+        storage_dir_fact = get_data_dir_in_user_space()
+    else:
+        storage_dir_fact = storage_dir
+
     main_chat(
         show_commands=show_commands,
         hide_intro=hide_intro,
+        #
         non_interactive=non_interactive,
         plain_render=plain_render,
         terminal_simplified=terminal_simplified,
+        #
         predefined_input=predefined_input,
+        #
+        storage_dir=storage_dir_fact,
     )

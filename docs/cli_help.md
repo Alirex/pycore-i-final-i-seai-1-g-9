@@ -80,6 +80,11 @@ Useful for simple terminals and CLI automations scripts.
 Useful for testing and automation purposes. Also, useful for some debugging tools.
 
 .
+* `--storage-dir PATH`: Storage directory. 
+
+ Use PERSYVAL_I_NO_PERSISTENCE if you want to disable storing data to the file system.
+
+.
 * `--help`: Show this message and exit.
 
 ## `helpers`
