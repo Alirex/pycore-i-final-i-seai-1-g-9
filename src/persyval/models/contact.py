@@ -1,139 +1,47 @@
-import re
+import datetime
 import uuid
-from datetime import UTC, date, datetime, timedelta
 from typing import TYPE_CHECKING, Annotated, Final, NewType
 
-import phonenumbers
-from email_validator import EmailNotValidError, validate_email
 from prompt_toolkit import HTML
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 
-from persyval.constants.numeric_contants import FIVE, ONE_HUNDRED, SIX, YEAR
-from persyval.exceptions.main import InvalidDataError
+from persyval.constants.numeric_contants import FIVE, SIX
+from persyval.services.birthday.parse_and_format import format_birthday
+from persyval.services.birthday.validate_birthday import validate_birthday
 
 if TYPE_CHECKING:
     from persyval.services.console.types import PromptToolkitFormattedText
 
 ContactUid = NewType("ContactUid", uuid.UUID)
 
-FORMAT_BIRTHDAY_FOR_HUMAN: Final[str] = "YYYY-MM-DD"
-"""ISO-8601 format for birthday."""
 
-DEFAULT_REGION = "UA"
-
-
-def format_birthday(birthday: date) -> str:
-    return birthday.isoformat()
-
-
-def parse_birthday(birthday: date) -> str:
-    return datetime.strftime(birthday, "%Y-%m-%d")
-
-
-def validate_birthday(date_string: str) -> date:
-    if isinstance(date_string, date):
-        return date_string
-
-    pattern = r"^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
-    valid_date_string_match = re.search(pattern, date_string.strip())
-    if not valid_date_string_match:
-        msg = "Invalid date format. Use YYYY-MM-DD"
-        raise ValueError(msg)
-
-    # Get current date and check approximate difference in years with it,
-    # to prevent writting the future dates or dates more then 100 years old
-    valid_date_string = datetime.strptime(
-        valid_date_string_match.group(),
-        "%Y-%m-%d",
-    ).replace(tzinfo=UTC)
-    current_date = datetime.now(UTC)
-    difference = current_date - valid_date_string
-    year_difference = difference.days // YEAR
-    if not (0 < year_difference < ONE_HUNDRED):
-        raise ValueError(
-            "Birthday date can not be in future."
-            if year_difference < 0
-            else "Birthday date is invalid. Contact can not be more then 100 years old.",
-        )
-
-    return valid_date_string
-
-
-def validate_phone_list(phones: list[str]) -> list[str]:
-    validated = []
-
-    for phone in phones:
-        user_phone = phone.strip()
-        if not user_phone:
-            continue
-
-        try:
-            if user_phone.startswith("+"):
-                parsed = phonenumbers.parse(user_phone, None)
-            else:
-                parsed = phonenumbers.parse(user_phone, DEFAULT_REGION)
-        except phonenumbers.NumberParseException as e:
-            msg = f"Invalid phone number format: {user_phone}"
-            raise InvalidDataError(msg) from e
-
-        if not phonenumbers.is_valid_number(parsed):
-            msg = f"Invalid phone number: {user_phone}"
-            raise InvalidDataError(msg)
-
-        formatted = phonenumbers.format_number(
-            parsed,
-            phonenumbers.PhoneNumberFormat.E164,
-        )
-        validated.append(formatted)
-
-    return list(set(validated))
-
-
-def validate_email_list(emails: list[str]) -> list[str]:
-    validated = []
-
-    for email in emails:
-        user_email = email.strip()
-        if not user_email:
-            continue
-
-        try:
-            valid = validate_email(user_email, check_deliverability=False)
-            validated.append(valid.normalized)
-        except EmailNotValidError as e:
-            msg = f"Invalid email address: {user_email} ({e!s})"
-            raise InvalidDataError(msg) from e
-
-    return list(set(validated))
-
-
-def get_nearest_anniversary(birthday_date: date, current_date: date) -> date:
-    contact_birthday_nearest_year = datetime(
+def get_nearest_anniversary(birthday_date: datetime.date, current_date: datetime.date) -> datetime.date:
+    contact_birthday_nearest_year = datetime.datetime(
         year=current_date.year,
         month=birthday_date.month,
         day=birthday_date.day,
-        tzinfo=UTC,
+        tzinfo=datetime.UTC,
     ).date()
     is_birthday_this_year_passed = contact_birthday_nearest_year < current_date
 
     # Check user's birthday has already passed, set the birthday to next year
     if is_birthday_this_year_passed:
-        contact_birthday_nearest_year = datetime(
+        contact_birthday_nearest_year = datetime.datetime(
             year=current_date.year + 1,
             month=birthday_date.month,
             day=birthday_date.day,
-            tzinfo=UTC,
+            tzinfo=datetime.UTC,
         ).date()
 
     return contact_birthday_nearest_year
 
 
-def process_weekend_birthday(birthday_date: date) -> date:
+def process_weekend_birthday(birthday_date: datetime.date) -> datetime.date:
     day_of_week = birthday_date.weekday()
 
     if day_of_week in {FIVE, SIX}:
         interval = 2 if day_of_week == FIVE else 1
-        birthday_date += timedelta(days=interval)
+        birthday_date += datetime.timedelta(days=interval)
 
     return birthday_date
 
@@ -163,8 +71,10 @@ class Contact(BaseModel):
         description="List of email addresses associated with the contact.",
     )
 
-    birthday: date | None = None
-    _validate_birthday = field_validator("birthday", mode="before")(validate_birthday)
+    birthday: Annotated[
+        datetime.date | None,
+        AfterValidator(validate_birthday),
+    ] = None
 
     model_config = ConfigDict(
         validate_assignment=True,

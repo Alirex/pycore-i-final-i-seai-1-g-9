@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from rich.table import Table
 
 from persyval.constants.numeric_contants import YEAR
-from persyval.models.contact import format_birthday
+from persyval.services.birthday.parse_and_format import format_birthday
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message
@@ -23,12 +23,12 @@ def validate_days_to_show_birthdays(days: int) -> int:
     return days
 
 
-class ShowContactsIArgs(BaseModel):
+class ContactsGetUpcomingBirthdaysIArgs(BaseModel):
     days: int = 7
 
 
-CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG = ArgsConfig[ShowContactsIArgs](
-    result_cls=ShowContactsIArgs,
+CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG = ArgsConfig[ContactsGetUpcomingBirthdaysIArgs](
+    result_cls=ContactsGetUpcomingBirthdaysIArgs,
     args=[
         ArgMetaConfig(
             name="days",

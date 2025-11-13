@@ -55,7 +55,7 @@ persy_exec "storage_clear true"
 for i in {1..3}; do
   birthday="1990-0$((i))-0$((i))"
 
-  persy_exec "contact_add x$((i)) address-$((i)) ${birthday} +38088000000$((i)),+38088000001$((i)) user_$((i))@example.com,user_$((i))@gmail.com"
+  persy_exec "contact_add x$((i)) address-$((i)) ${birthday} +38073000000$((i)),+38097000001$((i)),+38097000001$((i)) user_$((i))@example.com,user_$((i))@gmail.com"
 done
 
 # Show storage stats

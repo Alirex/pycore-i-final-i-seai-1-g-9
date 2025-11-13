@@ -4,15 +4,15 @@ from typing import TYPE_CHECKING, Annotated
 from pydantic import BaseModel, Field
 
 from persyval.models.contact import (
-    FORMAT_BIRTHDAY_FOR_HUMAN,
     Contact,
-    validate_birthday,
-    validate_email_list,
-    validate_phone_list,
 )
+from persyval.services.birthday.parse_and_format import FORMAT_BIRTHDAY_FOR_HUMAN, parse_birthday
+from persyval.services.birthday.validate_birthday import validate_birthday
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contact_add import contact_add
+from persyval.services.email.validate_email import validate_email_list
 from persyval.services.handlers_base.handler_base import HandlerBase
+from persyval.services.phone.validate_phone_list import validate_phone_list
 from persyval.utils.format import render_good_message
 
 if TYPE_CHECKING:
@@ -42,7 +42,8 @@ CONTACT_ADD_I_ARGS_CONFIG = ArgsConfig[PhoneAddIArgs](
             name="birthday",
             type_=ArgType.DATE,
             format=FORMAT_BIRTHDAY_FOR_HUMAN,
-            parser_func=validate_birthday,
+            parser_func=parse_birthday,
+            validator_func=validate_birthday,
         ),
         ArgMetaConfig(
             name="phones",
