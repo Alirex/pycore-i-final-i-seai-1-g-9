@@ -1,4 +1,5 @@
 import enum
+import sys
 from typing import TYPE_CHECKING
 
 from persyval.exceptions.main import InvalidCommandError
@@ -29,6 +30,7 @@ def parse_input_and_make_action(  # noqa: PLR0913
     non_interactive: bool = False,
     plain_render: bool = False,
     terminal_simplified: bool = False,
+    raise_sys_exit_on_error: bool = False,
 ) -> LoopAction:
     try:
         parsed_input = parse_input(user_input)
@@ -36,8 +38,12 @@ def parse_input_and_make_action(  # noqa: PLR0913
         render_error(
             console=console,
             message=str(exc),
-            title="Invalid Command",
+            title=exc.__class__.__name__,
         )
+
+        if raise_sys_exit_on_error:
+            sys.exit(1)
+
         return LoopAction.CONTINUE
 
     if show_commands:
@@ -54,6 +60,7 @@ def parse_input_and_make_action(  # noqa: PLR0913
         non_interactive=non_interactive,
         plain_render=plain_render,
         terminal_simplified=terminal_simplified,
+        raise_sys_exit_on_error=raise_sys_exit_on_error,
     )
     handler_output = handler_obj.run()
 

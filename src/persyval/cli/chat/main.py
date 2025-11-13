@@ -64,6 +64,14 @@ def run(  # noqa: PLR0913
             f"Also, useful for some debugging tools.{CLI_DOC_NEWLINE_AT_END}",
         ),
     ] = False,
+    raise_sys_exit_on_error: Annotated[
+        bool,
+        typer.Option(
+            "--raise-sys-exit-on-error",
+            help=f"Raise sys.exit(1) on error. {CLI_DOC_NEWLINE}"
+            f"Useful for testing and automation purposes.{CLI_DOC_NEWLINE_AT_END}",
+        ),
+    ] = False,
     #
     storage_dir: Annotated[
         pathlib.Path | None,
@@ -107,6 +115,7 @@ def run(  # noqa: PLR0913
         non_interactive=non_interactive,
         plain_render=plain_render,
         terminal_simplified=terminal_simplified,
+        raise_sys_exit_on_error=raise_sys_exit_on_error,
         #
         predefined_input=predefined_input,
         #

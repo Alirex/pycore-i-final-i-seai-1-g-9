@@ -25,12 +25,12 @@ def main_chat(  # noqa: PLR0913
     non_interactive: bool = False,
     plain_render: bool = False,
     terminal_simplified: bool = False,
+    raise_sys_exit_on_error: bool = False,
     #
     predefined_input: str | None = None,
     #
     storage_dir: pathlib.Path | None = None,
 ) -> None:
-    print(storage_dir)
     with DataStorage.load(
         dir_path=storage_dir,
     ) as data_storage:
@@ -56,6 +56,7 @@ def main_chat(  # noqa: PLR0913
                 non_interactive=non_interactive,
                 plain_render=plain_render,
                 terminal_simplified=terminal_simplified,
+                raise_sys_exit_on_error=raise_sys_exit_on_error,
             )
 
             if non_interactive:

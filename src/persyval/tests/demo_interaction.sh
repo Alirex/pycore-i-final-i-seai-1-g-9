@@ -14,18 +14,27 @@ set -o nounset
 # Note: EOF-style input does not work. So demonstrating only predefined-input style.
 
 
+PERSY_STORAGE_PATH=$(mktemp --directory -t persy-demo-XXXXXX)
+
+echo "Using storage path: ${PERSY_STORAGE_PATH}"
+echo "-------------------------------------"
+
 persy_exec() {
   persy \
+    --storage-dir "${PERSY_STORAGE_PATH}" \
     --show-commands \
     --non-interactive \
+    --raise-sys-exit-on-error \
     --hide-intro \
     "$1"
 }
 
 persy_exec_plain() {
   persy \
+    --storage-dir "${PERSY_STORAGE_PATH}" \
     --show-commands \
     --non-interactive \
+    --raise-sys-exit-on-error \
     --hide-intro \
     --plain-render \
     "$1"
@@ -36,10 +45,10 @@ persy_exec_plain() {
 persy --show-commands --non-interactive help
 
 # Wrong argument in help command
-persy_exec "help bla"
+persy_exec "help bla" || true
 
 # Wrong command
-persy_exec "he123"
+persy_exec "he123" || true
 
 # Exit
 persy_exec "exit true"

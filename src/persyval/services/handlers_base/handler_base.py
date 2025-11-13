@@ -1,4 +1,5 @@
 import abc
+import sys
 from typing import Annotated
 
 import rich
@@ -36,6 +37,7 @@ class HandlerBase(abc.ABC, BaseModel):
             description="For simplified terminal input. For non-interactive CLI or when used not good enough terminal.",
         ),
     ] = False
+    raise_sys_exit_on_error: bool = False
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
@@ -81,5 +83,7 @@ class HandlerBase(abc.ABC, BaseModel):
                 title=error_name,
                 message=msg,
             )
+            if self.raise_sys_exit_on_error:
+                sys.exit(1)
 
             return HandlerOutput()

@@ -80,6 +80,11 @@ Useful for simple terminals and CLI automations scripts.
 Useful for testing and automation purposes. Also, useful for some debugging tools.
 
 .
+* `--raise-sys-exit-on-error`: Raise sys.exit(1) on error. 
+
+Useful for testing and automation purposes.
+
+.
 * `--storage-dir PATH`: Storage directory. 
 
  Use env var &#x27;PERSYVAL_I_NO_PERSISTENCE&#x27; if you want to disable storing data to the file system.
