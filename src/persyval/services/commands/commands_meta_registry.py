@@ -19,16 +19,16 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
     item.command: item
     for item in [
         CommandMeta(
-            command=Command.CONTACT_ADD,
-            args_config=CONTACT_ADD_I_ARGS_CONFIG,
-            description="Add a contact.",
-            handler=ContactAddIHandler,
-        ),
-        CommandMeta(
             command=Command.CONTACTS_LIST,
             args_config=CONTACT_LIST_I_ARGS_CONFIG,
             description="List contacts. With filtering and actions on the selected contact.",
             handler=ContactsListIHandler,
+        ),
+        CommandMeta(
+            command=Command.CONTACT_ADD,
+            args_config=CONTACT_ADD_I_ARGS_CONFIG,
+            description="Add a contact.",
+            handler=ContactAddIHandler,
         ),
         CommandMeta(
             command=Command.CONTACT_DELETE,
@@ -37,15 +37,22 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             handler=ContactDeleteIHandler,
         ),
         CommandMeta(
-            command=Command.NOTE_ADD,
-            args_config=NOTE_ADD_I_ARGS_CONFIG,
-            description="Add a note.",
-            handler=NoteAddIHandler,
+            command=Command.CONTACTS_GET_UPCOMING_BIRTHDAYS,
+            args_config=CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG,
+            description="Show upcoming birthdays from the contacts book.",
+            handler=ContactsGetUpcomingBirthdaysIHandler,
         ),
+        #
         CommandMeta(
             command=Command.NOTE_LIST,
             description="List notes",
             handler=NoteListIHandler,
+        ),
+        CommandMeta(
+            command=Command.NOTE_ADD,
+            args_config=NOTE_ADD_I_ARGS_CONFIG,
+            description="Add a note.",
+            handler=NoteAddIHandler,
         ),
         CommandMeta(
             command=Command.NOTE_DELETE,
@@ -53,6 +60,7 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             description="Delete a note.",
             handler=NoteDeleteIHandler,
         ),
+        #
         CommandMeta(
             command=Command.STORAGE_STATS,
             description="Display statistics about the storage.",
@@ -63,12 +71,6 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             args_config=STORAGE_CLEAR_I_ARGS_CONFIG,
             description="Clear the storage.",
             handler=StorageClearIHandler,
-        ),
-        CommandMeta(
-            command=Command.CONTACTS_GET_UPCOMING_BIRTHDAYS,
-            args_config=CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG,
-            description="Show upcoming birthdays from the contacts book.",
-            handler=ContactsGetUpcomingBirthdaysIHandler,
         ),
         #
         CommandMeta(
