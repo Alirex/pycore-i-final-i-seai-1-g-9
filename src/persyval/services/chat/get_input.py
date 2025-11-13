@@ -10,15 +10,18 @@ if TYPE_CHECKING:
 
 def get_input(
     console: Console,
-    prompt_session: PromptSession,  # type: ignore[type-arg]
+    prompt_session: PromptSession | None,  # type: ignore[type-arg]
 ) -> str:
     input_prompt_msg = format_prompt_message("Enter command: ")
     console.print(input_prompt_msg)
 
-    result = prompt_session.prompt(
-        message="> ",
-        completer=get_completer(),
-        show_frame=True,
-    )
+    if prompt_session:
+        result = prompt_session.prompt(
+            message="> ",
+            completer=get_completer(),
+            show_frame=True,
+        )
+    else:
+        result = input("> ")
 
     return str(result)

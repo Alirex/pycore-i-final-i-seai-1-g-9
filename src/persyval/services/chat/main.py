@@ -23,7 +23,7 @@ def main_chat(  # noqa: PLR0913
 ) -> None:
     with DataStorage.load(dir_path=get_data_dir_in_user_space()) as data_storage:
         console = Console()
-        prompt_session: PromptSession = PromptSession()  # type: ignore[type-arg]
+        prompt_session: PromptSession | None = None if terminal_simplified else PromptSession()  # type: ignore[type-arg]
 
         if not hide_intro:
             render_intro(console)
