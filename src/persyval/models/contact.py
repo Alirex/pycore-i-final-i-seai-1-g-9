@@ -26,8 +26,6 @@ class Contact(BaseModel):
 
     address: Annotated[str | None, Field(description="The address of the contact.")] = None
 
-    # TODO: Use fields: email, phone (maybe multiple)
-
     phones: list[str] = Field(
         default_factory=list,
         description="List of phone numbers associated with the contact.",
