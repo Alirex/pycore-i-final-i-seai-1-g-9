@@ -256,6 +256,8 @@ bash ./src/persyval/tests/demo_interaction.sh
   - Contains data of the app.
 - [data actions](./src/persyval/services/data_actions)
   - Actions with data.
+- [tests](./src/persyval/tests)
+  - Tests.
 
 ---
 
