@@ -22,6 +22,10 @@ dependencies = [
     #
     # User folders path handling.
     "platformdirs>=4.5.0",
+    # [validators]-[BEGIN]
+    "phonenumbers>=9.0.18",
+    "email-validator>=2.3.0",
+    # [validators]-[END]
     #
     # [tui_libs]-[BEGIN]
     # Libs for TUI application.

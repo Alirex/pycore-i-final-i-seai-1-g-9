@@ -8,3 +8,7 @@ class NotFoundError(Exception):
 
 class AlreadyExistsError(Exception):
     pass
+
+
+class InvalidDataError(Exception):
+    pass

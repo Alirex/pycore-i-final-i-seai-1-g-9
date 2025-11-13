@@ -2,8 +2,12 @@ import datetime
 import uuid
 from typing import TYPE_CHECKING, Annotated, Final, NewType
 
+import phonenumbers
+from email_validator import EmailNotValidError, validate_email
 from prompt_toolkit import HTML
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field
+
+from persyval.exceptions.main import InvalidDataError
 
 if TYPE_CHECKING:
     from persyval.services.console.types import PromptToolkitFormattedText
@@ -12,6 +16,8 @@ ContactUid = NewType("ContactUid", uuid.UUID)
 
 FORMAT_BIRTHDAY_FOR_HUMAN: Final[str] = "YYYY-MM-DD"
 """ISO-8601 format for birthday."""
+
+DEFAULT_REGION = "UA"
 
 
 def parse_birthday(birthday: str) -> datetime.date:
@@ -25,6 +31,54 @@ def format_birthday(birthday: datetime.date) -> str:
 def validate_birthday(birthday: datetime.date) -> datetime.date:
     # TODO: validate birthday by minimal date.
     return birthday
+
+
+def validate_phone_list(phones: list[str]) -> list[str]:
+    validated = []
+
+    for phone in phones:
+        user_phone = phone.strip()
+        if not user_phone:
+            continue
+
+        try:
+            if user_phone.startswith("+"):
+                parsed = phonenumbers.parse(user_phone, None)
+            else:
+                parsed = phonenumbers.parse(user_phone, DEFAULT_REGION)
+        except phonenumbers.NumberParseException as e:
+            msg = f"Invalid phone number format: {user_phone}"
+            raise InvalidDataError(msg) from e
+
+        if not phonenumbers.is_valid_number(parsed):
+            msg = f"Invalid phone number: {user_phone}"
+            raise InvalidDataError(msg)
+
+        formatted = phonenumbers.format_number(
+            parsed,
+            phonenumbers.PhoneNumberFormat.E164,
+        )
+        validated.append(formatted)
+
+    return list(set(validated))
+
+
+def validate_email_list(emails: list[str]) -> list[str]:
+    validated = []
+
+    for email in emails:
+        user_email = email.strip()
+        if not user_email:
+            continue
+
+        try:
+            valid = validate_email(user_email, check_deliverability=False)
+            validated.append(valid.normalized)
+        except EmailNotValidError as e:
+            msg = f"Invalid email address: {user_email} ({e!s})"
+            raise InvalidDataError(msg) from e
+
+    return list(set(validated))
 
 
 TRIM_ADDRESS: Final[int] = 10
@@ -71,6 +125,13 @@ class Contact(BaseModel):
 
         if self.birthday:
             text += f" ({format_birthday(self.birthday)})"
+
+        # TODO: Need to decide Do we need to show phones and emails in prompt?
+        # if self.phones:
+        #     text += f" {self.phones}"
+
+        # if self.emails:
+        #     text += f" {self.emails}"
 
         text += f"  (<i>{self.uid}</i>)"
 
