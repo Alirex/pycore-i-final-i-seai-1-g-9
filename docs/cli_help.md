@@ -39,7 +39,7 @@ Run the personal assistant chat.
 
 Provides interactive chat with the personal assistant.
 
-Also, can be used as a command line tool.
+Also, it can be used as a command line tool.
 
 **Usage**:
 
@@ -49,11 +49,34 @@ $ chat run [OPTIONS]
 
 **Options**:
 
-* `--show-commands / --no-show-commands`: [default: no-show-commands]
-* `--hide-intro / --no-hide-intro`: [default: no-hide-intro]
-* `--non-interactive / --no-non-interactive`: [default: no-non-interactive]
-* `--plain-render / --no-plain-render`: [default: no-plain-render]
-* `--predefined-input TEXT`
+* `--show-commands / --no-show-commands`: Show input commands. 
+
+Useful for debugging purposes.
+
+.  [default: no-show-commands]
+* `--hide-intro / --no-hide-intro`: Hide the introduction message.
+
+.  [default: no-hide-intro]
+* `--non-interactive / --no-non-interactive`: Run in non-interactive mode. 
+
+Do not prompt for user input. Exit after completion of action.
+
+.  [default: no-non-interactive]
+* `--plain-render / --no-plain-render`: Render plain text without any special formatting (e.g., colors, styles). 
+
+Useful for simple terminals and CLI automations scripts.
+
+.  [default: no-plain-render]
+* `--terminal-simplified / --no-terminal-simplified`: Use simplified terminal input. 
+
+Useful for testing and automation purposes. Also, useful for some debugging tools.
+
+.  [default: no-terminal-simplified]
+* `--predefined-input TEXT`: Predefined input to be used instead of prompting the user. 
+
+Useful for testing and automation purposes. Related env: &#x27;PERSYVAL_I_PREDEFINED_INPUT&#x27;
+
+.
 * `--help`: Show this message and exit.
 
 ## `helpers`

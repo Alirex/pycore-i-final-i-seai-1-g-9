@@ -30,6 +30,12 @@ class HandlerBase(abc.ABC, BaseModel):
         bool,
         Field(description="For plain rendering, without extra-formatting. For non-interactive CLI."),
     ] = False
+    terminal_simplified: Annotated[
+        bool,
+        Field(
+            description="For simplified terminal input. For non-interactive CLI or when used not good enough terminal.",
+        ),
+    ] = False
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,

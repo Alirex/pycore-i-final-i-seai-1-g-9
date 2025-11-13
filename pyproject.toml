@@ -14,26 +14,37 @@ requires-python = ">=3.14.0"
 dependencies = [
     # Better classes and validation.
     "pydantic[email]>=2.12.4",
-    # Pretty terminal output.
-    "rich>=14.2.0",
+    #
     # Environment variable parsing and validation.
     "environs>=14.5.0",
-    # Better command-line interfaces.
-    "prompt-toolkit>=3.0.52",
-    # Command-line interface creation library.
+    # CLI creation library.
     "typer>=0.20.0",
+    #
     # User folders path handling.
     "platformdirs>=4.5.0",
+    #
+    # [tui_libs]-[BEGIN]
+    # Libs for TUI application.
+    # Pretty terminal output.
+    "rich>=14.2.0",
+    # Better command-line interfaces.
+    "prompt-toolkit>=3.0.52",
+    # [tui_libs]-[END]
 ]
 
 [dependency-groups]
 dev = [
+    # [typing]-[BEGIN]
     # Static type checker
     "mypy>=1.18.2",
+    # [typing]-[END]
+    #
+    # [testing]-[BEGIN]
     # Tests.
-    "pytest>=9.0.0",
+    "pytest>=9.0.1",
     # Freeze time for tests.
     "freezegun>=1.5.5",
+    # Interactive command-line testing.
     "pexpect>=4.9.0",
 ]
 

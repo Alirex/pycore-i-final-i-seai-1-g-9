@@ -28,6 +28,7 @@ def parse_input_and_make_action(  # noqa: PLR0913
     #
     non_interactive: bool = False,
     plain_render: bool = False,
+    terminal_simplified: bool = False,
 ) -> LoopAction:
     try:
         parsed_input = parse_input(user_input)
@@ -52,6 +53,7 @@ def parse_input_and_make_action(  # noqa: PLR0913
         #
         non_interactive=non_interactive,
         plain_render=plain_render,
+        terminal_simplified=terminal_simplified,
     )
     handler_output = handler_obj.run()
 
