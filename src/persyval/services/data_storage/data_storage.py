@@ -1,6 +1,5 @@
 import pathlib
-from datetime import UTC, date, datetime
-from typing import TYPE_CHECKING, Self, cast
+from typing import TYPE_CHECKING, Self
 
 from pydantic import BaseModel, Field
 
@@ -10,7 +9,6 @@ from persyval.models.note import Note, NoteUid
 if TYPE_CHECKING:
     from types import TracebackType
 
-from persyval.models.contact import get_nearest_anniversary, process_weekend_birthday
 
 # Note: Use `thin model` when available. So, all methods created as separated functions.
 
@@ -72,29 +70,3 @@ class DataStorage(BaseModel):
 
     def clear(self) -> None:
         self.data.clear()
-
-    def get_upcoming_birthdays(self, target_days: int) -> list[dict[str, str | date]]:
-        upcoming_birthdays = []
-        current_date = datetime.now(UTC).date()
-
-        for contact in self.data.contacts.values():
-            if not contact.birthday:
-                continue
-
-            nearest_birthday = get_nearest_anniversary(contact.birthday, current_date)
-            days_until_birthday = (nearest_birthday - current_date).days
-
-            if not days_until_birthday <= target_days:
-                continue
-
-            # Move weekend birthdays to Monday
-            non_weekend_birthday = process_weekend_birthday(nearest_birthday)
-            upcoming_birthdays.append(
-                {
-                    "name": contact.name,
-                    "congratulation date": nearest_birthday,
-                    "non-weekend congratulation date": non_weekend_birthday,
-                },
-            )
-
-        return cast("list[dict[str, str | date]]", upcoming_birthdays)

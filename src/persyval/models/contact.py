@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Annotated, Final, NewType
 from prompt_toolkit import HTML
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 
-from persyval.constants.numeric_contants import FIVE, SIX
 from persyval.services.birthday.parse_and_format import format_birthday
 from persyval.services.birthday.validate_birthday import validate_birthday
 
@@ -13,38 +12,6 @@ if TYPE_CHECKING:
     from persyval.services.console.types import PromptToolkitFormattedText
 
 ContactUid = NewType("ContactUid", uuid.UUID)
-
-
-def get_nearest_anniversary(birthday_date: datetime.date, current_date: datetime.date) -> datetime.date:
-    contact_birthday_nearest_year = datetime.datetime(
-        year=current_date.year,
-        month=birthday_date.month,
-        day=birthday_date.day,
-        tzinfo=datetime.UTC,
-    ).date()
-    is_birthday_this_year_passed = contact_birthday_nearest_year < current_date
-
-    # Check user's birthday has already passed, set the birthday to next year
-    if is_birthday_this_year_passed:
-        contact_birthday_nearest_year = datetime.datetime(
-            year=current_date.year + 1,
-            month=birthday_date.month,
-            day=birthday_date.day,
-            tzinfo=datetime.UTC,
-        ).date()
-
-    return contact_birthday_nearest_year
-
-
-def process_weekend_birthday(birthday_date: datetime.date) -> datetime.date:
-    day_of_week = birthday_date.weekday()
-
-    if day_of_week in {FIVE, SIX}:
-        interval = 2 if day_of_week == FIVE else 1
-        birthday_date += datetime.timedelta(days=interval)
-
-    return birthday_date
-
 
 TRIM_ADDRESS: Final[int] = 10
 LONG_PLACEHOLDER: Final[str] = "..."

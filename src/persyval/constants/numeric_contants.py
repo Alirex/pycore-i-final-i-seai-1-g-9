@@ -1,4 +1,0 @@
-YEAR = 365
-
-FIVE = 5
-SIX = 6

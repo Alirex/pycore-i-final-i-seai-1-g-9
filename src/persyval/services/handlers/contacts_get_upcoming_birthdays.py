@@ -1,22 +1,22 @@
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Annotated, Final
 
-from pydantic import BaseModel
+from pydantic import AfterValidator, BaseModel
 from rich.table import Table
 
-from persyval.constants.numeric_contants import YEAR
 from persyval.services.birthday.parse_and_format import format_birthday
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
+from persyval.services.data_actions.contacts_get_upcoming_birthdays import contacts_get_upcoming_birthdays
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message
 
 if TYPE_CHECKING:
-    from datetime import date
-
     from persyval.services.handlers_base.handler_output import HandlerOutput
+
+MAX_DAYS_RANGE_TO_SHOW_BIRTHDAYS: Final[int] = 365
 
 
 def validate_days_to_show_birthdays(days: int) -> int:
-    if not 0 < days <= YEAR:
+    if not 0 < days <= MAX_DAYS_RANGE_TO_SHOW_BIRTHDAYS:
         msg = "Entered value should be between 1 and 365 days."
         raise ValueError(msg)
 
@@ -24,7 +24,7 @@ def validate_days_to_show_birthdays(days: int) -> int:
 
 
 class ContactsGetUpcomingBirthdaysIArgs(BaseModel):
-    days: int = 7
+    days: Annotated[int, AfterValidator(validate_days_to_show_birthdays)] = 7
 
 
 CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG = ArgsConfig[ContactsGetUpcomingBirthdaysIArgs](
@@ -45,7 +45,8 @@ class ContactsGetUpcomingBirthdaysIHandler(
     def _handler(self) -> HandlerOutput | None:
         parse_result = CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG.parse(self.args)
 
-        upcoming_birthdays = self.data_storage.get_upcoming_birthdays(parse_result.days)
+        upcoming_birthdays = contacts_get_upcoming_birthdays(self.data_storage, parse_result.days, sort=True)
+
         if not upcoming_birthdays:
             render_canceled_message(
                 console=self.console,
@@ -54,18 +55,16 @@ class ContactsGetUpcomingBirthdaysIHandler(
             )
             return None
 
-        sorted_birthdays = sorted(upcoming_birthdays, key=lambda person: person["congratulation date"])
-
-        table = Table(title="Upcomig birthdays", title_justify="left")
+        table = Table(title="Upcoming birthdays", title_justify="left")
         table.add_column("Name")
         table.add_column("Congratulation date")
         table.add_column("Non-weekend congratulation date")
 
-        for birthday in sorted_birthdays:
+        for anniversary_info in upcoming_birthdays:
             table.add_row(
-                cast("str", birthday["name"]),
-                format_birthday(cast("date", birthday["congratulation date"])),
-                format_birthday(cast("date", birthday["non-weekend congratulation date"])),
+                anniversary_info.name,
+                format_birthday(anniversary_info.congratulation_date),
+                format_birthday(anniversary_info.non_weekend_congratulation_date),
             )
 
         self.console.print(table)
