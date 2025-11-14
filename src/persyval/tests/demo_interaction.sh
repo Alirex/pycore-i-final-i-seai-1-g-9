@@ -81,6 +81,9 @@ persy_exec_plain "contacts_list filter name=x2"
 last_line=$(persy_exec_plain "contacts_list filter name=x2" | tail --lines 1)
 
 # Remove contact based on last line
+persy_exec "contact_view ${last_line}"
+
+# Remove contact based on last line
 persy_exec "contact_delete ${last_line} true"
 
 # Show all contacts

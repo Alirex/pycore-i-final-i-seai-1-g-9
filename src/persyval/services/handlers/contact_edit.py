@@ -16,6 +16,7 @@ from persyval.services.data_actions.contact_get import contact_get
 from persyval.services.data_actions.contact_update import contact_update
 from persyval.services.email.validate_email import parse_emails, validate_email_list
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
+from persyval.services.handlers.contacts.contacts_ask_next_action import contacts_ask_next_action
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.services.phone.validate_phone_list import (
     parse_phones,
@@ -98,6 +99,11 @@ class ContactEditIHandler(
         render_good_message(
             self.console,
             f"Contact '{contact.name}' edited successfully.",
+        )
+
+        contacts_ask_next_action(
+            execution_queue=self.execution_queue,
+            contact_uid=contact.uid,
         )
 
         return None

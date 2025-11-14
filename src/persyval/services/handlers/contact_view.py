@@ -9,6 +9,7 @@ from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
 from persyval.services.console.render_item_card_with_panel import RenderItem, render_item_card_with_panel
 from persyval.services.data_actions.contact_get import contact_get
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
+from persyval.services.handlers.contacts.contacts_ask_next_action import contacts_ask_next_action
 from persyval.services.handlers_base.handler_base import HandlerBase
 
 if TYPE_CHECKING:
@@ -47,6 +48,15 @@ class ContactViewIHandler(
         contact_render_details(
             console=self.console,
             contact=contact,
+        )
+
+        if self.non_interactive:
+            return
+
+        contacts_ask_next_action(
+            execution_queue=self.execution_queue,
+            contact_uid=contact_uid,
+            is_from_view=True,
         )
 
 
