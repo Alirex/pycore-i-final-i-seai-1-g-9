@@ -72,7 +72,9 @@ def fill_data_storage(
     amount: int = 10,
     init_only: bool = False,
 ) -> None:
-    faker = Faker("uk_UA")
+    faker = Faker(
+        # "uk_UA",
+    )
 
     if init_only and data_storage.data.contacts:
         print("Contacts already exists. Skipping.")
