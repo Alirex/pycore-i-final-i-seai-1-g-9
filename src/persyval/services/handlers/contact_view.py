@@ -84,5 +84,5 @@ def contact_render_details(console: Console, contact: Contact) -> None:
         console=console,
         title="Contact details",
         message=RichFormattedText(message),
-        style="green",
+        style=RENDER_I_STYLE,
     )
