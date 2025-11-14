@@ -1,5 +1,5 @@
 import enum
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field
 
@@ -42,7 +42,7 @@ LIST_FILTER_MODE_REGISTRY: dict[ListFilterModeEnum, ListFilterModeMeta] = {
 class ContactsListConfig(BaseModel):
     filter_mode: ListFilterModeEnum
 
-    queries_as_map: Annotated[dict[str, str], Field(default_factory=dict)]
+    queries_as_map: dict[str, str] = Field(default_factory=dict)
 
 
 # TODO: Refactor this function.

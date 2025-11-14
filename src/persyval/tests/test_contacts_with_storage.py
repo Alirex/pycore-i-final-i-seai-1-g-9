@@ -9,6 +9,7 @@ from persyval.services.data_actions.contact_add import contact_add
 from persyval.services.data_actions.contact_delete import contact_delete
 from persyval.services.data_actions.contact_get import contact_get
 from persyval.services.data_actions.contact_update import contact_update
+from persyval.services.data_actions.contacts_list import ContactsListConfig, ListFilterModeEnum, contacts_list
 from persyval.services.data_storage.data_storage import DataStorage
 
 if TYPE_CHECKING:
@@ -43,6 +44,16 @@ def test_contact_i_add_i_get_i_remove(
 ) -> None:
     contact_uid = contact.uid
 
+    contacts_amount_before = len(
+        contacts_list(
+            data_storage=data_storage_fixture,
+            list_config=ContactsListConfig(
+                filter_mode=ListFilterModeEnum.ALL,
+            ),
+        ),
+    )
+    assert contacts_amount_before == 0
+
     contact_add(
         data_storage=data_storage_fixture,
         contact=contact,
@@ -70,6 +81,28 @@ def test_contact_i_add_i_get_i_remove(
     )
 
     assert retrieved_contact_updated.name == name
+
+    contacts_amount_after_add_all = len(
+        contacts_list(
+            data_storage=data_storage_fixture,
+            list_config=ContactsListConfig(
+                filter_mode=ListFilterModeEnum.ALL,
+            ),
+        ),
+    )
+    amount_after_add_expected = contacts_amount_before + 1
+    assert contacts_amount_after_add_all == amount_after_add_expected
+
+    contacts_amount_after_add_filtered = len(
+        contacts_list(
+            data_storage=data_storage_fixture,
+            list_config=ContactsListConfig(
+                filter_mode=ListFilterModeEnum.FILTER,
+                queries_as_map={"name": name},
+            ),
+        ),
+    )
+    assert contacts_amount_after_add_filtered == 1
 
     try:
         contact_add(
@@ -105,3 +138,13 @@ def test_contact_i_add_i_get_i_remove(
         pass
     else:
         pytest.fail("Expected NotFoundError")
+
+    contacts_amount_end = len(
+        contacts_list(
+            data_storage=data_storage_fixture,
+            list_config=ContactsListConfig(
+                filter_mode=ListFilterModeEnum.ALL,
+            ),
+        ),
+    )
+    assert contacts_amount_end == contacts_amount_after_add_all - 1
