@@ -61,6 +61,9 @@ def parse_queries(queries: list[str]) -> dict[str, str]:
     return result
 
 
+# TODO: Make repeatable filtering without exiting to main menu
+
+
 class ContactsListIHandler(
     HandlerBase[ContactsListIArgs],
 ):
