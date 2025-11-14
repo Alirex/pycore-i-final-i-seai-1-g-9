@@ -2,9 +2,13 @@ import enum
 from typing import TYPE_CHECKING
 
 from prompt_toolkit import choice
-from pydantic import BaseModel
 
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
+from persyval.services.commands.commands_enum import Command
+from persyval.services.execution_queue.execution_queue import (
+    HandlerArgsBase,
+    HandlerFullArgs,
+)
 from persyval.services.handlers_base.handler_base import HandlerBase
 
 if TYPE_CHECKING:
@@ -17,7 +21,7 @@ class StorageRootIAction(enum.StrEnum):
     STATS = "stats"
 
 
-class StorageRootIArgs(BaseModel):
+class StorageRootIArgs(HandlerArgsBase):
     action: StorageRootIAction | None = None
 
 
@@ -32,17 +36,12 @@ STORAGE_ROOT_I_ARGS_CONFIG = ArgsConfig[StorageRootIArgs](
 
 
 class StorageRootIHandler(
-    HandlerBase,
+    HandlerBase[StorageRootIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parsed_args = STORAGE_ROOT_I_ARGS_CONFIG.parse(self.args)
-        self._make_action(parsed_args)
-        return None
+    def _get_args_config(self) -> ArgsConfig[StorageRootIArgs]:
+        return STORAGE_ROOT_I_ARGS_CONFIG
 
-    def parsed_call(self, parsed_args: StorageRootIArgs) -> None:
-        self._make_action(parsed_args)
-
-    def _make_action(self, parsed_args: StorageRootIArgs) -> None:
+    def _make_action(self, parsed_args: StorageRootIArgs) -> HandlerOutput | None:
         if parsed_args.action is not None:
             choice_result = parsed_args.action
         else:
@@ -53,23 +52,20 @@ class StorageRootIHandler(
 
         match choice_result:
             case StorageRootIAction.CLEAR:
-                from persyval.services.handlers.storage_clear import (  # noqa: PLC0415
-                    STORAGE_CLEAR_I_ARGS_CONFIG,
-                    StorageClearIHandler,
-                )
+                # TODO: (?) Use lazy import, when available. https://peps.python.org/pep-0810/
+                from persyval.services.handlers.storage_clear import StorageClearIForce  # noqa: PLC0415
 
-                StorageClearIHandler(
-                    **(self.model_dump() | {"args": []}),
-                ).parsed_call(
-                    STORAGE_CLEAR_I_ARGS_CONFIG.parse([]),
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.STORAGE_CLEAR,
+                        args=StorageClearIForce(),
+                    ),
                 )
             case StorageRootIAction.STATS:
-                from persyval.services.handlers.storage_stats import (  # noqa: PLC0415
-                    StorageStatsIHandler,
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.STORAGE_STATS,
+                    ),
                 )
 
-                StorageStatsIHandler(
-                    **(self.model_dump() | {"args": []}),
-                ).parsed_call(
-                    None,
-                )
+        return None

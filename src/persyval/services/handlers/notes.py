@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Final
 
 import typer
 from prompt_toolkit import choice, shortcuts
-from pydantic import BaseModel
 from rich import box, table, text
 
 from persyval.models.note import Note, NoteUid
@@ -13,6 +12,7 @@ from persyval.services.data_actions.note_add import note_add
 from persyval.services.data_actions.note_delete import note_delete
 from persyval.services.data_actions.note_list import note_list
 from persyval.services.data_actions.note_update import note_update
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message, render_good_message
 
@@ -30,7 +30,7 @@ class NoteItemsActions(enum.StrEnum):
     VIEW = "view"
 
 
-class NotesListIArgs(BaseModel):
+class NotesListIArgs(HandlerArgsBase):
     actions: NoteItemsActions | None = None
 
 
@@ -46,11 +46,12 @@ NOTES_I_ARGS_CONFIG = ArgsConfig[NotesListIArgs](
 
 
 class NotesIHandler(
-    HandlerBase,
+    HandlerBase[NotesListIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parsed_args = NOTES_I_ARGS_CONFIG.parse(self.args)
+    def _get_args_config(self) -> ArgsConfig[NotesListIArgs]:
+        return NOTES_I_ARGS_CONFIG
 
+    def _make_action(self, parsed_args: NotesListIArgs) -> HandlerOutput | None:
         if parsed_args.actions is not None:
             choice_result = parsed_args.actions
         else:

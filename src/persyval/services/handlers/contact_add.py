@@ -1,7 +1,6 @@
-import datetime
 from typing import TYPE_CHECKING, Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from persyval.models.contact import (
     Contact,
@@ -11,15 +10,16 @@ from persyval.services.birthday.validate_birthday import validate_birthday
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contact_add import contact_add
 from persyval.services.email.validate_email import validate_email_list
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.services.phone.validate_phone_list import validate_phone_list
 from persyval.utils.format import render_good_message
 
 if TYPE_CHECKING:
-    from persyval.services.handlers_base.handler_output import HandlerOutput
+    import datetime
 
 
-class ContactAddIArgs(BaseModel):
+class ContactAddIArgs(HandlerArgsBase):
     name: str
     address: str | None = None
     birthday: datetime.date | None = None
@@ -60,15 +60,10 @@ CONTACT_ADD_I_ARGS_CONFIG = ArgsConfig[ContactAddIArgs](
 
 
 class ContactAddIHandler(
-    HandlerBase,
+    HandlerBase[ContactAddIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parsed_args = CONTACT_ADD_I_ARGS_CONFIG.parse(self.args)
-        self._make_action(parsed_args)
-        return None
-
-    def parsed_call(self, parsed_args: ContactAddIArgs) -> None:
-        self._make_action(parsed_args)
+    def _get_args_config(self) -> ArgsConfig[ContactAddIArgs]:
+        return CONTACT_ADD_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: ContactAddIArgs) -> None:
         # TODO: Implement

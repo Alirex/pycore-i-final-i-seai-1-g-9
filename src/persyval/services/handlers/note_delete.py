@@ -2,13 +2,13 @@ import uuid
 from typing import TYPE_CHECKING
 
 from prompt_toolkit.shortcuts import yes_no_dialog
-from pydantic import BaseModel
 
 from persyval.models.note import (
     NoteUid,
 )
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.note_delete import note_delete
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message, render_good_message
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from persyval.services.handlers_base.handler_output import HandlerOutput
 
 
-class NoteDeleteIArgs(BaseModel):
+class NoteDeleteIArgs(HandlerArgsBase):
     uid: NoteUid
     force: bool | None = None
 
@@ -38,11 +38,12 @@ NOTE_DELETE_I_ARGS_CONFIG = ArgsConfig[NoteDeleteIArgs](
 
 
 class NoteDeleteIHandler(
-    HandlerBase,
+    HandlerBase[NoteDeleteIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parsed_args = NOTE_DELETE_I_ARGS_CONFIG.parse(self.args)
+    def _get_args_config(self) -> ArgsConfig[NoteDeleteIArgs]:
+        return NOTE_DELETE_I_ARGS_CONFIG
 
+    def _make_action(self, parsed_args: NoteDeleteIArgs) -> HandlerOutput | None:
         if parsed_args.force is None:
             is_do = yes_no_dialog(
                 title="Confirm Note Delete",

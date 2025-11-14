@@ -1,18 +1,22 @@
 import abc
 import sys
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated, Any
 
 import rich
 from pydantic import BaseModel, ConfigDict, Field
 
 from persyval.exceptions.main import AlreadyExistsError, InvalidCommandError, InvalidDataError, NotFoundError
 from persyval.services.data_storage.data_storage import DataStorage
+from persyval.services.execution_queue.execution_queue import ExecutionQueue
 from persyval.services.handlers_base.handler_output import HandlerOutput
 from persyval.services.parse_input.parse_input import T_ARGS
 from persyval.utils.format import render_error
 
+if TYPE_CHECKING:
+    from persyval.services.commands.command_meta import ArgsConfig
 
-class HandlerBase(abc.ABC, BaseModel):
+
+class HandlerBase[HandlerArgs](abc.ABC, BaseModel):
     """Base class for handlers.
 
     Used class, not function, because it must have the same signature for all handlers.
@@ -21,6 +25,8 @@ class HandlerBase(abc.ABC, BaseModel):
     """
 
     args: T_ARGS
+
+    execution_queue: ExecutionQueue
 
     data_storage: DataStorage
 
@@ -45,6 +51,9 @@ class HandlerBase(abc.ABC, BaseModel):
     )
 
     @abc.abstractmethod
+    def _get_args_config(self) -> ArgsConfig[Any]:
+        """Get arguments configuration."""
+
     def _handler(self) -> HandlerOutput | None:
         """Handler function.
 
@@ -52,9 +61,20 @@ class HandlerBase(abc.ABC, BaseModel):
 
         Because it is better, at first, to validate input.
 
-        ---
 
-        Then interactively parse arguments if needed.
+        """
+        args_config = self._get_args_config()
+        parsed_args = args_config.parse(self.args)
+        return self._make_action(parsed_args)
+
+    def parsed_call(self, parsed_args: HandlerArgs) -> HandlerOutput | None:
+        return self._make_action(parsed_args)
+
+    @abc.abstractmethod
+    def _make_action(self, parsed_args: HandlerArgs) -> HandlerOutput | None:
+        """Make action with parsed arguments.
+
+        Interactively parse arguments if needed.
 
         Use `prompt-toolkit` or `rich` for interactive input.
 

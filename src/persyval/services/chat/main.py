@@ -9,6 +9,7 @@ from persyval.services.chat.parse_input_and_make_action import (
     parse_input_and_make_action,
 )
 from persyval.services.data_storage.data_storage import DataStorage
+from persyval.services.execution_queue.execution_queue import create_execution_queue
 from persyval.services.intro.render_intro import render_intro
 
 if TYPE_CHECKING:
@@ -40,24 +41,29 @@ def main_chat(  # noqa: PLR0913
         console = Console()
         prompt_session: PromptSession | None = None if terminal_simplified else PromptSession()  # type: ignore[type-arg]
 
+        execution_queue = create_execution_queue()
+
         if not hide_intro:
             render_intro(console)
 
         while True:
-            user_input = predefined_input or get_input(
-                console=console,
-                prompt_session=prompt_session,
-                use_advanced_completer=use_advanced_completer,
-            )
+            if execution_queue.empty():
+                user_input = predefined_input or get_input(
+                    console=console,
+                    prompt_session=prompt_session,
+                    use_advanced_completer=use_advanced_completer,
+                )
 
-            if predefined_input:
-                predefined_input = None
+                if predefined_input:
+                    predefined_input = None
+
+                execution_queue.put(user_input)
 
             loop_action = parse_input_and_make_action(
                 console=console,
                 data_storage=data_storage,
                 #
-                user_input=user_input,
+                execution_queue=execution_queue,
                 show_commands=show_commands,
                 #
                 non_interactive=non_interactive,

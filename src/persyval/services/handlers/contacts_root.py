@@ -1,15 +1,11 @@
 import enum
-from typing import TYPE_CHECKING
 
 from prompt_toolkit import choice
-from pydantic import BaseModel
 
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.convert_snake_case_to_human_readable import convert_snake_case_to_human_readable
-
-if TYPE_CHECKING:
-    from persyval.services.handlers_base.handler_output import HandlerOutput
 
 
 @enum.unique
@@ -19,7 +15,7 @@ class ContactsRootIAction(enum.StrEnum):
     GET_UPCOMING_BIRTHDAYS = "get_upcoming_birthdays"
 
 
-class ContactsRootIArgs(BaseModel):
+class ContactsRootIArgs(HandlerArgsBase):
     action: ContactsRootIAction | None = None
 
 
@@ -34,15 +30,10 @@ CONTACTS_ROOT_I_ARGS_CONFIG = ArgsConfig[ContactsRootIArgs](
 
 
 class ContactsRootIHandler(
-    HandlerBase,
+    HandlerBase[ContactsRootIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parsed_args = CONTACTS_ROOT_I_ARGS_CONFIG.parse(self.args)
-        self._make_action(parsed_args)
-        return None
-
-    def parsed_call(self, parsed_args: ContactsRootIArgs) -> None:
-        self._make_action(parsed_args)
+    def _get_args_config(self) -> ArgsConfig[ContactsRootIArgs]:
+        return CONTACTS_ROOT_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: ContactsRootIArgs) -> None:
         if parsed_args.action is not None:

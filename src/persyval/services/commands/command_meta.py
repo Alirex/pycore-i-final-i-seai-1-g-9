@@ -106,7 +106,7 @@ class CommandMeta(BaseModel):
     command: Command
     args_config: ArgsConfig[Any] | None = None
     description: str = Field(default="")
-    handler: type[HandlerBase]
+    handler: type[HandlerBase]  # type: ignore[type-arg]
     hidden: Annotated[bool, Field(description="Hidden from hints and basic help.")] = False
 
     model_config = ConfigDict(

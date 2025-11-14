@@ -1,19 +1,17 @@
 from typing import TYPE_CHECKING
 
-from pydantic import BaseModel
 from rich.markup import escape
 from rich.table import Table
 
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 
 if TYPE_CHECKING:
     from rich.console import Console
 
-    from persyval.services.handlers_base.handler_output import HandlerOutput
 
-
-class HelpIArgs(BaseModel):
+class HelpIArgs(HandlerArgsBase):
     advanced: bool = False
 
 
@@ -29,15 +27,10 @@ HELP_I_ARGS_CONFIG = ArgsConfig[HelpIArgs](
 
 
 class HelpIHandler(
-    HandlerBase,
+    HandlerBase[HelpIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parsed_args = HELP_I_ARGS_CONFIG.parse(self.args)
-        self._make_action(parsed_args)
-        return None
-
-    def parsed_call(self, parsed_args: HelpIArgs) -> None:
-        self._make_action(parsed_args)
+    def _get_args_config(self) -> ArgsConfig[HelpIArgs]:
+        return HELP_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: HelpIArgs) -> None:
         render_help(console=self.console, show_hidden=parsed_args.advanced)

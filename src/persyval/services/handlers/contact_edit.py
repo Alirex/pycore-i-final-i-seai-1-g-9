@@ -2,11 +2,7 @@ import copy
 from typing import TYPE_CHECKING
 
 from prompt_toolkit import HTML, prompt
-from pydantic import BaseModel
 
-from persyval.models.contact import (
-    ContactUid,
-)
 from persyval.services.birthday.parse_and_format import (
     format_birthday_for_edit,
     parse_birthday,
@@ -16,6 +12,7 @@ from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
 from persyval.services.data_actions.contact_get import contact_get
 from persyval.services.data_actions.contact_update import contact_update
 from persyval.services.email.validate_email import parse_emails, validate_email_list
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.services.phone.validate_phone_list import (
     parse_phones,
@@ -24,10 +21,13 @@ from persyval.services.phone.validate_phone_list import (
 from persyval.utils.format import render_good_message
 
 if TYPE_CHECKING:
+    from persyval.models.contact import (
+        ContactUid,
+    )
     from persyval.services.handlers_base.handler_output import HandlerOutput
 
 
-class ContactEditIArgs(BaseModel):
+class ContactEditIArgs(HandlerArgsBase):
     uid: ContactUid
     force: bool | None = None
 
@@ -44,17 +44,12 @@ CONTACT_EDIT_I_ARGS_CONFIG = ArgsConfig[ContactEditIArgs](
 
 
 class ContactEditIHandler(
-    HandlerBase,
+    HandlerBase[ContactEditIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parsed_args = CONTACT_EDIT_I_ARGS_CONFIG.parse(self.args)
-        self._make_action(parsed_args)
-        return None
+    def _get_args_config(self) -> ArgsConfig[ContactEditIArgs]:
+        return CONTACT_EDIT_I_ARGS_CONFIG
 
-    def parsed_call(self, parsed_args: ContactEditIArgs) -> None:
-        self._make_action(parsed_args)
-
-    def _make_action(self, parsed_args: ContactEditIArgs) -> None:
+    def _make_action(self, parsed_args: ContactEditIArgs) -> HandlerOutput | None:
         contact = copy.deepcopy(
             contact_get(
                 data_storage=self.data_storage,
@@ -104,3 +99,5 @@ class ContactEditIHandler(
             self.console,
             f"Contact '{contact.name}' edited successfully.",
         )
+
+        return None

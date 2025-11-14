@@ -1,21 +1,20 @@
 from typing import TYPE_CHECKING
 
 from prompt_toolkit.shortcuts import yes_no_dialog
-from pydantic import BaseModel
 
-from persyval.models.contact import (
-    ContactUid,
-)
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contact_delete import contact_delete
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message, render_good_message
 
 if TYPE_CHECKING:
-    from persyval.services.handlers_base.handler_output import HandlerOutput
+    from persyval.models.contact import (
+        ContactUid,
+    )
 
 
-class ContactDeleteIArgs(BaseModel):
+class ContactDeleteIArgs(HandlerArgsBase):
     uid: ContactUid
     force: bool | None = None
 
@@ -36,15 +35,10 @@ CONTACT_DELETE_I_ARGS_CONFIG = ArgsConfig[ContactDeleteIArgs](
 
 
 class ContactDeleteIHandler(
-    HandlerBase,
+    HandlerBase[ContactDeleteIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parsed_args = CONTACT_DELETE_I_ARGS_CONFIG.parse(self.args)
-        self._make_action(parsed_args)
-        return None
-
-    def parsed_call(self, parsed_args: ContactDeleteIArgs) -> None:
-        self._make_action(parsed_args)
+    def _get_args_config(self) -> ArgsConfig[ContactDeleteIArgs]:
+        return CONTACT_DELETE_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: ContactDeleteIArgs) -> None:
         if parsed_args.force is None:

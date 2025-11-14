@@ -2,7 +2,7 @@ import enum
 from typing import TYPE_CHECKING, Annotated
 
 from prompt_toolkit import choice, print_formatted_text, prompt
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from persyval.exceptions.main import InvalidCommandError
 from persyval.models.contact import (
@@ -16,11 +16,11 @@ from persyval.services.data_actions.contacts_list import (
     ListFilterModeEnum,
     contacts_list,
 )
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 
 if TYPE_CHECKING:
     from persyval.services.console.types import PromptToolkitFormattedText
-    from persyval.services.handlers_base.handler_output import HandlerOutput
 
 
 class ContactItemAction(enum.StrEnum):
@@ -34,7 +34,7 @@ class FilterModeEnum(enum.StrEnum):
     FILTER = "filter"
 
 
-class ContactsListIArgs(BaseModel):
+class ContactsListIArgs(HandlerArgsBase):
     filter_mode: ListFilterModeEnum | None = None
     queries: Annotated[list[str], Field(default_factory=list)]
 
@@ -64,16 +64,10 @@ def parse_queries(queries: list[str]) -> dict[str, str]:
 
 
 class ContactsListIHandler(
-    HandlerBase,
+    HandlerBase[ContactsListIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        # TODO: Refactor this function.
-        parsed_args = CONTACTS_LIST_I_ARGS_CONFIG.parse(self.args)
-        self._make_action(parsed_args)
-        return None
-
-    def parsed_call(self, parsed_args: ContactsListIArgs) -> None:
-        self._make_action(parsed_args)
+    def _get_args_config(self) -> ArgsConfig[ContactsListIArgs]:
+        return CONTACTS_LIST_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: ContactsListIArgs) -> None:  # noqa: C901, PLR0912
         if parsed_args.filter_mode is None and self.non_interactive:

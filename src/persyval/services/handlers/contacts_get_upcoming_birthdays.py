@@ -1,16 +1,14 @@
-from typing import TYPE_CHECKING, Annotated, Final
+from typing import Annotated, Final
 
-from pydantic import AfterValidator, BaseModel
+from pydantic import AfterValidator
 from rich.table import Table
 
 from persyval.services.birthday.parse_and_format import format_birthday_for_output
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contacts_get_upcoming_birthdays import contacts_get_upcoming_birthdays
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message
-
-if TYPE_CHECKING:
-    from persyval.services.handlers_base.handler_output import HandlerOutput
 
 MAX_DAYS_RANGE_TO_SHOW_BIRTHDAYS: Final[int] = 365
 
@@ -23,7 +21,7 @@ def validate_days_to_show_birthdays(days: int) -> int:
     return days
 
 
-class ContactsGetUpcomingBirthdaysIArgs(BaseModel):
+class ContactsGetUpcomingBirthdaysIArgs(HandlerArgsBase):
     days: Annotated[int, AfterValidator(validate_days_to_show_birthdays)] = 7
 
 
@@ -40,15 +38,10 @@ CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG = ArgsConfig[ContactsGetUpcomingBirthdaysIA
 
 
 class ContactsGetUpcomingBirthdaysIHandler(
-    HandlerBase,
+    HandlerBase[ContactsGetUpcomingBirthdaysIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parsed_args = CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG.parse(self.args)
-        self._make_action(parsed_args)
-        return None
-
-    def parsed_call(self, parsed_args: ContactsGetUpcomingBirthdaysIArgs) -> None:
-        self._make_action(parsed_args)
+    def _get_args_config(self) -> ArgsConfig[ContactsGetUpcomingBirthdaysIArgs]:
+        return CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: ContactsGetUpcomingBirthdaysIArgs) -> None:
         upcoming_birthdays = contacts_get_upcoming_birthdays(self.data_storage, parsed_args.days, sort=True)

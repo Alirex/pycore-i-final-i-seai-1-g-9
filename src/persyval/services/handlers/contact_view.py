@@ -1,18 +1,16 @@
 from typing import TYPE_CHECKING
 
-from pydantic import BaseModel
-
-from persyval.models.contact import (
-    ContactUid,
-)
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 
 if TYPE_CHECKING:
-    from persyval.services.handlers_base.handler_output import HandlerOutput
+    from persyval.models.contact import (
+        ContactUid,
+    )
 
 
-class ContactViewIArgs(BaseModel):
+class ContactViewIArgs(HandlerArgsBase):
     uid: ContactUid
 
 
@@ -28,17 +26,10 @@ CONTACT_VIEW_I_ARGS_CONFIG = ArgsConfig[ContactViewIArgs](
 
 
 class ContactViewIHandler(
-    HandlerBase,
+    HandlerBase[ContactViewIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parsed_args = CONTACT_VIEW_I_ARGS_CONFIG.parse(self.args)
-
-        self._make_action(parsed_args)
-
-        return None
-
-    def parsed_call(self, parsed_args: ContactViewIArgs) -> None:
-        self._make_action(parsed_args)
+    def _get_args_config(self) -> ArgsConfig[ContactViewIArgs]:
+        return CONTACT_VIEW_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: ContactViewIArgs) -> None:
         # Get contact via data_action

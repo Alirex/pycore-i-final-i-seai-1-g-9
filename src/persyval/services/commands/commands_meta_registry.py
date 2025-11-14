@@ -28,6 +28,7 @@ from persyval.services.handlers.contacts_root import CONTACTS_ROOT_I_ARGS_CONFIG
 from persyval.services.handlers.exit import EXIT_I_ARGS_CONFIG, ExitIHandler
 from persyval.services.handlers.help import HELP_I_ARGS_CONFIG, HelpIHandler
 from persyval.services.handlers.notes import NOTES_I_ARGS_CONFIG, NotesIHandler
+from persyval.services.handlers.shared.args_i_empty import ARGS_CONFIG_I_EMPTY
 from persyval.services.handlers.storage_clear import (
     STORAGE_CLEAR_I_ARGS_CONFIG,
     StorageClearIHandler,
@@ -106,6 +107,7 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
         #
         CommandMeta(
             command=Command.STORAGE_STATS,
+            args_config=ARGS_CONFIG_I_EMPTY,
             description="Display statistics about the storage.",
             handler=StorageStatsIHandler,
             hidden=True,
