@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 from prompt_toolkit import choice
 
-from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
+from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig
 from persyval.services.commands.commands_enum import Command
 from persyval.services.execution_queue.execution_queue import (
     HandlerArgsBase,

@@ -6,7 +6,7 @@ from prompt_toolkit.shortcuts import yes_no_dialog
 from persyval.models.note import (
     NoteUid,
 )
-from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
+from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.note_delete import note_delete
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase

@@ -12,3 +12,7 @@ class AlreadyExistsError(Exception):
 
 class InvalidDataError(Exception):
     pass
+
+
+class EmptyDataError(Exception):
+    pass

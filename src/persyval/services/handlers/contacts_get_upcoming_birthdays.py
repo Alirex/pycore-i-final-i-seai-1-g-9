@@ -4,7 +4,7 @@ from pydantic import AfterValidator
 from rich.table import Table
 
 from persyval.services.birthday.parse_and_format import format_birthday_for_output
-from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
+from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contacts_get_upcoming_birthdays import contacts_get_upcoming_birthdays
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
@@ -22,7 +22,7 @@ def validate_days_to_show_birthdays(days: int) -> int:
 
 
 class ContactsGetUpcomingBirthdaysIArgs(HandlerArgsBase):
-    days: Annotated[int, AfterValidator(validate_days_to_show_birthdays)] = 7
+    days: Annotated[int | None, AfterValidator(validate_days_to_show_birthdays)] = None
 
 
 CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG = ArgsConfig[ContactsGetUpcomingBirthdaysIArgs](
@@ -31,7 +31,10 @@ CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG = ArgsConfig[ContactsGetUpcomingBirthdaysIA
         ArgMetaConfig(
             name="days",
             type_=ArgType.INT,
+            required=True,
             validator_func=validate_days_to_show_birthdays,
+            allow_input_on_empty=True,
+            default=7,
         ),
     ],
 )
@@ -44,6 +47,10 @@ class ContactsGetUpcomingBirthdaysIHandler(
         return CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: ContactsGetUpcomingBirthdaysIArgs) -> None:
+        if parsed_args.days is None:
+            msg = "You shouldn't be here"
+            raise NotImplementedError(msg)
+
         upcoming_birthdays = contacts_get_upcoming_birthdays(self.data_storage, parsed_args.days, sort=True)
 
         if not upcoming_birthdays:

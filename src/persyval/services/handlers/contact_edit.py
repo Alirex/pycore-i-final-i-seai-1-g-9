@@ -11,7 +11,7 @@ from persyval.services.birthday.parse_and_format import (
     parse_birthday,
 )
 from persyval.services.birthday.validate_birthday import validate_birthday
-from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
+from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig
 from persyval.services.data_actions.contact_get import contact_get
 from persyval.services.data_actions.contact_update import contact_update
 from persyval.services.email.validate_email import parse_emails, validate_email_list

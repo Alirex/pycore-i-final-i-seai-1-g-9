@@ -6,7 +6,7 @@ from persyval.services.handlers.shared.args_i_empty import ARGS_CONFIG_I_EMPTY, 
 from persyval.services.handlers_base.handler_base import HandlerBase
 
 if TYPE_CHECKING:
-    from persyval.services.commands.command_meta import ArgsConfig
+    from persyval.services.commands.args_config import ArgsConfig
 
 
 class StorageStatsIHandler(

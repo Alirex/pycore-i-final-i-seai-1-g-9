@@ -24,9 +24,20 @@ def test_parse_birthday(birthday: str, expected: datetime.date) -> None:
         "1990-01-01-00-00",
         "1990 01 01",
         "bla",
-        "",
     ],
 )
 def test_parse_birthday_i_invalid_format(birthday_str: str) -> None:
     with pytest.raises(ValueError, match="Invalid isoformat"):
         parse_birthday(birthday_str)
+
+
+@pytest.mark.parametrize(
+    "birthday",
+    [
+        "",
+        None,
+    ],
+)
+def test_parse_birthday_i_empty(birthday: str | None) -> None:
+    result = parse_birthday(birthday)
+    assert result is None

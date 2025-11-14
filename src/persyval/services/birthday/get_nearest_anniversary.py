@@ -5,7 +5,10 @@ from dateutil.relativedelta import relativedelta
 
 
 def get_nearest_anniversary(birthday_date: datetime.date, current_date: datetime.date) -> datetime.date:
-    contact_birthday_nearest_year = birthday_date.replace(year=current_date.year)
+    # Note: Better handle for the leap years.
+    # TODO: Better testing for leap years.
+    year_diff = current_date.year - birthday_date.year
+    contact_birthday_nearest_year = birthday_date + relativedelta(years=year_diff)
 
     if contact_birthday_nearest_year < current_date:
         contact_birthday_nearest_year += relativedelta(years=1)

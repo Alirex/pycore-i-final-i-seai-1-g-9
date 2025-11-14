@@ -4,7 +4,7 @@ from typing import Final
 
 import phonenumbers
 
-from persyval.exceptions.main import InvalidDataError
+from persyval.exceptions.main import EmptyDataError, InvalidDataError
 
 DEFAULT_REGION: Final[str] = "UA"
 
@@ -20,7 +20,7 @@ def validate_phone(phone: str) -> str:
     user_phone = phone.strip()
     if not user_phone:
         msg = f"Phone number is empty: {phone}"
-        raise InvalidDataError(msg)
+        raise EmptyDataError(msg)
 
     user_phone = PATTERN_I_PHONE_I_CHARS_FOR_CLEANUP.sub("", user_phone)
 
@@ -50,7 +50,10 @@ def validate_phone_list(phones: list[str]) -> list[str]:
     validated_phones = []
 
     for phone in phones:
-        validated = validate_phone(phone)
+        try:
+            validated = validate_phone(phone)
+        except EmptyDataError:
+            continue
         validated_phones.append(validated)
 
     # Remove duplicates. But keep the order.

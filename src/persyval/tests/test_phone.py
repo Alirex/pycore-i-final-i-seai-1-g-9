@@ -1,6 +1,6 @@
 import pytest
 
-from persyval.exceptions.main import InvalidDataError
+from persyval.exceptions.main import EmptyDataError, InvalidDataError
 from persyval.services.phone.validate_phone_list import (
     parse_phones,
     validate_phone,
@@ -47,8 +47,6 @@ def test_validate_phone_valid(phone: str, expected: str) -> None:
 @pytest.mark.parametrize(
     "phone",
     [
-        "",
-        "   ",
         "123",
         "+999999999999",
         "abcdefg",
@@ -60,6 +58,18 @@ def test_validate_phone_valid(phone: str, expected: str) -> None:
 )
 def test_validate_phone_invalid(phone: str) -> None:
     with pytest.raises(InvalidDataError):
+        validate_phone(phone)
+
+
+@pytest.mark.parametrize(
+    "phone",
+    [
+        "",
+        "   ",
+    ],
+)
+def test_validate_phone_empty(phone: str) -> None:
+    with pytest.raises(EmptyDataError):
         validate_phone(phone)
 
 

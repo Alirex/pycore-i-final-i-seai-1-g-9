@@ -1,4 +1,4 @@
-from persyval.services.commands.command_meta import ArgsConfig
+from persyval.services.commands.args_config import ArgsConfig
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 
 

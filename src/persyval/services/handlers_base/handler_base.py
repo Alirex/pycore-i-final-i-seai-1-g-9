@@ -9,11 +9,11 @@ from persyval.exceptions.main import AlreadyExistsError, InvalidCommandError, In
 from persyval.services.data_storage.data_storage import DataStorage
 from persyval.services.execution_queue.execution_queue import ExecutionQueue
 from persyval.services.handlers_base.handler_output import HandlerOutput
-from persyval.services.parse_input.parse_input import T_ARGS
 from persyval.utils.format import render_error
 
 if TYPE_CHECKING:
-    from persyval.services.commands.command_meta import ArgsConfig
+    from persyval.services.commands.args_config import ArgsConfig
+    from persyval.services.parse_input.parse_input import T_ARGS
 
 
 class HandlerBase[HandlerArgs](abc.ABC, BaseModel):
@@ -23,8 +23,6 @@ class HandlerBase[HandlerArgs](abc.ABC, BaseModel):
 
     Also, it is good to have some predefined structure.
     """
-
-    args: T_ARGS
 
     execution_queue: ExecutionQueue
 
@@ -54,19 +52,6 @@ class HandlerBase[HandlerArgs](abc.ABC, BaseModel):
     def _get_args_config(self) -> ArgsConfig[Any]:
         """Get arguments configuration."""
 
-    def _handler(self) -> HandlerOutput | None:
-        """Handler function.
-
-        Parse command line arguments.
-
-        Because it is better, at first, to validate input.
-
-
-        """
-        args_config = self._get_args_config()
-        parsed_args = args_config.parse(self.args)
-        return self._make_action(parsed_args)
-
     def parsed_call(self, parsed_args: HandlerArgs) -> HandlerOutput | None:
         return self._make_action(parsed_args)
 
@@ -93,10 +78,41 @@ class HandlerBase[HandlerArgs](abc.ABC, BaseModel):
         Then get or render output based on output data.
         """
 
-    def run(self) -> HandlerOutput | None:
-        # sourcery skip: remove-redundant-exception
+    def _handle_parsed_args(
+        self,
+        args: T_ARGS | None,
+        parsed_args: HandlerArgs | None,
+    ) -> HandlerArgs:
+        if (args is None and parsed_args is None) or (args is not None and parsed_args is not None):
+            msg = "Either args or parsed_args must be provided."
+            raise ValueError(msg)
+
+        args_config = self._get_args_config()
+        # Parse command line arguments.
+        #   Because it is better, at first, to validate input.
+
+        if parsed_args is None and args is not None:
+            parsed_args = args_config.parse(args=args, non_interactive=self.non_interactive)
+        elif args is None and parsed_args is not None:
+            parsed_args = args_config.reparse(parsed_args=parsed_args, non_interactive=self.non_interactive)
+        else:
+            msg = "Either args or parsed_args must be provided."
+            raise ValueError(msg)
+
+        return parsed_args
+
+    def run(
+        self,
+        args: T_ARGS | None,
+        parsed_args: HandlerArgs | None = None,
+    ) -> HandlerOutput | None:
+        # sourcery skip: assign-if-exp, remove-redundant-exception
+
         try:
-            return self._handler()
+            result = self._make_action(
+                parsed_args=self._handle_parsed_args(args, parsed_args),
+            )
+
         except (
             InvalidCommandError,
             NotFoundError,
@@ -104,20 +120,25 @@ class HandlerBase[HandlerArgs](abc.ABC, BaseModel):
             InvalidDataError,
             ValueError,
             KeyError,
-            Exception,
+            Exception,  # noqa: BLE001
         ) as exc:
-            error_name = type(exc).__name__
-            msg = str(exc)
-            render_error(
-                console=self.console,
-                title=error_name,
-                message=msg,
-            )
+            return self._handle_exception(exc)
 
-            if self.throw_full_error:
-                raise
+        return result
 
-            if self.raise_sys_exit_on_error:
-                sys.exit(1)
+    def _handle_exception(self, exc: Exception) -> HandlerOutput | None:
+        error_name = type(exc).__name__
+        msg = str(exc)
+        render_error(
+            console=self.console,
+            title=error_name,
+            message=msg,
+        )
 
-            return HandlerOutput()
+        if self.throw_full_error:
+            raise exc
+
+        if self.raise_sys_exit_on_error:
+            sys.exit(1)
+
+        return HandlerOutput()

@@ -1,4 +1,4 @@
-from typing import TypeAlias
+from collections.abc import Sequence
 
 from pydantic import BaseModel, Field
 from rich.markup import escape
@@ -7,8 +7,8 @@ from persyval.exceptions.main import InvalidCommandError
 from persyval.services.commands.commands_enum import Command
 from persyval.services.console.types import RichFormattedText
 
-T_COMMAND: TypeAlias = str
-T_ARGS: TypeAlias = list[str]
+type T_COMMAND = str
+type T_ARGS = Sequence[str | None]
 
 
 class UserInput(BaseModel):
@@ -21,7 +21,15 @@ class UserInput(BaseModel):
     def get_rich_cli(self) -> RichFormattedText:
         msg = f"[bold]{escape(self.command)}[/bold]"
         if self.args:
-            args = [f"'[italic]{escape(arg)}[/italic]'" for arg in self.args]
+            # args = [f"'[italic]{escape(arg)}[/italic]'" for arg in self.args]
+            args = []
+            for arg in self.args:
+                arg_normalized = str(arg) if arg else None
+
+                part = f"[italic]{escape(arg_normalized)}[/italic]" if arg_normalized else ""
+                part = f"'{part}'"
+                args.append(part)
+
             msg += f" {' '.join(args)}"
 
         return RichFormattedText(msg)

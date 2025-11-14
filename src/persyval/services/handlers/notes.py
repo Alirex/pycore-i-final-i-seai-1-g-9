@@ -7,7 +7,7 @@ from prompt_toolkit import choice, shortcuts
 from rich import box, table, text
 
 from persyval.models.note import Note, NoteUid
-from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
+from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig
 from persyval.services.data_actions.note_add import note_add
 from persyval.services.data_actions.note_delete import note_delete
 from persyval.services.data_actions.note_list import note_list

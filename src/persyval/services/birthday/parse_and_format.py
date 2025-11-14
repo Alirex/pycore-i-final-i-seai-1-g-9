@@ -25,5 +25,5 @@ def format_birthday_for_edit(birthday: datetime.date) -> str:
     return birthday.isoformat()
 
 
-def parse_birthday(birthday: str) -> datetime.date:
-    return datetime.date.fromisoformat(birthday)
+def parse_birthday(birthday: str | None) -> datetime.date | None:
+    return datetime.date.fromisoformat(birthday) if birthday else None

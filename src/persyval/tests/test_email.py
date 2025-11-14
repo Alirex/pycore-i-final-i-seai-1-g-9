@@ -1,6 +1,6 @@
 import pytest
 
-from persyval.exceptions.main import InvalidDataError
+from persyval.exceptions.main import EmptyDataError, InvalidDataError
 from persyval.services.email.validate_email import (
     parse_emails,
     validate_email,
@@ -52,8 +52,6 @@ def test_validate_email_valid(email: str, expected: str) -> None:
 @pytest.mark.parametrize(
     "email",
     [
-        "",
-        "   ",
         "bad-email",
         "user@",
         "@example.com",
@@ -70,6 +68,18 @@ def test_validate_email_valid(email: str, expected: str) -> None:
 )
 def test_validate_email_invalid(email: str) -> None:
     with pytest.raises(InvalidDataError):
+        validate_email(email)
+
+
+@pytest.mark.parametrize(
+    "email",
+    [
+        "",
+        "   ",
+    ],
+)
+def test_validate_email_empty(email: str) -> None:
+    with pytest.raises(EmptyDataError):
         validate_email(email)
 
 

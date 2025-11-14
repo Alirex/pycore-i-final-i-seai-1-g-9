@@ -2,10 +2,16 @@ import enum
 
 from prompt_toolkit import choice
 
-from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
-from persyval.services.execution_queue.execution_queue import HandlerArgsBase
+from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig
+from persyval.services.commands.commands_enum import Command
+from persyval.services.execution_queue.execution_queue import (
+    HandlerArgsBase,
+    HandlerFullArgs,
+)
 from persyval.services.handlers_base.handler_base import HandlerBase
-from persyval.utils.convert_snake_case_to_human_readable import convert_snake_case_to_human_readable
+from persyval.utils.convert_snake_case_to_human_readable import (
+    convert_snake_case_to_human_readable,
+)
 
 
 @enum.unique
@@ -45,36 +51,39 @@ class ContactsRootIHandler(
             )
 
         match choice_result:
+            # TODO: (?) Use lazy import, when available. https://peps.python.org/pep-0810/
             case ContactsRootIAction.LIST:
                 from persyval.services.handlers.contacts_list import (  # noqa: PLC0415
-                    CONTACTS_LIST_I_ARGS_CONFIG,
-                    ContactsListIHandler,
+                    ContactsListIArgs,
                 )
 
-                ContactsListIHandler(
-                    **(self.model_dump() | {"args": []}),
-                ).parsed_call(
-                    CONTACTS_LIST_I_ARGS_CONFIG.parse([]),
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.CONTACTS_LIST,
+                        args=ContactsListIArgs(),
+                    ),
                 )
+
             case ContactsRootIAction.ADD:
                 from persyval.services.handlers.contact_add import (  # noqa: PLC0415
-                    CONTACT_ADD_I_ARGS_CONFIG,
-                    ContactAddIHandler,
+                    ContactAddIArgs,
                 )
 
-                ContactAddIHandler(
-                    **(self.model_dump() | {"args": []}),
-                ).parsed_call(
-                    CONTACT_ADD_I_ARGS_CONFIG.parse([]),
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.CONTACT_ADD,
+                        args=ContactAddIArgs(),
+                    ),
                 )
+
             case ContactsRootIAction.GET_UPCOMING_BIRTHDAYS:
                 from persyval.services.handlers.contacts_get_upcoming_birthdays import (  # noqa: PLC0415
-                    CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG,
-                    ContactsGetUpcomingBirthdaysIHandler,
+                    ContactsGetUpcomingBirthdaysIArgs,
                 )
 
-                ContactsGetUpcomingBirthdaysIHandler(
-                    **(self.model_dump() | {"args": []}),
-                ).parsed_call(
-                    CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG.parse([]),
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.CONTACTS_GET_UPCOMING_BIRTHDAYS,
+                        args=ContactsGetUpcomingBirthdaysIArgs(),
+                    ),
                 )

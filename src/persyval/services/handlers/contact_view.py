@@ -5,7 +5,7 @@ from persyval.models.contact import (
     ContactUid,
 )
 from persyval.services.birthday.parse_and_format import format_birthday_for_output
-from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
+from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig
 from persyval.services.console.render_item_card_with_panel import RenderItem, render_item_card_with_panel
 from persyval.services.data_actions.contact_get import contact_get
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase

@@ -1,5 +1,5 @@
 import enum
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING
 
 from prompt_toolkit import choice, print_formatted_text, prompt
 from pydantic import Field
@@ -9,7 +9,7 @@ from persyval.models.contact import (
     ALLOWED_KEYS_TO_FILTER,
     ContactUid,
 )
-from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
+from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contacts_list import (
     LIST_FILTER_MODE_REGISTRY,
     ContactsListConfig,
@@ -33,7 +33,7 @@ class FilterModeEnum(enum.StrEnum):
 
 class ContactsListIArgs(HandlerArgsBase):
     filter_mode: ListFilterModeEnum | None = None
-    queries: Annotated[list[str], Field(default_factory=list)]
+    queries: list[str] = Field(default_factory=list)
 
 
 CONTACTS_LIST_I_ARGS_CONFIG = ArgsConfig[ContactsListIArgs](

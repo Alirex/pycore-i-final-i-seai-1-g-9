@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from prompt_toolkit.shortcuts import yes_no_dialog
 
-from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
+from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message, render_good_message

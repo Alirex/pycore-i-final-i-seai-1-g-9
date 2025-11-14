@@ -58,19 +58,15 @@ def parse_input_and_make_action(  # noqa: PLR0913
 
         command = parsed_input.command
         args = parsed_input.args
-        args_parsed = None
-        is_raw_input = True
+        parsed_args = None
     else:
         command = user_input.command
-        args = []
-        args_parsed = user_input.args
-        is_raw_input = False
+        args = None
+        parsed_args = user_input.args
 
     command_meta = COMMANDS_META_REGISTRY[command]
 
     handler_obj = command_meta.handler(
-        args=args,
-        #
         execution_queue=execution_queue,
         #
         data_storage=data_storage,
@@ -82,7 +78,11 @@ def parse_input_and_make_action(  # noqa: PLR0913
         raise_sys_exit_on_error=raise_sys_exit_on_error,
         throw_full_error=throw_full_error,
     )
-    handler_output = handler_obj.run() if is_raw_input else handler_obj.parsed_call(args_parsed)
+
+    handler_output = handler_obj.run(
+        args=args,
+        parsed_args=parsed_args,
+    )
 
     if handler_output is not None:
         if handler_output.message_rich:

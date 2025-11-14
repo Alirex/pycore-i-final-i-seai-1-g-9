@@ -1,7 +1,7 @@
 from email_validator import EmailNotValidError
 from email_validator import validate_email as validate_email_external
 
-from persyval.exceptions.main import InvalidDataError
+from persyval.exceptions.main import EmptyDataError, InvalidDataError
 
 
 def parse_emails(emails: str) -> list[str]:
@@ -12,7 +12,7 @@ def validate_email(email: str) -> str:
     user_email = email.strip()
     if not user_email:
         msg = f"Email address is empty: {email}"
-        raise InvalidDataError(msg)
+        raise EmptyDataError(msg)
 
     try:
         valid = validate_email_external(user_email, check_deliverability=False)
@@ -28,7 +28,10 @@ def validate_email_list(emails: list[str]) -> list[str]:
     validated_emails = []
 
     for email in emails:
-        validated = validate_email(email)
+        try:
+            validated = validate_email(email)
+        except EmptyDataError:
+            continue
         validated_emails.append(validated)
 
     exist = set()
