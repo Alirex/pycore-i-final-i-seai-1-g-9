@@ -5,7 +5,7 @@ from typing import Annotated
 import rich
 from pydantic import BaseModel, ConfigDict, Field
 
-from persyval.exceptions.main import InvalidCommandError
+from persyval.exceptions.main import AlreadyExistsError, InvalidCommandError, InvalidDataError, NotFoundError
 from persyval.services.data_storage.data_storage import DataStorage
 from persyval.services.handlers_base.handler_output import HandlerOutput
 from persyval.services.parse_input.parse_input import T_ARGS
@@ -38,6 +38,7 @@ class HandlerBase(abc.ABC, BaseModel):
         ),
     ] = False
     raise_sys_exit_on_error: bool = False
+    throw_full_error: bool = False
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
@@ -73,9 +74,18 @@ class HandlerBase(abc.ABC, BaseModel):
         """
 
     def run(self) -> HandlerOutput | None:
+        # sourcery skip: remove-redundant-exception
         try:
             return self._handler()
-        except (InvalidCommandError, ValueError, KeyError, Exception) as exc:  # noqa: BLE001
+        except (
+            InvalidCommandError,
+            NotFoundError,
+            AlreadyExistsError,
+            InvalidDataError,
+            ValueError,
+            KeyError,
+            Exception,
+        ) as exc:
             error_name = type(exc).__name__
             msg = str(exc)
             render_error(
@@ -83,6 +93,10 @@ class HandlerBase(abc.ABC, BaseModel):
                 title=error_name,
                 message=msg,
             )
+
+            if self.throw_full_error:
+                raise
+
             if self.raise_sys_exit_on_error:
                 sys.exit(1)
 

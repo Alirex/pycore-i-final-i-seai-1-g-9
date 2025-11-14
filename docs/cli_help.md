@@ -85,6 +85,11 @@ Useful for testing and automation purposes. Also, useful for some debugging tool
 Useful for testing and automation purposes.
 
 .
+* `--throw-full-error`: Throw full error. 
+
+Useful for testing and automation purposes.
+
+.
 * `--storage-dir PATH`: Storage directory. 
 
  Use env var &#x27;PERSYVAL_I_NO_PERSISTENCE&#x27; if you want to disable storing data to the file system.
@@ -113,6 +118,7 @@ $ helpers [OPTIONS] COMMAND [ARGS]...
 
 * `show-paths`: Show the paths that used for storage.
 * `clear-storage`: Clear all stored data.
+* `fill-storage`: Fill the storage with some data.
 * `debug`: Debug the application.
 
 ### `helpers show-paths`
@@ -141,6 +147,23 @@ $ helpers clear-storage [OPTIONS]
 
 **Options**:
 
+* `--help`: Show this message and exit.
+
+### `helpers fill-storage`
+
+Fill the storage with some data.
+
+**Usage**:
+
+```console
+$ helpers fill-storage [OPTIONS]
+```
+
+**Options**:
+
+* `--amount INTEGER`: Amount of entities for each type to be added.  [default: 10]
+* `--storage-dir PATH`: Storage directory.
+* `--init-only`: Only add data in section, if it doesn&#x27;t exist.
 * `--help`: Show this message and exit.
 
 ### `helpers debug`

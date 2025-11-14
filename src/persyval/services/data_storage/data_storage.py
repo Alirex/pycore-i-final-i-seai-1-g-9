@@ -47,6 +47,11 @@ class DataStorageAutosaver(BaseModel):
         return None
 
 
+class DataStorageSectionStats(BaseModel):
+    name: str
+    amount: int
+
+
 class DataStorage(BaseModel):
     path: Annotated[
         pathlib.Path | None,
@@ -99,4 +104,11 @@ class DataStorage(BaseModel):
         return None
 
     def clear(self) -> None:
-        self.data.clear()
+        with self.autosave():
+            self.data.clear()
+
+    def get_stats(self) -> list[DataStorageSectionStats]:
+        return [
+            DataStorageSectionStats(name="Contacts", amount=len(self.data.contacts)),
+            DataStorageSectionStats(name="Notes", amount=len(self.data.notes)),
+        ]

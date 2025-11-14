@@ -2,7 +2,7 @@ import enum
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Final
 
-import click
+import typer
 from prompt_toolkit import choice, shortcuts
 from pydantic import BaseModel
 from rich import box, table, text
@@ -185,7 +185,7 @@ class NotesIHandler(
         """Open system editor via click.edit() and return written text, or None if cancelled."""
         template = self._form_editor_template(note)
 
-        edited = click.edit(template)
+        edited = typer.edit(template)
         if edited is None:
             return None
 

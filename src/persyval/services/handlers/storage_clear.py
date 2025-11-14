@@ -26,10 +26,17 @@ class StorageClearIHandler(
 
     def _make_action(self, parsed_args: ArgsIForce) -> None:
         if parsed_args.force is None:
-            is_do = yes_no_dialog(
-                title="Confirm Storage Clear",
-                text="Are you sure you want to clear the storage? This action cannot be undone.",
-            ).run()
+            title = "Confirm Storage Clear"
+            text = "Are you sure you want to clear the storage? This action cannot be undone."
+            if self.terminal_simplified:
+                message = f"{title}\n{text} (enter to confirm, any key to cancel)"
+                is_do = not bool(input(message).strip())
+
+            else:
+                is_do = yes_no_dialog(
+                    title=title,
+                    text=text,
+                ).run()
         else:
             is_do = parsed_args.force
 

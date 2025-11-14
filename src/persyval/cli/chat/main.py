@@ -72,6 +72,14 @@ def run(  # noqa: PLR0913
             f"Useful for testing and automation purposes.{CLI_DOC_NEWLINE_AT_END}",
         ),
     ] = False,
+    throw_full_error: Annotated[
+        bool,
+        typer.Option(
+            "--throw-full-error",
+            help=f"Throw full error. {CLI_DOC_NEWLINE}"
+            f"Useful for testing and automation purposes.{CLI_DOC_NEWLINE_AT_END}",
+        ),
+    ] = False,
     #
     storage_dir: Annotated[
         pathlib.Path | None,
@@ -109,13 +117,10 @@ def run(  # noqa: PLR0913
 
     persyval_i_no_persistence = environs.env.bool(ENV_VAR_NAME_I_NO_PERSISTENCE, False)
 
-    get_data_dir_in_user_space()
-    if persyval_i_no_persistence:
-        storage_dir_fact = None
-    elif storage_dir is None:
-        storage_dir_fact = get_data_dir_in_user_space()
-    else:
-        storage_dir_fact = storage_dir
+    storage_dir_fact = get_storage_dir_fact(
+        no_persistence=persyval_i_no_persistence,
+        storage_dir_external=storage_dir,
+    )
 
     main_chat(
         show_commands=show_commands,
@@ -125,6 +130,7 @@ def run(  # noqa: PLR0913
         plain_render=plain_render,
         terminal_simplified=terminal_simplified,
         raise_sys_exit_on_error=raise_sys_exit_on_error,
+        throw_full_error=throw_full_error,
         #
         predefined_input=predefined_input,
         #
@@ -132,3 +138,17 @@ def run(  # noqa: PLR0913
         #
         use_advanced_completer=use_advanced_completer,
     )
+
+
+def get_storage_dir_fact(
+    *,
+    no_persistence: bool,
+    storage_dir_external: pathlib.Path | None,
+) -> pathlib.Path | None:
+    if no_persistence:
+        return None
+
+    if storage_dir_external is not None:
+        return storage_dir_external
+
+    return get_data_dir_in_user_space()

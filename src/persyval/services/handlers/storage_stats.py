@@ -30,14 +30,10 @@ class StorageStatsIHandler(
         table.add_column("Name")
         table.add_column("Amount")
 
-        table.add_row(
-            "Contacts",
-            str(len(self.data_storage.data.contacts)),
-        )
-
-        table.add_row(
-            "Notes",
-            str(len(self.data_storage.data.notes)),
-        )
+        for info in self.data_storage.get_stats():
+            table.add_row(
+                info.name,
+                str(info.amount),
+            )
 
         self.console.print(table)

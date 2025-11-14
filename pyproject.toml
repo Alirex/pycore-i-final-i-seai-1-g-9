@@ -34,8 +34,11 @@ dependencies = [
     # Better command-line interfaces.
     "prompt-toolkit>=3.0.52",
     # [tui_libs]-[END]
+    #
+    # Date and time utilities.
     "python-dateutil>=2.9.0.post0",
-    "click>=8.3.0",
+    # Fake data generator.
+    "faker>=38.0.0",
 ]
 
 [dependency-groups]

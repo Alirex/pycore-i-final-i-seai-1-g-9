@@ -26,6 +26,7 @@ def main_chat(  # noqa: PLR0913
     plain_render: bool = False,
     terminal_simplified: bool = False,
     raise_sys_exit_on_error: bool = False,
+    throw_full_error: bool = False,
     #
     predefined_input: str | None = None,
     #
@@ -63,6 +64,7 @@ def main_chat(  # noqa: PLR0913
                 plain_render=plain_render,
                 terminal_simplified=terminal_simplified,
                 raise_sys_exit_on_error=raise_sys_exit_on_error,
+                throw_full_error=throw_full_error,
             )
 
             if non_interactive:

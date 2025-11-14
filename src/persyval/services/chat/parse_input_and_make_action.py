@@ -31,6 +31,7 @@ def parse_input_and_make_action(  # noqa: PLR0913
     plain_render: bool = False,
     terminal_simplified: bool = False,
     raise_sys_exit_on_error: bool = False,
+    throw_full_error: bool = False,
 ) -> LoopAction:
     try:
         parsed_input = parse_input(user_input)
@@ -40,6 +41,9 @@ def parse_input_and_make_action(  # noqa: PLR0913
             message=str(exc),
             title=exc.__class__.__name__,
         )
+
+        if throw_full_error:
+            raise
 
         if raise_sys_exit_on_error:
             sys.exit(1)
@@ -61,6 +65,7 @@ def parse_input_and_make_action(  # noqa: PLR0913
         plain_render=plain_render,
         terminal_simplified=terminal_simplified,
         raise_sys_exit_on_error=raise_sys_exit_on_error,
+        throw_full_error=throw_full_error,
     )
     handler_output = handler_obj.run()
 

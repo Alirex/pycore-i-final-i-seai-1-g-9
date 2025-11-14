@@ -42,8 +42,6 @@ def validate_phone(phone: str) -> str:
 def validate_phone_list(phones: list[str]) -> list[str]:
     validated_phones = []
 
-    print(f"{phones=}")
-
     for phone in phones:
         validated = validate_phone(phone)
         validated_phones.append(validated)
