@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 from faker import Faker
 
@@ -10,6 +10,25 @@ if TYPE_CHECKING:
     import pathlib
     from collections.abc import Generator
 
+OPERATOR_CODES: Final[list[str]] = [
+    "73",
+    "93",
+    "97",
+    "98",
+]
+
+
+def generate_phone_number(
+    faker: Faker,
+) -> str:
+    return "".join(
+        [
+            "+380",
+            faker.random_element(elements=OPERATOR_CODES),
+            f"{faker.random_int(min=0, max=9999999):07d}",
+        ],
+    )
+
 
 def generate_contact(
     faker: Faker,
@@ -18,7 +37,7 @@ def generate_contact(
         name=faker.name(),
         address=faker.address() if faker.boolean() else None,
         birthday=faker.date_of_birth(minimum_age=1, maximum_age=100) if faker.boolean() else None,
-        phones=[faker.phone_number() for _ in range(faker.random_int(min=0, max=10))],
+        phones=[generate_phone_number(faker) for _ in range(faker.random_int(min=0, max=10))],
         emails=[faker.email() for _ in range(faker.random_int(min=0, max=10))],
     )
 
@@ -53,7 +72,7 @@ def fill_data_storage(
     amount: int = 10,
     init_only: bool = False,
 ) -> None:
-    faker = Faker()
+    faker = Faker("uk_UA")
 
     if init_only and data_storage.data.contacts:
         print("Contacts already exists. Skipping.")

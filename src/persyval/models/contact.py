@@ -7,6 +7,8 @@ from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 
 from persyval.services.birthday.parse_and_format import format_birthday_for_output
 from persyval.services.birthday.validate_birthday import validate_birthday
+from persyval.services.email.validate_email import validate_email_list
+from persyval.services.phone.validate_phone_list import validate_phone_list
 
 if TYPE_CHECKING:
     from persyval.services.console.types import PromptToolkitFormattedText
@@ -26,15 +28,23 @@ class Contact(BaseModel):
 
     address: Annotated[str | None, Field(description="The address of the contact.")] = None
 
-    phones: list[str] = Field(
-        default_factory=list,
-        description="List of phone numbers associated with the contact.",
-    )
+    phones: Annotated[
+        list[str],
+        AfterValidator(validate_phone_list),
+        Field(
+            default_factory=list,
+            description="List of phone numbers associated with the contact.",
+        ),
+    ]
     #
-    emails: list[str] = Field(
-        default_factory=list,
-        description="List of email addresses associated with the contact.",
-    )
+    emails: Annotated[
+        list[str],
+        AfterValidator(validate_email_list),
+        Field(
+            default_factory=list,
+            description="List of email addresses associated with the contact.",
+        ),
+    ]
 
     birthday: Annotated[
         datetime.date | None,

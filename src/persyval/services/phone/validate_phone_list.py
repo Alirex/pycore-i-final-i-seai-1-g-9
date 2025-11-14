@@ -1,3 +1,5 @@
+import re
+from re import Pattern
 from typing import Final
 
 import phonenumbers
@@ -11,11 +13,16 @@ def parse_phones(phones: str) -> list[str]:
     return list(filter(None, phones.split(",")))
 
 
+PATTERN_I_PHONE_I_CHARS_FOR_CLEANUP: Pattern[str] = re.compile(r"[^\d+]")
+
+
 def validate_phone(phone: str) -> str:
     user_phone = phone.strip()
     if not user_phone:
         msg = f"Phone number is empty: {phone}"
         raise InvalidDataError(msg)
+
+    user_phone = PATTERN_I_PHONE_I_CHARS_FOR_CLEANUP.sub("", user_phone)
 
     try:
         if user_phone.startswith("+"):
