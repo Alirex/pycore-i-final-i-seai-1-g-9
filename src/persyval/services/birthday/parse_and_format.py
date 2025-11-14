@@ -18,12 +18,24 @@ YYYY-MM-DD Weekday
 
 
 def format_birthday_for_output(birthday: datetime.date) -> str:
+    if type(birthday) is not datetime.date:
+        msg = "Invalid birthday date for formatting."
+        raise ValueError(msg)
+
     return birthday.strftime(FORMAT_BIRTHDAY_OUTPUT)
 
 
 def format_birthday_for_edit(birthday: datetime.date) -> str:
+    if type(birthday) is not datetime.date:
+        msg = "Invalid birthday date for formatting."
+        raise ValueError(msg)
+
     return birthday.isoformat()
 
 
 def parse_birthday(birthday: str | None) -> datetime.date | None:
+    if not isinstance(birthday, (str, type(None))):
+        msg = "Invalid birthday date for formatting."
+        raise ValueError(msg)
+    
     return datetime.date.fromisoformat(birthday) if birthday else None

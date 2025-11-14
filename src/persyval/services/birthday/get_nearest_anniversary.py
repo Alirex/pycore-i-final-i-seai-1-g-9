@@ -1,17 +1,27 @@
 import datetime
 from typing import Final
 
-from dateutil.relativedelta import relativedelta
+FEBRUARY_MONTH = 2
+LEAP_DAY = 29
+NON_LEAP_DAY = 28
+
+
+def is_leap_year(year: int) -> bool:
+    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+
+
+def birthday_in_year(birthday_date: datetime.date, year: int) -> datetime.date:
+    if birthday_date.month == FEBRUARY_MONTH and birthday_date.day == LEAP_DAY:
+        day = LEAP_DAY if is_leap_year(year) else NON_LEAP_DAY
+        return datetime.date(year, 2, day)
+    return birthday_date.replace(year=year)
 
 
 def get_nearest_anniversary(birthday_date: datetime.date, current_date: datetime.date) -> datetime.date:
-    # Note: Better handle for the leap years.
-    # TODO: Better testing for leap years.
-    year_diff = current_date.year - birthday_date.year
-    contact_birthday_nearest_year = birthday_date + relativedelta(years=year_diff)
+    contact_birthday_nearest_year = birthday_in_year(birthday_date, current_date.year)
 
     if contact_birthday_nearest_year < current_date:
-        contact_birthday_nearest_year += relativedelta(years=1)
+        contact_birthday_nearest_year = birthday_in_year(birthday_date, current_date.year + 1)
 
     return contact_birthday_nearest_year
 
