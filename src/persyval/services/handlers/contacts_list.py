@@ -56,7 +56,11 @@ CONTACTS_LIST_I_ARGS_CONFIG = ArgsConfig[ContactsListIArgs](
 def parse_queries(queries: list[str]) -> dict[AllowedKeysToFilter, str]:
     result = {}
     for part in queries:
-        key, value = part.split("=")
+        split = part.split("=")
+        if len(split) != 2:  # noqa: PLR2004
+            continue
+
+        key, value = split
         key_ = AllowedKeysToFilter(key)
         result[key_] = value
 
@@ -103,6 +107,11 @@ class ContactsListIHandler(
                 raise InvalidCommandError(msg)
 
             parsed_queries = parse_queries(queries)
+
+            if not parsed_queries:
+                msg = "Queries are required."
+                raise InvalidCommandError(msg)
+
             for key in parsed_queries:
                 if key not in ALLOWED_KEYS_TO_FILTER:
                     msg = f"Filtering by '{key}' is not allowed."
