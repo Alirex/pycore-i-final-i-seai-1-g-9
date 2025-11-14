@@ -49,10 +49,11 @@ class ContactsListConfig(BaseModel):
 # TODO: Refactor this function.
 
 
-def contacts_list(  # noqa: C901, PLR0912
+def contacts_list(  # noqa: C901, PLR0912, PLR0915
     data_storage: DataStorage,
     list_config: ContactsListConfig,
 ) -> list[Contact]:
+    # sourcery skip: low-code-quality
     if list_config.filter_mode is ListFilterModeEnum.ALL:
         list(data_storage.data.contacts.values())
 
@@ -101,17 +102,29 @@ def contacts_list(  # noqa: C901, PLR0912
         if name and name not in contact.name.lower():
             continue
 
-        if address and contact.address and address not in contact.address.lower():
-            continue
+        if address:
+            if not contact.address:
+                continue
+            if address not in contact.address.lower():
+                continue
 
-        if birthday and contact.birthday and contact.birthday != birthday:
-            continue
+        if birthday:
+            if not contact.birthday:
+                continue
+            if contact.birthday != birthday:
+                continue
 
-        if phone and not any(phone_item for phone_item in contact.phones if phone in phone_item):
-            continue
+        if phone:
+            if not contact.phones:
+                continue
+            if not any(phone_item for phone_item in contact.phones if phone in phone_item):
+                continue
 
-        if email and not any(email_item for email_item in contact.emails if email in email_item.lower()):
-            continue
+        if email:
+            if not contact.emails:
+                continue
+            if not any(email_item for email_item in contact.emails if email in email_item.lower()):
+                continue
 
         result.append(contact)
 

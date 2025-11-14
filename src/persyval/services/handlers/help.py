@@ -21,6 +21,7 @@ HELP_I_ARGS_CONFIG = ArgsConfig[HelpIArgs](
         ArgMetaConfig(
             name="advanced",
             type_=ArgType.BOOL,
+            default=False,
         ),
     ],
 )
