@@ -1,9 +1,8 @@
-from prompt_toolkit.shortcuts import yes_no_dialog
-
 from persyval.models.contact import (
     ContactUid,
 )
 from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
+from persyval.services.console.yes_no_dialog import yes_no_dialog
 from persyval.services.data_actions.contact_delete import contact_delete
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
@@ -41,7 +40,7 @@ class ContactDeleteIHandler(
             is_do = yes_no_dialog(
                 title="Confirm Contact Remove",
                 text="Are you sure you want to remove the contact?",
-            ).run()
+            )
 
         else:
             is_do = parsed_args.force

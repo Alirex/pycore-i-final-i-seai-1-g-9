@@ -3,11 +3,12 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Final
 
 import typer
-from prompt_toolkit import choice, shortcuts
+from prompt_toolkit import choice
 from rich import box, table, text
 
 from persyval.models.note import Note, NoteUid
 from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig
+from persyval.services.console.yes_no_dialog import yes_no_dialog
 from persyval.services.data_actions.note_add import note_add
 from persyval.services.data_actions.note_delete import note_delete
 from persyval.services.data_actions.note_list import note_list
@@ -161,10 +162,10 @@ class NotesIHandler(
 
         selected_note_id = self._get_note_id()
 
-        is_do = shortcuts.yes_no_dialog(
+        is_do = yes_no_dialog(
             title="Confirm Note Delete",
             text="Are you sure you want to delete the note?",
-        ).run()
+        )
 
         if not is_do:
             render_canceled_message(
