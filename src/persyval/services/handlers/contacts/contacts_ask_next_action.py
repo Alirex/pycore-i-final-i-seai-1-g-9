@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from prompt_toolkit import choice
 from pydantic import BaseModel
 
+from persyval.constants.text import CHOICE_I_TO_MAIN_MENU
 from persyval.services.commands.commands_enum import Command
 from persyval.services.execution_queue.execution_queue import ExecutionQueue, HandlerFullArgs
 
@@ -62,7 +63,7 @@ def contacts_ask_next_action(
         meta = CHOICE_ITEM_META_REGISTRY[item]
         options.append((item, meta.title))
 
-    options.append((None, "To main menu"))
+    options.append((None, CHOICE_I_TO_MAIN_MENU))
 
     choice_for_item = choice(
         message="What to do with contact:",

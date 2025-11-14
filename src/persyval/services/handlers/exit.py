@@ -1,5 +1,4 @@
 from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
-from persyval.services.console.yes_no_dialog import yes_no_dialog
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.services.handlers_base.handler_output import HandlerOutput
@@ -15,7 +14,11 @@ EXIT_I_ARGS_CONFIG = ArgsConfig[ExitIForce](
     args=[
         ArgMetaConfig(
             name="force",
+            alternative_text="Are you sure you want to exit?",
+            boolean_text="Yes/No",
             type_=ArgType.BOOL,
+            allow_input_on_empty=True,
+            required=True,
         ),
     ],
 )
@@ -28,15 +31,7 @@ class ExitIHandler(
         return EXIT_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: ExitIForce) -> HandlerOutput | None:
-        if parsed_args.force is None:
-            is_do = yes_no_dialog(
-                title="Exit",
-                text="Are you sure you want to exit?",
-            )
-        else:
-            is_do = parsed_args.force
-
-        if not is_do:
+        if not parsed_args.force:
             render_canceled_message(
                 self.console,
                 "I'm glad that you decided to stay with me.",

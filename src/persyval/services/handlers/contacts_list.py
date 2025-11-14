@@ -2,8 +2,8 @@ import enum
 from typing import TYPE_CHECKING
 
 from prompt_toolkit import choice, print_formatted_text, prompt
-from pydantic import Field
 
+from persyval.constants.text import CHOICE_I_TO_MAIN_MENU
 from persyval.exceptions.main import InvalidCommandError
 from persyval.models.contact import (
     ALLOWED_KEYS_TO_FILTER,
@@ -33,7 +33,7 @@ class FilterModeEnum(enum.StrEnum):
 
 class ContactsListIArgs(HandlerArgsBase):
     filter_mode: ListFilterModeEnum | None = None
-    queries: list[str] = Field(default_factory=list)
+    queries: list[str] | None = None
 
 
 CONTACTS_LIST_I_ARGS_CONFIG = ArgsConfig[ContactsListIArgs](
@@ -46,6 +46,7 @@ CONTACTS_LIST_I_ARGS_CONFIG = ArgsConfig[ContactsListIArgs](
         ArgMetaConfig(
             name="queries",
             type_=ArgType.LIST_BY_COMMA,
+            default_factory=list,
         ),
     ],
 )
@@ -70,6 +71,7 @@ class ContactsListIHandler(
         if parsed_args.filter_mode is None and self.non_interactive:
             msg = "Filter mode is required."
             raise InvalidCommandError(msg)
+
         if parsed_args.filter_mode is not None:
             choice_filter = parsed_args.filter_mode
         else:
@@ -81,8 +83,13 @@ class ContactsListIHandler(
         if choice_filter is ListFilterModeEnum.FILTER:
             queries = parsed_args.queries
             if not queries:
+                message = (
+                    "Enter queries to filter by. \n"
+                    "Format: key=value,key2=value2 (e.g., name=John,address=UA \n"
+                    f"Allowed keys: {', '.join(sorted(ALLOWED_KEYS_TO_FILTER))}\n"
+                )
                 queries_raw = prompt(
-                    message="Enter queries (a=b,c=d):",
+                    message=message,
                 )
                 queries = queries_raw.split(",")
 
@@ -129,12 +136,13 @@ class ContactsListIHandler(
             return
 
         options_list: list[tuple[ContactUid | None, PromptToolkitFormattedText]] = [
-            (None, "Exit"),
+            (None, CHOICE_I_TO_MAIN_MENU),
         ]
         options_list.extend((contact.uid, contact.get_prompt_toolkit_output()) for contact in contacts)
 
+        message_after_filter = f"Contacts found: {len(contacts)}. \nChoose one to interact:"
         choice_by_list = choice(
-            message="Choose contact for interact:",
+            message=message_after_filter,
             options=options_list,
         )
 

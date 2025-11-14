@@ -2,7 +2,6 @@ from persyval.models.contact import (
     ContactUid,
 )
 from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
-from persyval.services.console.yes_no_dialog import yes_no_dialog
 from persyval.services.data_actions.contact_delete import contact_delete
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
@@ -24,6 +23,10 @@ CONTACT_DELETE_I_ARGS_CONFIG = ArgsConfig[ContactDeleteIArgs](
         ArgMetaConfig(
             name="force",
             type_=ArgType.BOOL,
+            required=True,
+            allow_input_on_empty=True,
+            alternative_text="Are you sure you want to delete this contact?",
+            boolean_text="Yes/No",
         ),
     ],
 )
@@ -36,16 +39,7 @@ class ContactDeleteIHandler(
         return CONTACT_DELETE_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: ContactDeleteIArgs) -> None:
-        if parsed_args.force is None:
-            is_do = yes_no_dialog(
-                title="Confirm Contact Remove",
-                text="Are you sure you want to remove the contact?",
-            )
-
-        else:
-            is_do = parsed_args.force
-
-        if not is_do:
+        if not parsed_args.force:
             render_canceled_message(
                 self.console,
                 "Contact remove operation cancelled by user.",

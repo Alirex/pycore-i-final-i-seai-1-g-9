@@ -6,6 +6,7 @@ from prompt_toolkit import HTML, prompt
 from pydantic import AfterValidator, BaseModel, Field
 
 from persyval.exceptions.main import InvalidCommandError
+from persyval.services.console.yes_no_dialog import yes_no_skip_dialog
 from persyval.utils.convert_command_part_to_bool import convert_command_part_to_bool
 
 if TYPE_CHECKING:
@@ -24,10 +25,17 @@ class ArgType(enum.StrEnum):
 
 class ArgMetaConfig(BaseModel):
     name: str
+    description: str | None = None
+
+    alternative_text: str | None = None
+
+    boolean_text: str | None = None
+
     type_: ArgType = ArgType.TEXT
     required: bool = False
 
     default: Any | None = None
+    default_factory: Callable[[], Any] | None = None
 
     format: str | None = None
     parser_func: Callable[[str], Any] | None = None
@@ -105,27 +113,54 @@ class ArgsConfig[ParseResult](BaseModel):
             if arg_meta_config.required and arg is None and non_interactive:
                 if arg_meta_config.default is not None:
                     arg = arg_meta_config.default
+                elif arg_meta_config.default_factory is not None:
+                    arg = arg_meta_config.default_factory()
                 else:
                     msg = f"Required argument `{arg_meta_config.name}` is missing."
                     raise InvalidCommandError(msg)
 
             # ---
 
-            prompt_text = f"Enter <b>{arg_meta_config.name}</b>"
-            if not arg_meta_config.required:
-                prompt_text = f"{prompt_text} <i>(optional)</i>"
-            if arg_meta_config.format:
-                prompt_text = f"{prompt_text} <i>({arg_meta_config.format})</i>"
-            if not arg and arg_meta_config.default:
-                prompt_text = f"{prompt_text} <i>(or skip for default: '{arg_meta_config.default}')</i>"
-            prompt_text = f"{prompt_text}: "
+            if arg_meta_config.alternative_text:
+                prompt_text = arg_meta_config.alternative_text
+            else:
+                prompt_text = f"Enter <b>{arg_meta_config.name}</b>"
+                if arg_meta_config.description:
+                    prompt_text = f"{prompt_text} - {arg_meta_config.description}"
+                if not arg_meta_config.required:
+                    prompt_text = f"{prompt_text} <i>(optional)</i>"
+                if arg_meta_config.format:
+                    prompt_text = f"{prompt_text} <i>({arg_meta_config.format})</i>"
+                if not arg and arg_meta_config.default:
+                    prompt_text = f"{prompt_text} <i>(or skip for default: '{arg_meta_config.default}')</i>"
+                if not arg and arg_meta_config.default_factory:
+                    prompt_text = f"{prompt_text} <i>(or skip for default)</i>"
+                prompt_text = f"{prompt_text}: "
 
             # ---
 
             if not arg and arg_meta_config.allow_input_on_empty:
-                arg = prompt(HTML(prompt_text))
+                if arg_meta_config.type_ == ArgType.BOOL:
+                    if arg_meta_config.alternative_text:
+                        text = arg_meta_config.alternative_text
+                    else:
+                        text = f"Select '{arg_meta_config.name}'"
+                        if arg_meta_config.description:
+                            text = f"{text} - {arg_meta_config.description}"
+
+                    value = yes_no_skip_dialog(
+                        title=None if arg_meta_config.alternative_text else "Select value",
+                        text=text,
+                        boolean_text=arg_meta_config.boolean_text or "True/False",
+                        optional=not arg_meta_config.required,
+                    )
+                    arg = str(value) if value is not None else None
+                else:
+                    arg = prompt(HTML(prompt_text))
                 if not arg and arg_meta_config.default is not None:
                     arg = arg_meta_config.default
+                if not arg and arg_meta_config.default_factory is not None:
+                    arg = arg_meta_config.default_factory()
 
             if not arg and arg_meta_config.required:
                 msg = f"Required argument `{arg_meta_config.name}` is missing."
