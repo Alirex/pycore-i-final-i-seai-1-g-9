@@ -149,9 +149,9 @@ class ContactsListIHandler(
         choice_for_item = choice(
             message="What to do with contact:",
             options=[
+                (ContactItemAction.VIEW, "View"),
                 (ContactItemAction.EDIT, "Edit"),
                 (ContactItemAction.DELETE, "Delete"),
-                (ContactItemAction.VIEW, "View"),
             ],
         )
 
