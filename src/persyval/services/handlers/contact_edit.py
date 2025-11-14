@@ -3,6 +3,9 @@ from typing import TYPE_CHECKING
 
 from prompt_toolkit import HTML, prompt
 
+from persyval.models.contact import (
+    ContactUid,
+)
 from persyval.services.birthday.parse_and_format import (
     format_birthday_for_edit,
     parse_birthday,
@@ -21,9 +24,6 @@ from persyval.services.phone.validate_phone_list import (
 from persyval.utils.format import render_good_message
 
 if TYPE_CHECKING:
-    from persyval.models.contact import (
-        ContactUid,
-    )
     from persyval.services.handlers_base.handler_output import HandlerOutput
 
 

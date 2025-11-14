@@ -149,6 +149,7 @@ allow-dict-calls-with-keyword-arguments = true
 [tool.ruff.lint.flake8-type-checking]
 runtime-evaluated-base-classes = [
     "pydantic.BaseModel",
+    "persyval.services.execution_queue.execution_queue.HandlerArgsBase"
 ]
 runtime-evaluated-decorators = [
     "pydantic.validate_call",

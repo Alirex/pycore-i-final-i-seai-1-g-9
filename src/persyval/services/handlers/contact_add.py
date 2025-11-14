@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Annotated
+import datetime
+from typing import Annotated
 
 from pydantic import Field
 
@@ -14,9 +15,6 @@ from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.services.phone.validate_phone_list import validate_phone_list
 from persyval.utils.format import render_good_message
-
-if TYPE_CHECKING:
-    import datetime
 
 
 class ContactAddIArgs(HandlerArgsBase):

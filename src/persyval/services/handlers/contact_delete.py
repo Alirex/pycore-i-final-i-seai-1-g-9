@@ -1,17 +1,13 @@
-from typing import TYPE_CHECKING
-
 from prompt_toolkit.shortcuts import yes_no_dialog
 
+from persyval.models.contact import (
+    ContactUid,
+)
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contact_delete import contact_delete
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message, render_good_message
-
-if TYPE_CHECKING:
-    from persyval.models.contact import (
-        ContactUid,
-    )
 
 
 class ContactDeleteIArgs(HandlerArgsBase):

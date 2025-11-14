@@ -1,13 +1,9 @@
-from typing import TYPE_CHECKING
-
+from persyval.models.contact import (
+    ContactUid,
+)
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
-
-if TYPE_CHECKING:
-    from persyval.models.contact import (
-        ContactUid,
-    )
 
 
 class ContactViewIArgs(HandlerArgsBase):
