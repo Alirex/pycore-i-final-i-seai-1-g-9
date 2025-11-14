@@ -111,9 +111,6 @@ extend-ignore = [
     "G004",
     # Consider {expression} instead of string join.
     "FLY002",
-    # TODO: Remove after this will be implemented in MyPy.
-    # Type alias {name} uses TypeAlias annotation instead of the type keyword
-    "UP040",
     # TODOs
     # Author.
     "TD002",
