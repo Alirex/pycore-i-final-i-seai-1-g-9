@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from persyval.services.handlers_base.handler_output import HandlerOutput
 
 
-class PhoneAddIArgs(BaseModel):
+class ContactAddIArgs(BaseModel):
     name: str
     address: str | None = None
     birthday: datetime.date | None = None
@@ -28,8 +28,8 @@ class PhoneAddIArgs(BaseModel):
     emails: Annotated[list[str], Field(default_factory=list)]
 
 
-CONTACT_ADD_I_ARGS_CONFIG = ArgsConfig[PhoneAddIArgs](
-    result_cls=PhoneAddIArgs,
+CONTACT_ADD_I_ARGS_CONFIG = ArgsConfig[ContactAddIArgs](
+    result_cls=ContactAddIArgs,
     args=[
         ArgMetaConfig(
             name="name",
@@ -63,8 +63,14 @@ class ContactAddIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        parse_result = CONTACT_ADD_I_ARGS_CONFIG.parse(self.args)
+        parsed_args = CONTACT_ADD_I_ARGS_CONFIG.parse(self.args)
+        self._make_action(parsed_args)
+        return None
 
+    def parsed_call(self, parsed_args: ContactAddIArgs) -> None:
+        self._make_action(parsed_args)
+
+    def _make_action(self, parsed_args: ContactAddIArgs) -> None:
         # TODO: Implement
 
         # name = prompt(HTML("Enter <b>name</b>: "))
@@ -72,11 +78,11 @@ class ContactAddIHandler(
         # birthday = prompt(HTML("Enter <b>birthday</b> <i>(Optional)(YYYY-MM-DD)</i>: ")) or None
 
         contact = Contact(
-            name=parse_result.name,
-            address=parse_result.address,
-            birthday=parse_result.birthday,
-            phones=parse_result.phones,
-            emails=parse_result.emails,
+            name=parsed_args.name,
+            address=parsed_args.address,
+            birthday=parsed_args.birthday,
+            phones=parsed_args.phones,
+            emails=parsed_args.emails,
         )
 
         contact_add(data_storage=self.data_storage, contact=contact)
@@ -85,5 +91,3 @@ class ContactAddIHandler(
             self.console,
             f"Contact '{contact.name}' added successfully.",
         )
-
-        return None

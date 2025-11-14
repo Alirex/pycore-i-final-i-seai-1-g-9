@@ -39,26 +39,22 @@ class ContactDeleteIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        parse_result = CONTACT_DELETE_I_ARGS_CONFIG.parse(self.args)
-
-        self._make_action(parse_result)
-
+        parsed_args = CONTACT_DELETE_I_ARGS_CONFIG.parse(self.args)
+        self._make_action(parsed_args)
         return None
 
-    def parsed_call(self, parse_result: ContactDeleteIArgs) -> None:
-        self._make_action(parse_result)
+    def parsed_call(self, parsed_args: ContactDeleteIArgs) -> None:
+        self._make_action(parsed_args)
 
-    def _make_action(self, parse_result: ContactDeleteIArgs) -> None:
-        # ---
-
-        if parse_result.force is None:
+    def _make_action(self, parsed_args: ContactDeleteIArgs) -> None:
+        if parsed_args.force is None:
             is_do = yes_no_dialog(
                 title="Confirm Contact Remove",
                 text="Are you sure you want to remove the contact?",
             ).run()
 
         else:
-            is_do = parse_result.force
+            is_do = parsed_args.force
 
         if not is_do:
             render_canceled_message(
@@ -69,7 +65,7 @@ class ContactDeleteIHandler(
 
         # ---
 
-        contact = contact_delete(data_storage=self.data_storage, contact_uid=parse_result.uid)
+        contact = contact_delete(data_storage=self.data_storage, contact_uid=parsed_args.uid)
 
         render_good_message(
             self.console,

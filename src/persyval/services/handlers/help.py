@@ -1,14 +1,11 @@
 from typing import TYPE_CHECKING
 
+from pydantic import BaseModel
 from rich.markup import escape
 from rich.table import Table
 
-from persyval.services.commands.command_meta import ArgMetaConfig
-from persyval.services.commands.commands_enum import COMMANDS_ORDER
+from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.handlers_base.handler_base import HandlerBase
-from persyval.services.handlers_base.helpers.no_direct_args_check import (
-    no_direct_args_check,
-)
 
 if TYPE_CHECKING:
     from rich.console import Console
@@ -16,35 +13,50 @@ if TYPE_CHECKING:
     from persyval.services.handlers_base.handler_output import HandlerOutput
 
 
+class HelpIArgs(BaseModel):
+    advanced: bool = False
+
+
+HELP_I_ARGS_CONFIG = ArgsConfig[HelpIArgs](
+    result_cls=HelpIArgs,
+    args=[
+        ArgMetaConfig(
+            name="advanced",
+            type_=ArgType.BOOL,
+        ),
+    ],
+)
+
+
 class HelpIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        no_direct_args_check(self.args)
-
-        # ---------
-
-        render_help(console=self.console)
-
+        parsed_args = HELP_I_ARGS_CONFIG.parse(self.args)
+        self._make_action(parsed_args)
         return None
+
+    def parsed_call(self, parsed_args: HelpIArgs) -> None:
+        self._make_action(parsed_args)
+
+    def _make_action(self, parsed_args: HelpIArgs) -> None:
+        render_help(console=self.console, show_hidden=parsed_args.advanced)
 
 
 def render_help(
+    *,
     console: Console,
+    show_hidden: bool = False,
 ) -> None:
-    from persyval.services.commands.commands_meta_registry import (  # noqa: PLC0415
-        COMMANDS_META_REGISTRY,
-    )
-
     # Note: Moved from handler because it is relatively clear.
 
     table = Table(title="Available Commands", title_justify="left")
     table.add_column("Command", justify="left", style="cyan", no_wrap=True)
     table.add_column("Description", justify="left")
 
-    for command in COMMANDS_ORDER:
-        command_meta = COMMANDS_META_REGISTRY[command]
+    from persyval.services.commands.iterate_over_commands_meta import iterate_over_commands_meta  # noqa: PLC0415
 
+    for command_meta in iterate_over_commands_meta(show_hidden=show_hidden):
         command_full = str(command_meta.command)
         if command_meta.args_config:
             args: list[str] = []

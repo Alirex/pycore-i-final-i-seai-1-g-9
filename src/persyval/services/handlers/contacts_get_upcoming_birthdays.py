@@ -43,17 +43,23 @@ class ContactsGetUpcomingBirthdaysIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        parse_result = CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG.parse(self.args)
+        parsed_args = CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG.parse(self.args)
+        self._make_action(parsed_args)
+        return None
 
-        upcoming_birthdays = contacts_get_upcoming_birthdays(self.data_storage, parse_result.days, sort=True)
+    def parsed_call(self, parsed_args: ContactsGetUpcomingBirthdaysIArgs) -> None:
+        self._make_action(parsed_args)
+
+    def _make_action(self, parsed_args: ContactsGetUpcomingBirthdaysIArgs) -> None:
+        upcoming_birthdays = contacts_get_upcoming_birthdays(self.data_storage, parsed_args.days, sort=True)
 
         if not upcoming_birthdays:
             render_canceled_message(
                 console=self.console,
-                message=f"No upcoming birthdays within indicated period - {parse_result.days} days.",
+                message=f"No upcoming birthdays within indicated period - {parsed_args.days} days.",
                 title="No birthdays found",
             )
-            return None
+            return
 
         table = Table(title="Upcoming birthdays", title_justify="left")
         table.add_column("Name")
@@ -68,5 +74,3 @@ class ContactsGetUpcomingBirthdaysIHandler(
             )
 
         self.console.print(table)
-
-        return None

@@ -47,20 +47,18 @@ class ContactEditIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        parse_result = CONTACT_EDIT_I_ARGS_CONFIG.parse(self.args)
-
-        self._make_action(parse_result)
-
+        parsed_args = CONTACT_EDIT_I_ARGS_CONFIG.parse(self.args)
+        self._make_action(parsed_args)
         return None
 
-    def parsed_call(self, parse_result: ContactEditIArgs) -> None:
-        self._make_action(parse_result)
+    def parsed_call(self, parsed_args: ContactEditIArgs) -> None:
+        self._make_action(parsed_args)
 
-    def _make_action(self, parse_result: ContactEditIArgs) -> None:
+    def _make_action(self, parsed_args: ContactEditIArgs) -> None:
         contact = copy.deepcopy(
             contact_get(
                 data_storage=self.data_storage,
-                contact_uid=parse_result.uid,
+                contact_uid=parsed_args.uid,
             ),
         )
 

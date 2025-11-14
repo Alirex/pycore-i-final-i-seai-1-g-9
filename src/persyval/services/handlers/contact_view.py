@@ -31,19 +31,19 @@ class ContactViewIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        parse_result = CONTACT_VIEW_I_ARGS_CONFIG.parse(self.args)
+        parsed_args = CONTACT_VIEW_I_ARGS_CONFIG.parse(self.args)
 
-        self._make_action(parse_result)
+        self._make_action(parsed_args)
 
         return None
 
-    def parsed_call(self, parse_result: ContactViewIArgs) -> None:
-        self._make_action(parse_result)
+    def parsed_call(self, parsed_args: ContactViewIArgs) -> None:
+        self._make_action(parsed_args)
 
-    def _make_action(self, parse_result: ContactViewIArgs) -> None:
+    def _make_action(self, parsed_args: ContactViewIArgs) -> None:
         # Get contact via data_action
 
         # Render all the fields of the contact. You can use rich, prompt_toolkit or something else.
         # But make it with colors.
 
-        print(parse_result.uid)
+        print(parsed_args.uid)

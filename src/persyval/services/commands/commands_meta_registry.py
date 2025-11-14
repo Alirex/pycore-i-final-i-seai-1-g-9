@@ -21,11 +21,12 @@ from persyval.services.handlers.contacts_get_upcoming_birthdays import (
     ContactsGetUpcomingBirthdaysIHandler,
 )
 from persyval.services.handlers.contacts_list import (
-    CONTACT_LIST_I_ARGS_CONFIG,
+    CONTACTS_LIST_I_ARGS_CONFIG,
     ContactsListIHandler,
 )
+from persyval.services.handlers.contacts_root import CONTACTS_ROOT_I_ARGS_CONFIG, ContactsRootIHandler
 from persyval.services.handlers.exit import EXIT_I_ARGS_CONFIG, ExitIHandler
-from persyval.services.handlers.help import HelpIHandler
+from persyval.services.handlers.help import HELP_I_ARGS_CONFIG, HelpIHandler
 from persyval.services.handlers.notes import NOTES_I_ARGS_CONFIG, NotesIHandler
 from persyval.services.handlers.storage_clear import (
     STORAGE_CLEAR_I_ARGS_CONFIG,
@@ -37,34 +38,47 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
     item.command: item
     for item in [
         CommandMeta(
+            command=Command.CONTACTS,
+            args_config=CONTACTS_ROOT_I_ARGS_CONFIG,
+            description="Manage contacts.",
+            handler=ContactsRootIHandler,
+        ),
+        #
+        CommandMeta(
             command=Command.CONTACTS_LIST,
-            args_config=CONTACT_LIST_I_ARGS_CONFIG,
+            args_config=CONTACTS_LIST_I_ARGS_CONFIG,
             description="List contacts. With filtering and actions on the selected contact.",
             handler=ContactsListIHandler,
+            hidden=True,
         ),
         CommandMeta(
             command=Command.CONTACT_ADD,
             args_config=CONTACT_ADD_I_ARGS_CONFIG,
             description="Add a contact.",
             handler=ContactAddIHandler,
+            hidden=True,
         ),
+        #
         CommandMeta(
             command=Command.CONTACT_EDIT,
             args_config=CONTACT_EDIT_I_ARGS_CONFIG,
             description="Edit a contact.",
             handler=ContactEditIHandler,
+            hidden=True,
         ),
         CommandMeta(
             command=Command.CONTACT_VIEW,
             args_config=CONTACT_VIEW_I_ARGS_CONFIG,
             description="View a contact.",
             handler=ContactViewIHandler,
+            hidden=True,
         ),
         CommandMeta(
             command=Command.CONTACT_DELETE,
             args_config=CONTACT_DELETE_I_ARGS_CONFIG,
             description="Delete a contact.",
             handler=ContactDeleteIHandler,
+            hidden=True,
         ),
         #
         CommandMeta(
@@ -72,6 +86,7 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             args_config=CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG,
             description="Show upcoming birthdays from the contacts book.",
             handler=ContactsGetUpcomingBirthdaysIHandler,
+            hidden=True,
         ),
         #
         CommandMeta(
@@ -95,6 +110,7 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
         #
         CommandMeta(
             command=Command.HELP,
+            args_config=HELP_I_ARGS_CONFIG,
             description="Display help information.",
             handler=HelpIHandler,
         ),

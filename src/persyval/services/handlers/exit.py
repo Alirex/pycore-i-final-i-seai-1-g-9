@@ -12,15 +12,15 @@ class ExitIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        parse_result = EXIT_I_ARGS_CONFIG.parse(self.args)
+        parsed_args = EXIT_I_ARGS_CONFIG.parse(self.args)
 
-        if parse_result.force is None:
+        if parsed_args.force is None:
             is_do = yes_no_dialog(
                 title="Exit",
                 text="Are you sure you want to exit?",
             ).run()
         else:
-            is_do = parse_result.force
+            is_do = parsed_args.force
 
         if not is_do:
             render_canceled_message(

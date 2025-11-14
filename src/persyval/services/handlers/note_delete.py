@@ -41,16 +41,16 @@ class NoteDeleteIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        parse_result = NOTE_DELETE_I_ARGS_CONFIG.parse(self.args)
+        parsed_args = NOTE_DELETE_I_ARGS_CONFIG.parse(self.args)
 
-        if parse_result.force is None:
+        if parsed_args.force is None:
             is_do = yes_no_dialog(
                 title="Confirm Note Delete",
                 text="Are you sure you want to delete the note?",
             ).run()
 
         else:
-            is_do = parse_result.force
+            is_do = parsed_args.force
 
         if not is_do:
             render_canceled_message(
@@ -59,11 +59,11 @@ class NoteDeleteIHandler(
             )
             return None
 
-        note_delete(data_storage=self.data_storage, note_uid=parse_result.uid)
+        note_delete(data_storage=self.data_storage, note_uid=parsed_args.uid)
 
         render_good_message(
             self.console,
-            f"Note with uid {parse_result.uid} has been removed.",
+            f"Note with uid {parsed_args.uid} has been removed.",
         )
 
         return None

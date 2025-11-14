@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from pydantic import BaseModel
 
-from persyval.services.commands.commands_enum import COMMANDS_ORDER
+from persyval.services.commands.iterate_over_commands_meta import iterate_over_commands_meta
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -32,4 +32,4 @@ class HintsCompleter(Completer, BaseModel):
 
 
 def get_completer() -> HintsCompleter:
-    return HintsCompleter(hints=[str(item) for item in COMMANDS_ORDER])
+    return HintsCompleter(hints=[str(command_meta.command) for command_meta in iterate_over_commands_meta()])

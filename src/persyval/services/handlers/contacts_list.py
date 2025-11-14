@@ -34,13 +34,13 @@ class FilterModeEnum(enum.StrEnum):
     FILTER = "filter"
 
 
-class PhoneListIArgs(BaseModel):
+class ContactsListIArgs(BaseModel):
     filter_mode: ListFilterModeEnum | None = None
     queries: Annotated[list[str], Field(default_factory=list)]
 
 
-CONTACT_LIST_I_ARGS_CONFIG = ArgsConfig[PhoneListIArgs](
-    result_cls=PhoneListIArgs,
+CONTACTS_LIST_I_ARGS_CONFIG = ArgsConfig[ContactsListIArgs](
+    result_cls=ContactsListIArgs,
     args=[
         ArgMetaConfig(
             name="filter_mode",
@@ -66,10 +66,16 @@ def parse_queries(queries: list[str]) -> dict[str, str]:
 class ContactsListIHandler(
     HandlerBase,
 ):
-    def _handler(self) -> HandlerOutput | None:  # noqa: C901, PLR0912
+    def _handler(self) -> HandlerOutput | None:
         # TODO: Refactor this function.
-        parsed_args = CONTACT_LIST_I_ARGS_CONFIG.parse(self.args)
+        parsed_args = CONTACTS_LIST_I_ARGS_CONFIG.parse(self.args)
+        self._make_action(parsed_args)
+        return None
 
+    def parsed_call(self, parsed_args: ContactsListIArgs) -> None:
+        self._make_action(parsed_args)
+
+    def _make_action(self, parsed_args: ContactsListIArgs) -> None:  # noqa: C901, PLR0912
         if parsed_args.filter_mode is None and self.non_interactive:
             msg = "Filter mode is required."
             raise InvalidCommandError(msg)
@@ -108,13 +114,13 @@ class ContactsListIHandler(
         if self.plain_render:
             for contact in contacts:
                 print(contact.uid)
-            return None
+            return
 
         if self.non_interactive:
             for contact in contacts:
                 print_formatted_text(contact.get_prompt_toolkit_output())
 
-            return None
+            return
 
         options_list: list[tuple[ContactUid | None, PromptToolkitFormattedText]] = [
             (None, "Exit"),
@@ -127,7 +133,7 @@ class ContactsListIHandler(
         )
 
         if choice_by_list is None:
-            return None
+            return
 
         choice_for_item = choice(
             message="What to do with contact:",
@@ -183,4 +189,4 @@ class ContactsListIHandler(
             case _:
                 raise NotImplementedError
 
-        return None
+        return
