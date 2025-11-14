@@ -32,13 +32,14 @@ from persyval.services.handlers.storage_clear import (
     STORAGE_CLEAR_I_ARGS_CONFIG,
     StorageClearIHandler,
 )
+from persyval.services.handlers.storage_root import STORAGE_ROOT_I_ARGS_CONFIG, StorageRootIHandler
 from persyval.services.handlers.storage_stats import StorageStatsIHandler
 
 COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
     item.command: item
     for item in [
         CommandMeta(
-            command=Command.CONTACTS,
+            command=Command.CONTACTS_ROOT,
             args_config=CONTACTS_ROOT_I_ARGS_CONFIG,
             description="Manage contacts.",
             handler=ContactsRootIHandler,
@@ -97,15 +98,24 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
         ),
         #
         CommandMeta(
+            command=Command.STORAGE_ROOT,
+            args_config=STORAGE_ROOT_I_ARGS_CONFIG,
+            description="Manage storage.",
+            handler=StorageRootIHandler,
+        ),
+        #
+        CommandMeta(
             command=Command.STORAGE_STATS,
             description="Display statistics about the storage.",
             handler=StorageStatsIHandler,
+            hidden=True,
         ),
         CommandMeta(
             command=Command.STORAGE_CLEAR,
             args_config=STORAGE_CLEAR_I_ARGS_CONFIG,
             description="Clear the storage.",
             handler=StorageClearIHandler,
+            hidden=True,
         ),
         #
         CommandMeta(

@@ -4,7 +4,7 @@ from typing import Final
 
 @enum.unique
 class Command(enum.StrEnum):
-    CONTACTS = "contacts"
+    CONTACTS_ROOT = "contacts"
 
     CONTACTS_LIST = "contacts_list"
     CONTACT_ADD = "contact_add"
@@ -16,6 +16,8 @@ class Command(enum.StrEnum):
     CONTACTS_GET_UPCOMING_BIRTHDAYS = "contacts_get_upcoming_birthdays"
 
     NOTES = "notes"
+
+    STORAGE_ROOT = "storage"
 
     STORAGE_STATS = "storage_stats"
     STORAGE_CLEAR = "storage_clear"
@@ -30,7 +32,7 @@ class Command(enum.StrEnum):
 
 
 COMMANDS_ORDER: Final[list[Command]] = [
-    Command.CONTACTS,
+    Command.CONTACTS_ROOT,
     #
     Command.CONTACTS_LIST,
     Command.CONTACT_ADD,
@@ -42,7 +44,9 @@ COMMANDS_ORDER: Final[list[Command]] = [
     Command.CONTACTS_GET_UPCOMING_BIRTHDAYS,
     #
     Command.NOTES,
-    # #
+    #
+    Command.STORAGE_ROOT,
+    #
     Command.STORAGE_STATS,
     Command.STORAGE_CLEAR,
     #

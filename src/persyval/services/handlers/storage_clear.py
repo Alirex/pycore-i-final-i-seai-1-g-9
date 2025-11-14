@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from prompt_toolkit.shortcuts import yes_no_dialog
 
-from persyval.services.handlers.shared.args_i_force import ARGS_CONFIG_I_FORCE
+from persyval.services.handlers.shared.args_i_force import ARGS_CONFIG_I_FORCE, ArgsIForce
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message, render_good_message
 
@@ -18,7 +18,13 @@ class StorageClearIHandler(
 ):
     def _handler(self) -> HandlerOutput | None:
         parsed_args = STORAGE_CLEAR_I_ARGS_CONFIG.parse(self.args)
+        self._make_action(parsed_args)
+        return None
 
+    def parsed_call(self, parsed_args: ArgsIForce) -> None:
+        self._make_action(parsed_args)
+
+    def _make_action(self, parsed_args: ArgsIForce) -> None:
         if parsed_args.force is None:
             is_do = yes_no_dialog(
                 title="Confirm Storage Clear",
@@ -32,7 +38,7 @@ class StorageClearIHandler(
                 console=self.console,
                 message="Storage clear operation cancelled by user.",
             )
-            return None
+            return
 
         # ---
 
@@ -46,5 +52,3 @@ class StorageClearIHandler(
             console=self.console,
             message=message,
         )
-
-        return None

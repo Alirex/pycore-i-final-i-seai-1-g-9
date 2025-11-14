@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
 from persyval.services.handlers_base.handler_base import HandlerBase
+from persyval.utils.convert_snake_case_to_human_readable import convert_snake_case_to_human_readable
 
 if TYPE_CHECKING:
     from persyval.services.handlers_base.handler_output import HandlerOutput
@@ -49,7 +50,7 @@ class ContactsRootIHandler(
         else:
             choice_result = choice(
                 message="Choose action:",
-                options=[(item, str(item).capitalize()) for item in ContactsRootIAction],
+                options=[(item, convert_snake_case_to_human_readable(item)) for item in ContactsRootIAction],
             )
 
         match choice_result:
@@ -62,7 +63,7 @@ class ContactsRootIHandler(
                 ContactsListIHandler(
                     **(self.model_dump() | {"args": []}),
                 ).parsed_call(
-                    CONTACTS_LIST_I_ARGS_CONFIG.parse(self.args),
+                    CONTACTS_LIST_I_ARGS_CONFIG.parse([]),
                 )
             case ContactsRootIAction.ADD:
                 from persyval.services.handlers.contact_add import (  # noqa: PLC0415
@@ -73,7 +74,7 @@ class ContactsRootIHandler(
                 ContactAddIHandler(
                     **(self.model_dump() | {"args": []}),
                 ).parsed_call(
-                    CONTACT_ADD_I_ARGS_CONFIG.parse(self.args),
+                    CONTACT_ADD_I_ARGS_CONFIG.parse([]),
                 )
             case ContactsRootIAction.GET_UPCOMING_BIRTHDAYS:
                 from persyval.services.handlers.contacts_get_upcoming_birthdays import (  # noqa: PLC0415
@@ -84,5 +85,5 @@ class ContactsRootIHandler(
                 ContactsGetUpcomingBirthdaysIHandler(
                     **(self.model_dump() | {"args": []}),
                 ).parsed_call(
-                    CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG.parse(self.args),
+                    CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG.parse([]),
                 )

@@ -16,7 +16,16 @@ class StorageStatsIHandler(
 ):
     def _handler(self) -> HandlerOutput | None:
         no_direct_args_check(self.args)
+        self._make_action(None)
+        return None
 
+    def parsed_call(self, parsed_args: None) -> None:
+        self._make_action(parsed_args)
+
+    def _make_action(
+        self,
+        parsed_args: None,  # noqa: ARG002
+    ) -> None:
         table = Table(title="Storage Stats", title_justify="left")
         table.add_column("Name")
         table.add_column("Amount")
@@ -32,5 +41,3 @@ class StorageStatsIHandler(
         )
 
         self.console.print(table)
-
-        return None
