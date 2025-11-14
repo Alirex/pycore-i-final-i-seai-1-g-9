@@ -51,8 +51,8 @@ class StorageRootIHandler(
             )
 
         match choice_result:
+            # TODO: (?) Use lazy import, when available. https://peps.python.org/pep-0810/
             case StorageRootIAction.CLEAR:
-                # TODO: (?) Use lazy import, when available. https://peps.python.org/pep-0810/
                 from persyval.services.handlers.storage_clear import StorageClearIForce  # noqa: PLC0415
 
                 self.execution_queue.put(

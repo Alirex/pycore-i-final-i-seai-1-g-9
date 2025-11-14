@@ -10,13 +10,14 @@ from persyval.models.contact import (
     ContactUid,
 )
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
+from persyval.services.commands.commands_enum import Command
 from persyval.services.data_actions.contacts_list import (
     LIST_FILTER_MODE_REGISTRY,
     ContactsListConfig,
     ListFilterModeEnum,
     contacts_list,
 )
-from persyval.services.execution_queue.execution_queue import HandlerArgsBase
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase, HandlerFullArgs
 from persyval.services.handlers_base.handler_base import HandlerBase
 
 if TYPE_CHECKING:
@@ -146,47 +147,46 @@ class ContactsListIHandler(
         )
 
         match choice_for_item:
+            # TODO: (?) Use lazy import, when available. https://peps.python.org/pep-0810/
             case ContactItemAction.EDIT:
                 from persyval.services.handlers.contact_edit import (  # noqa: PLC0415
                     ContactEditIArgs,
-                    ContactEditIHandler,
                 )
 
-                ContactEditIHandler(
-                    **(self.model_dump() | {"args": []}),
-                ).parsed_call(
-                    ContactEditIArgs(
-                        uid=choice_by_list,
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.CONTACT_EDIT,
+                        args=ContactEditIArgs(
+                            uid=choice_by_list,
+                        ),
                     ),
                 )
-
             case ContactItemAction.VIEW:
                 from persyval.services.handlers.contact_view import (  # noqa: PLC0415
                     ContactViewIArgs,
-                    ContactViewIHandler,
                 )
 
-                ContactViewIHandler(
-                    **(self.model_dump() | {"args": []}),
-                ).parsed_call(
-                    ContactViewIArgs(
-                        uid=choice_by_list,
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.CONTACT_VIEW,
+                        args=ContactViewIArgs(
+                            uid=choice_by_list,
+                        ),
                     ),
                 )
             case ContactItemAction.DELETE:
                 from persyval.services.handlers.contact_delete import (  # noqa: PLC0415
                     ContactDeleteIArgs,
-                    ContactDeleteIHandler,
                 )
 
-                ContactDeleteIHandler(
-                    **(self.model_dump() | {"args": []}),
-                ).parsed_call(
-                    ContactDeleteIArgs(
-                        uid=choice_by_list,
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.CONTACT_DELETE,
+                        args=ContactDeleteIArgs(
+                            uid=choice_by_list,
+                        ),
                     ),
                 )
-
             case _:
                 raise NotImplementedError
 
