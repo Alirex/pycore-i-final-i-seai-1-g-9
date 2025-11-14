@@ -30,6 +30,8 @@ def main_chat(  # noqa: PLR0913
     predefined_input: str | None = None,
     #
     storage_dir: pathlib.Path | None = None,
+    #
+    use_advanced_completer: bool = False,
 ) -> None:
     with DataStorage.load(
         dir_path=storage_dir,
@@ -41,7 +43,11 @@ def main_chat(  # noqa: PLR0913
             render_intro(console)
 
         while True:
-            user_input = predefined_input or get_input(console=console, prompt_session=prompt_session)
+            user_input = predefined_input or get_input(
+                console=console,
+                prompt_session=prompt_session,
+                use_advanced_completer=use_advanced_completer,
+            )
 
             if predefined_input:
                 predefined_input = None

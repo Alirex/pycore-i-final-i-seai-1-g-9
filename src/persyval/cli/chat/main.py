@@ -81,6 +81,15 @@ def run(  # noqa: PLR0913
             f"{CLI_DOC_NEWLINE_AT_END}",
         ),
     ] = None,
+    #
+    use_advanced_completer: Annotated[
+        bool,
+        typer.Option(
+            "--use-advanced-completer",
+            help=f"Use advanced completer. {CLI_DOC_NEWLINE} "
+            f"Useful if you need to use advanced commands.{CLI_DOC_NEWLINE_AT_END}",
+        ),
+    ],
 ) -> None:
     """Run the personal assistant chat.
 
@@ -120,4 +129,6 @@ def run(  # noqa: PLR0913
         predefined_input=predefined_input,
         #
         storage_dir=storage_dir_fact,
+        #
+        use_advanced_completer=use_advanced_completer,
     )

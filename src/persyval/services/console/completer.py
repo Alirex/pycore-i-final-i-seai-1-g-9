@@ -31,5 +31,9 @@ class HintsCompleter(Completer, BaseModel):
                 yield Completion(hint, start_position=-len(word))
 
 
-def get_completer() -> HintsCompleter:
-    return HintsCompleter(hints=[str(command_meta.command) for command_meta in iterate_over_commands_meta()])
+def get_completer(*, use_advanced_completer: bool = False) -> HintsCompleter:
+    return HintsCompleter(
+        hints=[
+            str(command_meta.command) for command_meta in iterate_over_commands_meta(show_hidden=use_advanced_completer)
+        ],
+    )

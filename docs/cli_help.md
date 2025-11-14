@@ -90,6 +90,11 @@ Useful for testing and automation purposes.
  Use env var &#x27;PERSYVAL_I_NO_PERSISTENCE&#x27; if you want to disable storing data to the file system.
 
 .
+* `--use-advanced-completer`: Use advanced completer. 
+
+ Useful if you need to use advanced commands.
+
+.  [required]
 * `--help`: Show this message and exit.
 
 ## `helpers`
