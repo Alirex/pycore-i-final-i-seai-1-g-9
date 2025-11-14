@@ -1,7 +1,7 @@
 import enum
 from typing import TYPE_CHECKING, Annotated
 
-from prompt_toolkit import choice, print_formatted_text
+from prompt_toolkit import choice, print_formatted_text, prompt
 from pydantic import BaseModel, Field
 
 from persyval.exceptions.main import InvalidCommandError
@@ -90,8 +90,15 @@ class ContactsListIHandler(
         if choice_filter is ListFilterModeEnum.FILTER:
             queries = parsed_args.queries
             if not queries:
+                queries_raw = prompt(
+                    message="Enter queries (a=b,c=d):",
+                )
+                queries = queries_raw.split(",")
+
+            if not queries:
                 msg = "Queries are required."
                 raise InvalidCommandError(msg)
+
             parsed_queries = parse_queries(queries)
             for key in parsed_queries:
                 if key not in ALLOWED_KEYS_TO_FILTER:
