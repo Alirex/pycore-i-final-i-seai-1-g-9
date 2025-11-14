@@ -24,6 +24,7 @@ from persyval.services.data_actions.contact_list import (
     contact_list,
 )
 from persyval.services.data_actions.contact_update import contact_update
+from persyval.services.handlers.contact_view import ContactViewHandler
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_good_message
 
@@ -159,6 +160,13 @@ class ContactListIHandler(
                     self.console,
                     f"Contact '{contact.name}' edited successfully.",
                 )
+
+            case ContactItemAction.VIEW:
+                return ContactViewHandler(
+                    console=self.console,
+                    data_storage=self.data_storage,
+                    args=[str(choice_by_list)],
+                ).run()
 
             case _:
                 raise NotImplementedError
