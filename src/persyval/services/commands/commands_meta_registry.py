@@ -9,9 +9,7 @@ from persyval.services.handlers.contacts_get_upcoming_birthdays import (
 from persyval.services.handlers.contacts_list import CONTACT_LIST_I_ARGS_CONFIG, ContactsListIHandler
 from persyval.services.handlers.exit import EXIT_I_ARGS_CONFIG, ExitIHandler
 from persyval.services.handlers.help import HelpIHandler
-from persyval.services.handlers.note_add import NOTE_ADD_I_ARGS_CONFIG, NoteAddIHandler
-from persyval.services.handlers.note_delete import NOTE_DELETE_I_ARGS_CONFIG, NoteDeleteIHandler
-from persyval.services.handlers.note_list import NoteListIHandler
+from persyval.services.handlers.notes import NOTES_I_ARGS_CONFIG, NotesIHandler
 from persyval.services.handlers.storage_clear import STORAGE_CLEAR_I_ARGS_CONFIG, StorageClearIHandler
 from persyval.services.handlers.storage_stats import StorageStatsIHandler
 
@@ -44,21 +42,10 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
         ),
         #
         CommandMeta(
-            command=Command.NOTE_LIST,
-            description="List notes",
-            handler=NoteListIHandler,
-        ),
-        CommandMeta(
-            command=Command.NOTE_ADD,
-            args_config=NOTE_ADD_I_ARGS_CONFIG,
-            description="Add a note.",
-            handler=NoteAddIHandler,
-        ),
-        CommandMeta(
-            command=Command.NOTE_DELETE,
-            args_config=NOTE_DELETE_I_ARGS_CONFIG,
-            description="Delete a note.",
-            handler=NoteDeleteIHandler,
+            command=Command.NOTES,
+            args_config=NOTES_I_ARGS_CONFIG,
+            description="Handle operations with notes.",
+            handler=NotesIHandler,
         ),
         #
         CommandMeta(
