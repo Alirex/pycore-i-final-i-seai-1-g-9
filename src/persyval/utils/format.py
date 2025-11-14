@@ -42,6 +42,22 @@ def format_bad_message(message: T_MESSAGE_RAW) -> RichFormattedText:
     return pack_colored_message(message, "red")
 
 
+def render_with_panel(
+    console: Console,
+    message: RichFormattedText,
+    title: T_MESSAGE_RAW | None = None,
+    style: str = "green",
+) -> None:
+    panel = Panel(
+        message,
+        title=f"{escape(title)}" if title else None,
+        title_align="left",
+        border_style=style,
+        expand=False,
+    )
+    console.print(panel)
+
+
 def render_good_message(
     console: Console,
     message: T_MESSAGE_RAW,
