@@ -6,6 +6,8 @@ from typing import Final
 class Command(enum.StrEnum):
     CONTACTS_LIST = "contacts_list"
     CONTACT_ADD = "contact_add"
+    CONTACT_EDIT = "contact_edit"
+    CONTACT_VIEW = "contact_view"
     CONTACT_DELETE = "contact_delete"
     CONTACTS_GET_UPCOMING_BIRTHDAYS = "contacts_get_upcoming_birthdays"
 
@@ -26,7 +28,10 @@ class Command(enum.StrEnum):
 COMMANDS_ORDER: Final[list[Command]] = [
     Command.CONTACTS_LIST,
     Command.CONTACT_ADD,
+    Command.CONTACT_EDIT,
+    Command.CONTACT_VIEW,
     Command.CONTACT_DELETE,
+    #
     Command.CONTACTS_GET_UPCOMING_BIRTHDAYS,
     #
     Command.NOTES,

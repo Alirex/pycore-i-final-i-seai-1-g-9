@@ -8,7 +8,7 @@ DEFAULT_REGION: Final[str] = "UA"
 
 
 def parse_phones(phones: str) -> list[str]:
-    return phones.split(",")
+    return list(filter(None, phones.split(",")))
 
 
 def validate_phone(phone: str) -> str:
@@ -41,6 +41,8 @@ def validate_phone(phone: str) -> str:
 
 def validate_phone_list(phones: list[str]) -> list[str]:
     validated_phones = []
+
+    print(f"{phones=}")
 
     for phone in phones:
         validated = validate_phone(phone)

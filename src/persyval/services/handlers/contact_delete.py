@@ -15,13 +15,13 @@ if TYPE_CHECKING:
     from persyval.services.handlers_base.handler_output import HandlerOutput
 
 
-class ContactRemoveIArgs(BaseModel):
+class ContactDeleteIArgs(BaseModel):
     uid: ContactUid
     force: bool | None = None
 
 
-CONTACT_REMOVE_I_ARGS_CONFIG = ArgsConfig[ContactRemoveIArgs](
-    result_cls=ContactRemoveIArgs,
+CONTACT_DELETE_I_ARGS_CONFIG = ArgsConfig[ContactDeleteIArgs](
+    result_cls=ContactDeleteIArgs,
     args=[
         ArgMetaConfig(
             name="uid",
@@ -39,7 +39,17 @@ class ContactDeleteIHandler(
     HandlerBase,
 ):
     def _handler(self) -> HandlerOutput | None:
-        parse_result = CONTACT_REMOVE_I_ARGS_CONFIG.parse(self.args)
+        parse_result = CONTACT_DELETE_I_ARGS_CONFIG.parse(self.args)
+
+        self._make_action(parse_result)
+
+        return None
+
+    def parsed_call(self, parse_result: ContactDeleteIArgs) -> None:
+        self._make_action(parse_result)
+
+    def _make_action(self, parse_result: ContactDeleteIArgs) -> None:
+        # ---
 
         if parse_result.force is None:
             is_do = yes_no_dialog(
@@ -55,13 +65,15 @@ class ContactDeleteIHandler(
                 self.console,
                 "Contact remove operation cancelled by user.",
             )
-            return None
+            return
 
-        contact_delete(data_storage=self.data_storage, contact_uid=parse_result.uid)
+        # ---
+
+        contact = contact_delete(data_storage=self.data_storage, contact_uid=parse_result.uid)
 
         render_good_message(
             self.console,
-            f"Contact with uid {parse_result.uid} has been removed.",
+            f"Contact '{contact.name}' ({contact.uid}) has been deleted.",
         )
 
-        return None
+        return

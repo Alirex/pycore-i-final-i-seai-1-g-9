@@ -5,7 +5,7 @@ from persyval.exceptions.main import InvalidDataError
 
 
 def parse_emails(emails: str) -> list[str]:
-    return emails.split(",")
+    return list(filter(None, emails.split(",")))
 
 
 def validate_email(email: str) -> str:
