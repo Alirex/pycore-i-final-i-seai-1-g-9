@@ -19,6 +19,7 @@ from persyval.services.data_actions.contacts_list import (
 )
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase, HandlerFullArgs
 from persyval.services.handlers_base.handler_base import HandlerBase
+from persyval.utils.format import render_canceled_message
 
 if TYPE_CHECKING:
     from persyval.services.console.types import PromptToolkitFormattedText
@@ -122,6 +123,14 @@ class ContactsListIHandler(
             for contact in contacts:
                 print_formatted_text(contact.get_prompt_toolkit_output())
 
+            return
+
+        if not contacts:
+            render_canceled_message(
+                self.console,
+                "No contacts found.",
+                title="Not found",
+            )
             return
 
         options_list: list[tuple[ContactUid | None, PromptToolkitFormattedText]] = [
