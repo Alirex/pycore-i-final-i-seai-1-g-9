@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field
 
+from persyval.models.contact import AllowedKeysToFilter
 from persyval.services.birthday.parse_and_format import parse_birthday
 from persyval.services.birthday.validate_birthday import validate_birthday
 
@@ -42,7 +43,7 @@ LIST_FILTER_MODE_REGISTRY: dict[ListFilterModeEnum, ListFilterModeMeta] = {
 class ContactsListConfig(BaseModel):
     filter_mode: ListFilterModeEnum
 
-    queries_as_map: dict[str, str] = Field(default_factory=dict)
+    queries_as_map: dict[AllowedKeysToFilter, str] = Field(default_factory=dict)
 
 
 # TODO: Refactor this function.
@@ -58,33 +59,33 @@ def contacts_list(  # noqa: C901, PLR0912
     queries_as_map = list_config.queries_as_map
 
     try:
-        uid = queries_as_map.pop("uid")
+        uid = queries_as_map.pop(AllowedKeysToFilter.UID)
     except KeyError:
         uid = None
 
     try:
-        name = queries_as_map.pop("name")
+        name = queries_as_map.pop(AllowedKeysToFilter.NAME)
     except KeyError:
         name = None
 
     try:
-        address = queries_as_map.pop("address")
+        address = queries_as_map.pop(AllowedKeysToFilter.ADDRESS)
     except KeyError:
         address = None
 
     try:
-        birthday_raw = queries_as_map.pop("birthday")
+        birthday_raw = queries_as_map.pop(AllowedKeysToFilter.BIRTHDAY)
         birthday = validate_birthday(parse_birthday(birthday_raw)) if birthday_raw else None
     except KeyError:
         birthday = None
 
     try:
-        phone = queries_as_map.pop("phones")
+        phone = queries_as_map.pop(AllowedKeysToFilter.PHONE)
     except KeyError:
         phone = None
 
     try:
-        email = queries_as_map.pop("emails")
+        email = queries_as_map.pop(AllowedKeysToFilter.EMAIL)
     except KeyError:
         email = None
 

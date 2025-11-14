@@ -7,6 +7,7 @@ from persyval.constants.text import CHOICE_I_TO_MAIN_MENU
 from persyval.exceptions.main import InvalidCommandError
 from persyval.models.contact import (
     ALLOWED_KEYS_TO_FILTER,
+    AllowedKeysToFilter,
     ContactUid,
 )
 from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
@@ -52,11 +53,12 @@ CONTACTS_LIST_I_ARGS_CONFIG = ArgsConfig[ContactsListIArgs](
 )
 
 
-def parse_queries(queries: list[str]) -> dict[str, str]:
+def parse_queries(queries: list[str]) -> dict[AllowedKeysToFilter, str]:
     result = {}
     for part in queries:
         key, value = part.split("=")
-        result[key] = value
+        key_ = AllowedKeysToFilter(key)
+        result[key_] = value
 
     return result
 

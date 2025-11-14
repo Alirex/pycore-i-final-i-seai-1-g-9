@@ -1,4 +1,5 @@
 import datetime
+import enum
 import uuid
 from typing import TYPE_CHECKING, Annotated, Final, NewType
 
@@ -18,7 +19,19 @@ ContactUid = NewType("ContactUid", uuid.UUID)
 TRIM_ADDRESS: Final[int] = 10
 LONG_PLACEHOLDER: Final[str] = "..."
 
-ALLOWED_KEYS_TO_FILTER: Final[set[str]] = {"uid", "name", "address", "phones", "emails"}
+
+class AllowedKeysToFilter(enum.StrEnum):
+    UID = "uid"
+    NAME = "name"
+    ADDRESS = "address"
+    BIRTHDAY = "birthday"
+
+    # Special. Because of the singular form.
+    PHONE = "phone"
+    EMAIL = "email"
+
+
+ALLOWED_KEYS_TO_FILTER: Final[set[str]] = set(AllowedKeysToFilter)
 
 
 class Contact(BaseModel):
