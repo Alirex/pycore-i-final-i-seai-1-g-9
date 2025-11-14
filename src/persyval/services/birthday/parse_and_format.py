@@ -7,7 +7,7 @@ FORMAT_BIRTHDAY_FOR_HUMAN: Final[str] = "YYYY-MM-DD"
 
 # Format codes:
 # https://docs.python.org/3.13/library/datetime.html#strftime-and-strptime-format-codes
-FORMAT_BIRTHDAY_OUTPUT: str = "%Y.%m.%d %A"
+FORMAT_BIRTHDAY_OUTPUT: str = "%Y-%m-%d %A"
 """Format for birthday output.
 
 Use day of week.
