@@ -64,12 +64,12 @@ def contacts_list(  # noqa: C901, PLR0912
         uid = None
 
     try:
-        name = queries_as_map.pop(AllowedKeysToFilter.NAME)
+        name = queries_as_map.pop(AllowedKeysToFilter.NAME).lower()
     except KeyError:
         name = None
 
     try:
-        address = queries_as_map.pop(AllowedKeysToFilter.ADDRESS)
+        address = queries_as_map.pop(AllowedKeysToFilter.ADDRESS).lower()
     except KeyError:
         address = None
 
@@ -80,12 +80,12 @@ def contacts_list(  # noqa: C901, PLR0912
         birthday = None
 
     try:
-        phone = queries_as_map.pop(AllowedKeysToFilter.PHONE)
+        phone = queries_as_map.pop(AllowedKeysToFilter.PHONE).lower()
     except KeyError:
         phone = None
 
     try:
-        email = queries_as_map.pop(AllowedKeysToFilter.EMAIL)
+        email = queries_as_map.pop(AllowedKeysToFilter.EMAIL).lower()
     except KeyError:
         email = None
 
@@ -98,10 +98,10 @@ def contacts_list(  # noqa: C901, PLR0912
         if uid and uid != contact.uid:
             continue
 
-        if name and name not in contact.name:
+        if name and name not in contact.name.lower():
             continue
 
-        if address and contact.address and address not in contact.address:
+        if address and contact.address and address not in contact.address.lower():
             continue
 
         if birthday and contact.birthday and contact.birthday != birthday:
@@ -110,7 +110,7 @@ def contacts_list(  # noqa: C901, PLR0912
         if phone and not any(phone_item for phone_item in contact.phones if phone in phone_item):
             continue
 
-        if email and not any(email_item for email_item in contact.emails if email in email_item):
+        if email and not any(email_item for email_item in contact.emails if email in email_item.lower()):
             continue
 
         result.append(contact)
