@@ -28,23 +28,22 @@ class Contact(BaseModel):
 
     address: Annotated[str | None, Field(description="The address of the contact.")] = None
 
+    # noinspection Pydantic
     phones: Annotated[
         list[str],
         AfterValidator(validate_phone_list),
-        Field(
-            default_factory=list,
-            description="List of phone numbers associated with the contact.",
-        ),
-    ]
-    #
+    ] = Field(
+        default_factory=list,
+        description="List of phone numbers associated with the contact.",
+    )
+    # noinspection Pydantic
     emails: Annotated[
         list[str],
         AfterValidator(validate_email_list),
-        Field(
-            default_factory=list,
-            description="List of email addresses associated with the contact.",
-        ),
-    ]
+    ] = Field(
+        default_factory=list,
+        description="List of email addresses associated with the contact.",
+    )
 
     birthday: Annotated[
         datetime.date | None,

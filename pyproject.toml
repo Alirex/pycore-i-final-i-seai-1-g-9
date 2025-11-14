@@ -73,7 +73,22 @@ build-backend = "uv_build"
 addopts = "--strict-markers"
 
 [tool.mypy]
-strict = true
+plugins = [
+    "pydantic.mypy",
+]
+
+#strict = true
+follow_imports = "silent"
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_generics = true
+no_implicit_reexport = true
+disallow_untyped_defs = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
 
 [tool.ruff]
 line-length = 120
