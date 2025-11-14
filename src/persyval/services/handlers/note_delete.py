@@ -2,13 +2,13 @@ import uuid
 from typing import TYPE_CHECKING
 
 from prompt_toolkit.shortcuts import yes_no_dialog
-from pydantic import BaseModel
 
 from persyval.models.note import (
     NoteUid,
 )
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.note_delete import note_delete
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message, render_good_message
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from persyval.services.handlers_base.handler_output import HandlerOutput
 
 
-class NoteDeleteIArgs(BaseModel):
+class NoteDeleteIArgs(HandlerArgsBase):
     uid: NoteUid
     force: bool | None = None
 
@@ -38,19 +38,20 @@ NOTE_DELETE_I_ARGS_CONFIG = ArgsConfig[NoteDeleteIArgs](
 
 
 class NoteDeleteIHandler(
-    HandlerBase,
+    HandlerBase[NoteDeleteIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parse_result = NOTE_DELETE_I_ARGS_CONFIG.parse(self.args)
+    def _get_args_config(self) -> ArgsConfig[NoteDeleteIArgs]:
+        return NOTE_DELETE_I_ARGS_CONFIG
 
-        if parse_result.force is None:
+    def _make_action(self, parsed_args: NoteDeleteIArgs) -> HandlerOutput | None:
+        if parsed_args.force is None:
             is_do = yes_no_dialog(
                 title="Confirm Note Delete",
                 text="Are you sure you want to delete the note?",
             ).run()
 
         else:
-            is_do = parse_result.force
+            is_do = parsed_args.force
 
         if not is_do:
             render_canceled_message(
@@ -59,11 +60,11 @@ class NoteDeleteIHandler(
             )
             return None
 
-        note_delete(data_storage=self.data_storage, note_uid=parse_result.uid)
+        note_delete(data_storage=self.data_storage, note_uid=parsed_args.uid)
 
         render_good_message(
             self.console,
-            f"Note with uid {parse_result.uid} has been removed.",
+            f"Note with uid {parsed_args.uid} has been removed.",
         )
 
         return None

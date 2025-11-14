@@ -1,37 +1,27 @@
-import copy
 import enum
 from typing import TYPE_CHECKING, Annotated
 
-from prompt_toolkit import HTML, choice, print_formatted_text, prompt
-from pydantic import BaseModel, Field
+from prompt_toolkit import choice, print_formatted_text, prompt
+from pydantic import Field
 
 from persyval.exceptions.main import InvalidCommandError
 from persyval.models.contact import (
     ALLOWED_KEYS_TO_FILTER,
-    Contact,
     ContactUid,
-    format_birthday,
-    parse_birthday,
-    validate_email_list,
-    validate_phone_list,
 )
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
-from persyval.services.data_actions.contact_get import contact_get
-from persyval.services.data_actions.contact_list import (
+from persyval.services.commands.commands_enum import Command
+from persyval.services.data_actions.contacts_list import (
     LIST_FILTER_MODE_REGISTRY,
     ContactsListConfig,
     ListFilterModeEnum,
-    contact_list,
+    contacts_list,
 )
-from persyval.services.data_actions.contact_update import contact_update
-from persyval.services.handlers.contact_view import ContactViewHandler
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase, HandlerFullArgs
 from persyval.services.handlers_base.handler_base import HandlerBase
-from persyval.utils.format import render_good_message
 
 if TYPE_CHECKING:
     from persyval.services.console.types import PromptToolkitFormattedText
-    from persyval.services.data_storage.data_storage import DataStorage
-    from persyval.services.handlers_base.handler_output import HandlerOutput
 
 
 class ContactItemAction(enum.StrEnum):
@@ -45,13 +35,13 @@ class FilterModeEnum(enum.StrEnum):
     FILTER = "filter"
 
 
-class PhoneListIArgs(BaseModel):
+class ContactsListIArgs(HandlerArgsBase):
     filter_mode: ListFilterModeEnum | None = None
     queries: Annotated[list[str], Field(default_factory=list)]
 
 
-CONTACT_LIST_I_ARGS_CONFIG = ArgsConfig[PhoneListIArgs](
-    result_cls=PhoneListIArgs,
+CONTACTS_LIST_I_ARGS_CONFIG = ArgsConfig[ContactsListIArgs](
+    result_cls=ContactsListIArgs,
     args=[
         ArgMetaConfig(
             name="filter_mode",
@@ -74,13 +64,13 @@ def parse_queries(queries: list[str]) -> dict[str, str]:
     return result
 
 
-class ContactListIHandler(
-    HandlerBase,
+class ContactsListIHandler(
+    HandlerBase[ContactsListIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:  # noqa: C901, PLR0912
-        # TODO: Refactor this function.
-        parsed_args = CONTACT_LIST_I_ARGS_CONFIG.parse(self.args)
+    def _get_args_config(self) -> ArgsConfig[ContactsListIArgs]:
+        return CONTACTS_LIST_I_ARGS_CONFIG
 
+    def _make_action(self, parsed_args: ContactsListIArgs) -> None:  # noqa: C901, PLR0912
         if parsed_args.filter_mode is None and self.non_interactive:
             msg = "Filter mode is required."
             raise InvalidCommandError(msg)
@@ -95,8 +85,15 @@ class ContactListIHandler(
         if choice_filter is ListFilterModeEnum.FILTER:
             queries = parsed_args.queries
             if not queries:
+                queries_raw = prompt(
+                    message="Enter queries (a=b,c=d):",
+                )
+                queries = queries_raw.split(",")
+
+            if not queries:
                 msg = "Queries are required."
                 raise InvalidCommandError(msg)
+
             parsed_queries = parse_queries(queries)
             for key in parsed_queries:
                 if key not in ALLOWED_KEYS_TO_FILTER:
@@ -111,7 +108,7 @@ class ContactListIHandler(
             queries_as_map=parsed_queries,
         )
 
-        contacts = contact_list(
+        contacts = contacts_list(
             data_storage=self.data_storage,
             list_config=list_config,
         )
@@ -119,13 +116,13 @@ class ContactListIHandler(
         if self.plain_render:
             for contact in contacts:
                 print(contact.uid)
-            return None
+            return
 
         if self.non_interactive:
             for contact in contacts:
                 print_formatted_text(contact.get_prompt_toolkit_output())
 
-            return None
+            return
 
         options_list: list[tuple[ContactUid | None, PromptToolkitFormattedText]] = [
             (None, "Exit"),
@@ -138,7 +135,7 @@ class ContactListIHandler(
         )
 
         if choice_by_list is None:
-            return None
+            return
 
         choice_for_item = choice(
             message="What to do with contact:",
@@ -150,75 +147,47 @@ class ContactListIHandler(
         )
 
         match choice_for_item:
+            # TODO: (?) Use lazy import, when available. https://peps.python.org/pep-0810/
             case ContactItemAction.EDIT:
-                contact = contact_edit(
-                    data_storage=self.data_storage,
-                    contact_uid=choice_by_list,
+                from persyval.services.handlers.contact_edit import (  # noqa: PLC0415
+                    ContactEditIArgs,
                 )
 
-                render_good_message(
-                    self.console,
-                    f"Contact '{contact.name}' edited successfully.",
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.CONTACT_EDIT,
+                        args=ContactEditIArgs(
+                            uid=choice_by_list,
+                        ),
+                    ),
                 )
-
             case ContactItemAction.VIEW:
-                return ContactViewHandler(
-                    console=self.console,
-                    data_storage=self.data_storage,
-                    args=[str(choice_by_list)],
-                ).run()
+                from persyval.services.handlers.contact_view import (  # noqa: PLC0415
+                    ContactViewIArgs,
+                )
 
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.CONTACT_VIEW,
+                        args=ContactViewIArgs(
+                            uid=choice_by_list,
+                        ),
+                    ),
+                )
+            case ContactItemAction.DELETE:
+                from persyval.services.handlers.contact_delete import (  # noqa: PLC0415
+                    ContactDeleteIArgs,
+                )
+
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.CONTACT_DELETE,
+                        args=ContactDeleteIArgs(
+                            uid=choice_by_list,
+                        ),
+                    ),
+                )
             case _:
                 raise NotImplementedError
 
-        return None
-
-
-def contact_edit(
-    data_storage: DataStorage,
-    contact_uid: ContactUid,
-) -> Contact:
-    contact = copy.deepcopy(
-        contact_get(
-            data_storage=data_storage,
-            contact_uid=contact_uid,
-        ),
-    )
-
-    name = prompt(
-        message=HTML("<b>Name</b>: "),
-        default=str(contact.name),
-    )
-    address = prompt(
-        message=HTML("<b>Address</b>: "),
-        default=str(contact.address) if contact.address else "",
-    )
-    birthday = prompt(
-        message=HTML("<b>Birthday</b> (YYYY-MM-DD): "),
-        default=format_birthday(contact.birthday) if contact.birthday else "",
-    )
-
-    phones_input = prompt(
-        message=HTML("<b>Phones</b>: "),
-        default=",".join(contact.phones) if contact.phones else "",
-    )
-
-    phones_list = [phone.strip() for phone in phones_input.split(",") if phone.strip()]
-
-    emails_input = prompt(
-        message=HTML("<b>Emails</b>: "),
-        default=",".join(contact.emails) if contact.emails else "",
-    )
-
-    emails_list = [email.strip() for email in emails_input.split(",") if email.strip()]
-
-    contact.name = name
-    contact.address = address
-    contact.birthday = parse_birthday(birthday) if birthday else None
-    contact.phones = validate_phone_list(phones_list)
-    contact.emails = validate_email_list(emails_list)
-
-    return contact_update(
-        data_storage=data_storage,
-        contact=contact,
-    )
+        return

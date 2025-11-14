@@ -1,26 +1,23 @@
 import datetime
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from persyval.models.contact import (
-    FORMAT_BIRTHDAY_FOR_HUMAN,
     Contact,
-    parse_birthday,
-    validate_birthday,
-    validate_email_list,
-    validate_phone_list,
 )
+from persyval.services.birthday.parse_and_format import FORMAT_BIRTHDAY_FOR_HUMAN, parse_birthday
+from persyval.services.birthday.validate_birthday import validate_birthday
 from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.data_actions.contact_add import contact_add
+from persyval.services.email.validate_email import validate_email_list
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
+from persyval.services.phone.validate_phone_list import validate_phone_list
 from persyval.utils.format import render_good_message
 
-if TYPE_CHECKING:
-    from persyval.services.handlers_base.handler_output import HandlerOutput
 
-
-class PhoneAddIArgs(BaseModel):
+class ContactAddIArgs(HandlerArgsBase):
     name: str
     address: str | None = None
     birthday: datetime.date | None = None
@@ -29,8 +26,8 @@ class PhoneAddIArgs(BaseModel):
     emails: Annotated[list[str], Field(default_factory=list)]
 
 
-CONTACT_ADD_I_ARGS_CONFIG = ArgsConfig[PhoneAddIArgs](
-    result_cls=PhoneAddIArgs,
+CONTACT_ADD_I_ARGS_CONFIG = ArgsConfig[ContactAddIArgs](
+    result_cls=ContactAddIArgs,
     args=[
         ArgMetaConfig(
             name="name",
@@ -61,11 +58,12 @@ CONTACT_ADD_I_ARGS_CONFIG = ArgsConfig[PhoneAddIArgs](
 
 
 class ContactAddIHandler(
-    HandlerBase,
+    HandlerBase[ContactAddIArgs],
 ):
-    def _handler(self) -> HandlerOutput | None:
-        parse_result = CONTACT_ADD_I_ARGS_CONFIG.parse(self.args)
+    def _get_args_config(self) -> ArgsConfig[ContactAddIArgs]:
+        return CONTACT_ADD_I_ARGS_CONFIG
 
+    def _make_action(self, parsed_args: ContactAddIArgs) -> None:
         # TODO: Implement
 
         # name = prompt(HTML("Enter <b>name</b>: "))
@@ -73,11 +71,11 @@ class ContactAddIHandler(
         # birthday = prompt(HTML("Enter <b>birthday</b> <i>(Optional)(YYYY-MM-DD)</i>: ")) or None
 
         contact = Contact(
-            name=parse_result.name,
-            address=parse_result.address,
-            birthday=parse_result.birthday,
-            phones=parse_result.phones,
-            emails=parse_result.emails,
+            name=parsed_args.name,
+            address=parsed_args.address,
+            birthday=parsed_args.birthday,
+            phones=parsed_args.phones,
+            emails=parsed_args.emails,
         )
 
         contact_add(data_storage=self.data_storage, contact=contact)
@@ -86,5 +84,3 @@ class ContactAddIHandler(
             self.console,
             f"Contact '{contact.name}' added successfully.",
         )
-
-        return None

@@ -4,12 +4,20 @@ from typing import Final
 
 @enum.unique
 class Command(enum.StrEnum):
+    CONTACTS_ROOT = "contacts"
+
+    CONTACTS_LIST = "contacts_list"
     CONTACT_ADD = "contact_add"
-    CONTACT_LIST = "contact_list"
+
+    CONTACT_EDIT = "contact_edit"
+    CONTACT_VIEW = "contact_view"
     CONTACT_DELETE = "contact_delete"
 
-    NOTE_ADD = "note_add"
-    NOTE_DELETE = "note_delete"
+    CONTACTS_GET_UPCOMING_BIRTHDAYS = "contacts_get_upcoming_birthdays"
+
+    NOTES = "notes"
+
+    STORAGE_ROOT = "storage"
 
     STORAGE_STATS = "storage_stats"
     STORAGE_CLEAR = "storage_clear"
@@ -24,13 +32,21 @@ class Command(enum.StrEnum):
 
 
 COMMANDS_ORDER: Final[list[Command]] = [
+    Command.CONTACTS_ROOT,
+    #
+    Command.CONTACTS_LIST,
     Command.CONTACT_ADD,
-    Command.CONTACT_LIST,
+    #
+    Command.CONTACT_EDIT,
+    Command.CONTACT_VIEW,
     Command.CONTACT_DELETE,
     #
-    Command.NOTE_ADD,
-    Command.NOTE_DELETE,
-    # #
+    Command.CONTACTS_GET_UPCOMING_BIRTHDAYS,
+    #
+    Command.NOTES,
+    #
+    Command.STORAGE_ROOT,
+    #
     Command.STORAGE_STATS,
     Command.STORAGE_CLEAR,
     #

@@ -44,37 +44,60 @@ Also, it can be used as a command line tool.
 **Usage**:
 
 ```console
-$ chat run [OPTIONS]
+$ chat run [OPTIONS] [PREDEFINED_INPUT]
 ```
+
+**Arguments**:
+
+* `[PREDEFINED_INPUT]`: Predefined input to be used instead of prompting the user. 
+
+Useful for testing and automation purposes. Related env var: &#x27;PERSYVAL_I_PREDEFINED_INPUT&#x27;
+
+.
 
 **Options**:
 
-* `--show-commands / --no-show-commands`: Show input commands. 
+* `--show-commands`: Show input commands. 
 
 Useful for debugging purposes.
 
-.  [default: no-show-commands]
-* `--hide-intro / --no-hide-intro`: Hide the introduction message.
+.
+* `--hide-intro`: Hide the introduction message.
 
-.  [default: no-hide-intro]
-* `--non-interactive / --no-non-interactive`: Run in non-interactive mode. 
+.
+* `--non-interactive`: Run in non-interactive mode. 
 
 Do not prompt for user input. Exit after completion of action.
 
-.  [default: no-non-interactive]
-* `--plain-render / --no-plain-render`: Render plain text without any special formatting (e.g., colors, styles). 
+.
+* `--plain-render`: Render plain text without any special formatting (e.g., colors, styles). 
 
 Useful for simple terminals and CLI automations scripts.
 
-.  [default: no-plain-render]
-* `--terminal-simplified / --no-terminal-simplified`: Use simplified terminal input. 
+.
+* `--terminal-simplified`: Use simplified terminal input. 
 
 Useful for testing and automation purposes. Also, useful for some debugging tools.
 
-.  [default: no-terminal-simplified]
-* `--predefined-input TEXT`: Predefined input to be used instead of prompting the user. 
+.
+* `--raise-sys-exit-on-error`: Raise sys.exit(1) on error. 
 
-Useful for testing and automation purposes. Related env: &#x27;PERSYVAL_I_PREDEFINED_INPUT&#x27;
+Useful for testing and automation purposes.
+
+.
+* `--throw-full-error`: Throw full error. 
+
+Useful for testing and automation purposes.
+
+.
+* `--storage-dir PATH`: Storage directory. 
+
+ Use env var &#x27;PERSYVAL_I_NO_PERSISTENCE&#x27; if you want to disable storing data to the file system.
+
+.
+* `--use-advanced-completer`: Use advanced completer. 
+
+ Useful if you need to use advanced commands.
 
 .
 * `--help`: Show this message and exit.
@@ -95,6 +118,8 @@ $ helpers [OPTIONS] COMMAND [ARGS]...
 
 * `show-paths`: Show the paths that used for storage.
 * `clear-storage`: Clear all stored data.
+* `fill-storage`: Fill the storage with some data.
+* `debug`: Debug the application.
 
 ### `helpers show-paths`
 
@@ -118,6 +143,37 @@ Clear all stored data.
 
 ```console
 $ helpers clear-storage [OPTIONS]
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+### `helpers fill-storage`
+
+Fill the storage with some data.
+
+**Usage**:
+
+```console
+$ helpers fill-storage [OPTIONS]
+```
+
+**Options**:
+
+* `--amount INTEGER`: Amount of entities for each type to be added.  [default: 10]
+* `--storage-dir PATH`: Storage directory.
+* `--init-only`: Only add data in section, if it doesn&#x27;t exist.
+* `--help`: Show this message and exit.
+
+### `helpers debug`
+
+Debug the application.
+
+**Usage**:
+
+```console
+$ helpers debug [OPTIONS]
 ```
 
 **Options**:

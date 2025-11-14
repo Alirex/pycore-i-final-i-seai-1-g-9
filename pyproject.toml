@@ -34,6 +34,11 @@ dependencies = [
     # Better command-line interfaces.
     "prompt-toolkit>=3.0.52",
     # [tui_libs]-[END]
+    #
+    # Date and time utilities.
+    "python-dateutil>=2.9.0.post0",
+    # Fake data generator.
+    "faker>=38.0.0",
 ]
 
 [dependency-groups]
@@ -41,6 +46,9 @@ dev = [
     # [typing]-[BEGIN]
     # Static type checker
     "mypy>=1.18.2",
+    #
+    # Types for libs.
+    "types-python-dateutil>=2.9.0.20251108",
     # [typing]-[END]
     #
     # [testing]-[BEGIN]
@@ -50,6 +58,7 @@ dev = [
     "freezegun>=1.5.5",
     # Interactive command-line testing.
     "pexpect>=4.9.0",
+    # [testing]-[END]
 ]
 
 [project.scripts]
@@ -140,6 +149,7 @@ allow-dict-calls-with-keyword-arguments = true
 [tool.ruff.lint.flake8-type-checking]
 runtime-evaluated-base-classes = [
     "pydantic.BaseModel",
+    "persyval.services.execution_queue.execution_queue.HandlerArgsBase"
 ]
 runtime-evaluated-decorators = [
     "pydantic.validate_call",

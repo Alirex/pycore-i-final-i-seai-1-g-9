@@ -1,57 +1,103 @@
+import pathlib  # noqa: TC003
 from typing import Annotated, Final
 
 import environs
 import typer
 
+from persyval.cli.constants import CLI_DOC_NEWLINE, CLI_DOC_NEWLINE_AT_END
 from persyval.services.chat.main import main_chat
+from persyval.services.get_paths.get_app_dirs import get_data_dir_in_user_space
 
 app = typer.Typer()
 
 ENV_VAR_NAME_I_PREDEFINED_INPUT: Final[str] = "PERSYVAL_I_PREDEFINED_INPUT"
 
+ENV_VAR_NAME_I_NO_PERSISTENCE: Final[str] = "PERSYVAL_I_NO_PERSISTENCE"
+
 
 @app.command()
 def run(  # noqa: PLR0913
     *,
+    predefined_input: Annotated[
+        str | None,
+        typer.Argument(
+            help=f"Predefined input to be used instead of prompting the user. {CLI_DOC_NEWLINE}"
+            "Useful for testing and automation purposes. "
+            f"Related env var: '{ENV_VAR_NAME_I_PREDEFINED_INPUT}' {CLI_DOC_NEWLINE_AT_END}",
+        ),
+    ] = None,
+    #
     show_commands: Annotated[
         bool,
-        typer.Option(help="Show input commands. \n\nUseful for debugging purposes.\n\n."),
+        typer.Option(
+            "--show-commands",
+            help=f"Show input commands. {CLI_DOC_NEWLINE}Useful for debugging purposes.{CLI_DOC_NEWLINE_AT_END}",
+        ),
     ] = False,
     hide_intro: Annotated[
         bool,
-        typer.Option(help="Hide the introduction message.\n\n."),
+        typer.Option("--hide-intro", help=f"Hide the introduction message.{CLI_DOC_NEWLINE_AT_END}"),
     ] = False,
     #
     non_interactive: Annotated[
         bool,
         typer.Option(
-            help="Run in non-interactive mode. \n\nDo not prompt for user input. Exit after completion of action.\n\n.",
+            "--non-interactive",
+            help=f"Run in non-interactive mode. {CLI_DOC_NEWLINE}"
+            f"Do not prompt for user input. Exit after completion of action.{CLI_DOC_NEWLINE_AT_END}",
         ),
     ] = False,
     plain_render: Annotated[
         bool,
         typer.Option(
-            help="Render plain text without any special formatting (e.g., colors, styles). \n\n"
-            "Useful for simple terminals and CLI automations scripts.\n\n.",
+            "--plain-render",
+            help=f"Render plain text without any special formatting (e.g., colors, styles). {CLI_DOC_NEWLINE}"
+            f"Useful for simple terminals and CLI automations scripts.{CLI_DOC_NEWLINE_AT_END}",
         ),
     ] = False,
     terminal_simplified: Annotated[
         bool,
         typer.Option(
-            help="Use simplified terminal input. \n\n"
+            "--terminal-simplified",
+            help=f"Use simplified terminal input. {CLI_DOC_NEWLINE}"
             "Useful for testing and automation purposes. "
-            "Also, useful for some debugging tools.\n\n.",
+            f"Also, useful for some debugging tools.{CLI_DOC_NEWLINE_AT_END}",
+        ),
+    ] = False,
+    raise_sys_exit_on_error: Annotated[
+        bool,
+        typer.Option(
+            "--raise-sys-exit-on-error",
+            help=f"Raise sys.exit(1) on error. {CLI_DOC_NEWLINE}"
+            f"Useful for testing and automation purposes.{CLI_DOC_NEWLINE_AT_END}",
+        ),
+    ] = False,
+    throw_full_error: Annotated[
+        bool,
+        typer.Option(
+            "--throw-full-error",
+            help=f"Throw full error. {CLI_DOC_NEWLINE}"
+            f"Useful for testing and automation purposes.{CLI_DOC_NEWLINE_AT_END}",
         ),
     ] = False,
     #
-    predefined_input: Annotated[
-        str | None,
+    storage_dir: Annotated[
+        pathlib.Path | None,
         typer.Option(
-            help="Predefined input to be used instead of prompting the user. \n\n"
-            "Useful for testing and automation purposes. "
-            f"Related env: '{ENV_VAR_NAME_I_PREDEFINED_INPUT}'\n\n.",
+            help=f"Storage directory. {CLI_DOC_NEWLINE} "
+            f"Use env var '{ENV_VAR_NAME_I_NO_PERSISTENCE}' if you want to disable storing data to the file system. "
+            f"{CLI_DOC_NEWLINE_AT_END}",
         ),
     ] = None,
+    #
+    use_advanced_completer: Annotated[
+        bool,
+        typer.Option(
+            "--use-advanced-completer",
+            help=f"Use advanced completer. {CLI_DOC_NEWLINE} "
+            f"Useful if you need to use advanced commands.{CLI_DOC_NEWLINE_AT_END}",
+        ),
+    ] = False,
 ) -> None:
     """Run the personal assistant chat.
 
@@ -69,11 +115,40 @@ def run(  # noqa: PLR0913
     term = environs.env.str("TERM", "")
     terminal_simplified = terminal_simplified or (not term)
 
+    persyval_i_no_persistence = environs.env.bool(ENV_VAR_NAME_I_NO_PERSISTENCE, False)
+
+    storage_dir_fact = get_storage_dir_fact(
+        no_persistence=persyval_i_no_persistence,
+        storage_dir_external=storage_dir,
+    )
+
     main_chat(
         show_commands=show_commands,
         hide_intro=hide_intro,
+        #
         non_interactive=non_interactive,
         plain_render=plain_render,
         terminal_simplified=terminal_simplified,
+        raise_sys_exit_on_error=raise_sys_exit_on_error,
+        throw_full_error=throw_full_error,
+        #
         predefined_input=predefined_input,
+        #
+        storage_dir=storage_dir_fact,
+        #
+        use_advanced_completer=use_advanced_completer,
     )
+
+
+def get_storage_dir_fact(
+    *,
+    no_persistence: bool,
+    storage_dir_external: pathlib.Path | None,
+) -> pathlib.Path | None:
+    if no_persistence:
+        return None
+
+    if storage_dir_external is not None:
+        return storage_dir_external
+
+    return get_data_dir_in_user_space()

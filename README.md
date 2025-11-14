@@ -234,11 +234,27 @@ Go to the [Usage](#usage) section. Check some commands.
 
 Run a script with some demo interactions.
 
-!WARNING! This script will clear the storage.
-
 ```shell
 bash ./src/persyval/tests/demo_interaction.sh
 ```
+
+Details: [script](./src/persyval/tests/demo_interaction.sh)
+
+### Run tests
+
+All tests:
+
+```shell
+uv run pytest
+```
+
+Or run some group by **k**eyword in verbose mode:
+
+```shell
+uv run pytest --verbose -k test_birthday
+```
+
+Keyword can be any part of the test name. For example, the name of a file, or function.
 
 ## Interesting locations
 
@@ -256,6 +272,8 @@ bash ./src/persyval/tests/demo_interaction.sh
   - Contains data of the app.
 - [data actions](./src/persyval/services/data_actions)
   - Actions with data.
+- [tests](./src/persyval/tests)
+  - Tests.
 
 ---
 

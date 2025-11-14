@@ -14,34 +14,41 @@ set -o nounset
 # Note: EOF-style input does not work. So demonstrating only predefined-input style.
 
 
+PERSY_STORAGE_PATH=$(mktemp --directory -t persy-demo-XXXXXX)
+
+echo "Using storage path: ${PERSY_STORAGE_PATH}"
+echo "-------------------------------------"
+
 persy_exec() {
   persy \
+    --storage-dir "${PERSY_STORAGE_PATH}" \
     --show-commands \
     --non-interactive \
+    --raise-sys-exit-on-error \
     --hide-intro \
-    --predefined-input \
     "$1"
 }
 
 persy_exec_plain() {
   persy \
+    --storage-dir "${PERSY_STORAGE_PATH}" \
     --show-commands \
     --non-interactive \
+    --raise-sys-exit-on-error \
     --hide-intro \
     --plain-render \
-    --predefined-input \
     "$1"
 }
 
 
 # Show help message
-persy --show-commands --non-interactive --predefined-input help
+persy --show-commands --non-interactive help
 
 # Wrong argument in help command
-persy_exec "help bla"
+persy_exec "help bla" || true
 
 # Wrong command
-persy_exec "he123"
+persy_exec "he123" || true
 
 # Exit
 persy_exec "exit true"
@@ -52,31 +59,32 @@ persy_exec "storage_stats"
 # Clear storage
 persy_exec "storage_clear true"
 
+persy_exec "contact_add Some"
 
 # Add multiple contacts
 for i in {1..3}; do
   birthday="1990-0$((i))-0$((i))"
 
-  persy_exec "contact_add x$((i)) address-$((i)) ${birthday} +38088000000$((i)),+38088000001$((i)) user_$((i))@example.com,user_$((i))@gmail.com"
+  persy_exec "contact_add x$((i)) address-$((i)) ${birthday} +38073000000$((i)),+38097000001$((i)),+38097000001$((i)) user_$((i))@example.com,user_$((i))@gmail.com"
 done
 
 # Show storage stats
 persy_exec "storage_stats"
 
 # Show all contacts
-persy_exec "contact_list all"
+persy_exec "contacts_list all"
 
 # Show filtered
-persy_exec_plain "contact_list filter name=x2"
+persy_exec_plain "contacts_list filter name=x2"
 
 # Get last line from output
-last_line=$(persy_exec_plain "contact_list filter name=x2" | tail --lines 1)
+last_line=$(persy_exec_plain "contacts_list filter name=x2" | tail --lines 1)
 
 # Remove contact based on last line
 persy_exec "contact_delete ${last_line} true"
 
 # Show all contacts
-persy_exec "contact_list all"
+persy_exec "contacts_list all"
 
 
 #echo "----- Restarting -----"

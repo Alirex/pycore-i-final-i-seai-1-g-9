@@ -15,6 +15,7 @@ def note_add(
         msg = f"Note with uid {note.uid} already exists."
         raise AlreadyExistsError(msg)
 
-    data_storage.data.notes[note.uid] = note
+    with data_storage.autosave():
+        data_storage.data.notes[note.uid] = note
 
     return note

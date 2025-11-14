@@ -1,22 +1,36 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, cast
-from uuid import UUID
-
+from persyval.models.contact import (
+    ContactUid,
+)
+from persyval.services.commands.command_meta import ArgMetaConfig, ArgsConfig
 from persyval.services.data_actions.contact_get import contact_get
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_good_message
 
-if TYPE_CHECKING:
-    from persyval.models.contact import ContactUid
-    from persyval.services.handlers_base.handler_output import HandlerOutput
+
+class ContactViewIArgs(HandlerArgsBase):
+    uid: ContactUid
 
 
-class ContactViewHandler(HandlerBase):
-    def _handler(self) -> HandlerOutput | None:
-        raw_uid_str = self.args[0]
-        raw_uid = UUID(raw_uid_str)
-        contact_uid = cast("ContactUid", raw_uid)
+CONTACT_VIEW_I_ARGS_CONFIG = ArgsConfig[ContactViewIArgs](
+    result_cls=ContactViewIArgs,
+    args=[
+        ArgMetaConfig(
+            name="uid",
+            required=True,
+        ),
+    ],
+)
+
+
+class ContactViewIHandler(
+    HandlerBase[ContactViewIArgs],
+):
+    def _get_args_config(self) -> ArgsConfig[ContactViewIArgs]:
+        return CONTACT_VIEW_I_ARGS_CONFIG
+
+    def _make_action(self, parsed_args: ContactViewIArgs) -> None:
+        contact_uid = parsed_args.uid
 
         contact = contact_get(
             data_storage=self.data_storage,
@@ -37,5 +51,3 @@ class ContactViewHandler(HandlerBase):
         )
 
         render_good_message(self.console, message)
-
-        return None

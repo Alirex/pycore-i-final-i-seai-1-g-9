@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from pydantic import BaseModel
 
-from persyval.services.commands.commands_enum import COMMANDS_ORDER
+from persyval.services.commands.iterate_over_commands_meta import iterate_over_commands_meta
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -19,6 +19,11 @@ class HintsCompleter(Completer, BaseModel):
         document: Document,
         complete_event: CompleteEvent,  # noqa: ARG002
     ) -> Iterable[Completion]:
+        text = document.text_before_cursor
+
+        if " " in text.lstrip():
+            return
+
         word = document.get_word_before_cursor().lower()
 
         for hint in self.hints:
@@ -26,5 +31,9 @@ class HintsCompleter(Completer, BaseModel):
                 yield Completion(hint, start_position=-len(word))
 
 
-def get_completer() -> HintsCompleter:
-    return HintsCompleter(hints=[str(item) for item in COMMANDS_ORDER])
+def get_completer(*, use_advanced_completer: bool = False) -> HintsCompleter:
+    return HintsCompleter(
+        hints=[
+            str(command_meta.command) for command_meta in iterate_over_commands_meta(show_hidden=use_advanced_completer)
+        ],
+    )

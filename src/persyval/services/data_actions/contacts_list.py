@@ -1,9 +1,10 @@
 import enum
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field
 
-from persyval.models.contact import parse_birthday
+from persyval.services.birthday.parse_and_format import parse_birthday
+from persyval.services.birthday.validate_birthday import validate_birthday
 
 if TYPE_CHECKING:
     from persyval.models.contact import Contact
@@ -41,13 +42,13 @@ LIST_FILTER_MODE_REGISTRY: dict[ListFilterModeEnum, ListFilterModeMeta] = {
 class ContactsListConfig(BaseModel):
     filter_mode: ListFilterModeEnum
 
-    queries_as_map: Annotated[dict[str, str], Field(default_factory=dict)]
+    queries_as_map: dict[str, str] = Field(default_factory=dict)
 
 
 # TODO: Refactor this function.
 
 
-def contact_list(  # noqa: C901, PLR0912
+def contacts_list(  # noqa: C901, PLR0912
     data_storage: DataStorage,
     list_config: ContactsListConfig,
 ) -> list[Contact]:
@@ -73,7 +74,7 @@ def contact_list(  # noqa: C901, PLR0912
 
     try:
         birthday_raw = queries_as_map.pop("birthday")
-        birthday = parse_birthday(birthday_raw) if birthday_raw else None
+        birthday = validate_birthday(parse_birthday(birthday_raw)) if birthday_raw else None
     except KeyError:
         birthday = None
 

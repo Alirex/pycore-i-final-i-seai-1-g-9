@@ -15,6 +15,7 @@ def contact_add(
         msg = f"Contact with uid {contact.uid} already exists."
         raise AlreadyExistsError(msg)
 
-    data_storage.data.contacts[contact.uid] = contact
+    with data_storage.autosave():
+        data_storage.data.contacts[contact.uid] = contact
 
     return contact
