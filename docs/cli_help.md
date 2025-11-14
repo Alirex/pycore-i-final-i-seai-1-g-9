@@ -94,7 +94,7 @@ Useful for testing and automation purposes.
 
  Useful if you need to use advanced commands.
 
-.  [required]
+.
 * `--help`: Show this message and exit.
 
 ## `helpers`

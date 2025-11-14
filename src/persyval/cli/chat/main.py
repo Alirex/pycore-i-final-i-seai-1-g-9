@@ -89,7 +89,7 @@ def run(  # noqa: PLR0913
             help=f"Use advanced completer. {CLI_DOC_NEWLINE} "
             f"Useful if you need to use advanced commands.{CLI_DOC_NEWLINE_AT_END}",
         ),
-    ],
+    ] = False,
 ) -> None:
     """Run the personal assistant chat.
 
