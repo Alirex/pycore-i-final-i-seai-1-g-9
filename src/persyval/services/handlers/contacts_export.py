@@ -9,7 +9,7 @@ from persyval.services.handlers.shared.args_i_empty import (
     ArgsIEmpty,
 )
 from persyval.services.handlers_base.handler_base import HandlerBase
-from persyval.utils.format import render_canceled_message, render_good_message
+from persyval.utils.format import render_canceled_message, render_error, render_good_message
 
 if TYPE_CHECKING:
     from persyval.services.commands.args_config import ArgsConfig
@@ -52,8 +52,16 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
 
         export_path = get_downloads_dir_in_user_space() / base_name
 
-        if write_to_csv(self.console, contacts, export_path):
-            render_good_message(
+        try:
+            write_to_csv(items=contacts, path=export_path)
+        except Exception as exc:  # noqa: BLE001
+            render_error(
                 self.console,
-                f"{Contact.get_meta_info().plural_name} were successfully exported to {export_path.as_uri()}",
+                title=f"{exc.__class__.__name__}",
+                message=f"Error while exporting {Contact.get_meta_info().plural_name} to {export_path.as_uri()}: {exc}",
             )
+
+        render_good_message(
+            self.console,
+            f"{Contact.get_meta_info().plural_name} were successfully exported to {export_path.as_uri()}",
+        )

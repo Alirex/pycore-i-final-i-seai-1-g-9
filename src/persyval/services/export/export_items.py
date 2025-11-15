@@ -1,14 +1,13 @@
 import csv
 from typing import TYPE_CHECKING, Any
 
-from persyval.utils.format import render_canceled_message, render_error
+from persyval.exceptions.main import NotFoundError
 
 if TYPE_CHECKING:
     import pathlib
     from collections.abc import Iterable
 
     from pydantic import BaseModel
-    from rich.console import Console
 
 
 def adapt_fields_to_csv(
@@ -21,40 +20,26 @@ def adapt_fields_to_csv(
 
 
 def write_to_csv(
-    console: Console,
     items: Iterable[BaseModel],
-    export_path: pathlib.Path,
-) -> bool:
+    path: pathlib.Path,
+) -> None:
     if not items:
-        render_canceled_message(
-            console=console,
-            message="No items to export.",
-        )
+        msg = "No items to export."
+        raise NotFoundError(msg)
 
-        return False
+    path.parent.mkdir(parents=True, exist_ok=True)
 
-    try:
-        with export_path.open("w", newline="", encoding="utf-8") as f:
-            iter_items = iter(items)
+    # sourcery skip: extract-method
+    with path.open("w", newline="", encoding="utf-8") as f:
+        iter_items = iter(items)
 
-            first = next(iter_items)
-            fields = first.model_fields.keys()
+        first = next(iter_items)
+        fields = first.model_fields.keys()
 
-            writer = csv.DictWriter(f, fieldnames=fields)
-            writer.writeheader()
+        writer = csv.DictWriter(f, fieldnames=fields)
+        writer.writeheader()
 
-            writer.writerow(adapt_fields_to_csv(first.model_dump(mode="json")))
+        writer.writerow(adapt_fields_to_csv(first.model_dump(mode="json")))
 
-            for contact in items:
-                writer.writerow(adapt_fields_to_csv(contact.model_dump(mode="json")))
-
-    except OSError as e:
-        render_error(
-            console,
-            message=f"Failed to export contacts: {e}",
-            title="File Error",
-        )
-        return False
-
-    else:
-        return True
+        for contact in items:
+            writer.writerow(adapt_fields_to_csv(contact.model_dump(mode="json")))
