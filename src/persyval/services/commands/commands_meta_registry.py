@@ -74,7 +74,7 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
         CommandMeta(
             command=Command.CONTACTS_ROOT,
             args_config=CONTACTS_ROOT_I_ARGS_CONFIG,
-            description=f"Manage {Contact.get_meta_info().singular_name}.",
+            description=f"Manage {Contact.get_meta_info().plural_name}.",
             handler=ContactsRootIHandler,
         ),
         #
@@ -137,6 +137,7 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             description=f"List {Note.get_meta_info().plural_name}. "
             f"With filtering and actions on the selected {Note.get_meta_info().plural_name}.",
             handler=NotesListIHandler,
+            hidden=True,
         ),
         CommandMeta(
             command=Command.NOTE_ADD,
