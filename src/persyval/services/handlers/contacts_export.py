@@ -1,8 +1,11 @@
+from enum import Enum
 from typing import TYPE_CHECKING, Final
+
+from prompt_toolkit.shortcuts import choice
 
 from persyval.models.contact import Contact
 from persyval.services.data_actions.contacts_list import ContactsListConfig, ListFilterModeEnum, contacts_list
-from persyval.services.export.export_items import write_to_csv
+from persyval.services.export.export_items import write_to_csv, write_to_json
 from persyval.services.get_paths.get_app_dirs import get_downloads_dir_in_user_space
 from persyval.services.handlers.shared.args_i_empty import (
     ARGS_CONFIG_I_EMPTY,
@@ -15,6 +18,11 @@ if TYPE_CHECKING:
     from persyval.services.commands.args_config import ArgsConfig
 
 
+class ExportFormat(str, Enum):
+    CSV = "csv"
+    JSON = "json"
+
+
 class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
     def _get_args_config(self) -> ArgsConfig[ArgsIEmpty]:
         return ARGS_CONFIG_I_EMPTY
@@ -23,8 +31,6 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
         self,
         parsed_args: ArgsIEmpty,  # noqa: ARG002
     ) -> None:
-        # TODO: (?) Add export to different formats (with select) (CSV, JSON (by pydantic RootModel ?)).
-
         # TODO: (?) Add ability to filter data or get all.
 
         # TODO: (?) Add ability to import data.
@@ -33,6 +39,20 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
         #  If exists, ask for overwrite or provide other not-existing path.
 
         # TODO: (?) Implement all of this for notes.
+
+        format_choices = [
+            (ExportFormat.CSV, "CSV"),
+            (ExportFormat.JSON, "JSON"),
+        ]
+
+        chosen_format = choice(
+            message="Choose export format",
+            options=format_choices,
+        )
+
+        if chosen_format is None:
+            render_canceled_message(self.console, "Export canceled.")
+            return
 
         contacts = contacts_list(
             data_storage=self.data_storage,
@@ -49,19 +69,24 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
             )
             return
 
-        extension: Final[str] = "csv"
+        extension: str = chosen_format.value
         base_name: Final[str] = f"{Contact.get_meta_info().plural_name.lower()}.{extension}"
-
         export_path = get_downloads_dir_in_user_space() / base_name
 
         try:
-            write_to_csv(items=contacts, path=export_path)
+            if chosen_format == ExportFormat.CSV:
+                write_to_csv(items=contacts, path=export_path)
+            elif chosen_format == ExportFormat.JSON:
+                write_to_json(items=contacts, path=export_path)
+
         except Exception as exc:  # noqa: BLE001
             render_error(
                 self.console,
                 title=f"{exc.__class__.__name__}",
                 message=f"Error while exporting {Contact.get_meta_info().plural_name} to {export_path.as_uri()}: {exc}",
             )
+
+            return
 
         render_good_message(
             self.console,
