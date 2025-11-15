@@ -12,16 +12,20 @@ if TYPE_CHECKING:
 
 
 class HelpIArgs(HandlerArgsBase):
-    advanced: bool = False
+    simplified: bool = False
 
 
 HELP_I_ARGS_CONFIG = ArgsConfig[HelpIArgs](
     result_cls=HelpIArgs,
     args=[
         ArgMetaConfig(
-            name="advanced",
+            name="simplified",
             type_=ArgType.BOOL,
-            default=False,
+            alternative_text="Show only simplified commands",
+            boolean_text="Yes/No",
+            required=True,
+            default=True,
+            allow_input_on_empty=True,
         ),
     ],
 )
@@ -34,7 +38,7 @@ class HelpIHandler(
         return HELP_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: HelpIArgs) -> None:
-        render_help(console=self.console, show_hidden=parsed_args.advanced)
+        render_help(console=self.console, show_hidden=not parsed_args.simplified)
 
 
 def render_help(
