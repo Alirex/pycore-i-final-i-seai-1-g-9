@@ -37,7 +37,6 @@ class NoteAddIHandler(
         parsed_args: ArgsIEmpty,  # noqa: ARG002
     ) -> HandlerOutput | None:
         # TODO: Rework to use ArgsConfig input handling
-
         note_or_none = note_add_for_handler(
             console=self.console,
             data_storage=self.data_storage,
