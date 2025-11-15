@@ -1,47 +1,13 @@
-import enum
 from typing import TYPE_CHECKING
 
-from pydantic import BaseModel, Field
-
 from persyval.models.note import AllowedKeysToFilterForNote
+from persyval.services.handlers.shared.sort_and_filter import ListConfig, ListFilterModeEnum
 
 if TYPE_CHECKING:
     from persyval.models.note import Note
     from persyval.services.data_storage.data_storage import DataStorage
 
-
-@enum.unique
-class ListFilterModeEnum(enum.StrEnum):
-    ALL = enum.auto()
-    FILTER = enum.auto()
-
-
-class ListFilterModeMeta(BaseModel):
-    mode: ListFilterModeEnum
-    title: str
-
-
-class NotesListConfig(BaseModel):
-    filter_mode: ListFilterModeEnum
-    queries_as_map: dict[
-        AllowedKeysToFilterForNote,
-        str,
-    ] = Field(default_factory=dict)
-
-
-LIST_FILTER_MODE_REGISTRY: dict[ListFilterModeEnum, ListFilterModeMeta] = {
-    item.mode: item
-    for item in [
-        ListFilterModeMeta(
-            mode=ListFilterModeEnum.ALL,
-            title="Show all",
-        ),
-        ListFilterModeMeta(
-            mode=ListFilterModeEnum.FILTER,
-            title="Filter",
-        ),
-    ]
-}
+NotesListConfig = ListConfig[AllowedKeysToFilterForNote]
 
 
 def extract_queries(

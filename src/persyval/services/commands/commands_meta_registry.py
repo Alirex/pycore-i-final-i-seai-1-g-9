@@ -24,7 +24,6 @@ from persyval.services.handlers.contacts_get_upcoming_birthdays import (
     ContactsGetUpcomingBirthdaysIHandler,
 )
 from persyval.services.handlers.contacts_list import (
-    CONTACTS_LIST_I_ARGS_CONFIG,
     ContactsListIHandler,
 )
 from persyval.services.handlers.contacts_root import (
@@ -41,10 +40,11 @@ from persyval.services.handlers.note_view import (
     NOTE_VIEW_I_ARGS_CONFIG,
     NoteViewIHandler,
 )
-from persyval.services.handlers.notes_list import NOTES_I_ARGS_CONFIG_LIST_I_ARGS_CONFIG, NotesListIHandler
+from persyval.services.handlers.notes_list import NotesListIHandler
 from persyval.services.handlers.notes_root import NOTES_ROOT_I_ARGS_CONFIG, NotesRootIHandler
 from persyval.services.handlers.root import RootIHandler
 from persyval.services.handlers.shared.args_i_empty import ARGS_CONFIG_I_EMPTY
+from persyval.services.handlers.shared.sort_and_filter import LIST_I_ARGS_CONFIG
 from persyval.services.handlers.storage_clear import (
     STORAGE_CLEAR_I_ARGS_CONFIG,
     StorageClearIHandler,
@@ -81,7 +81,7 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
         #
         CommandMeta(
             command=Command.CONTACTS_LIST,
-            args_config=CONTACTS_LIST_I_ARGS_CONFIG,
+            args_config=LIST_I_ARGS_CONFIG,
             description=f"List {Contact.get_meta_info().plural_name}. "
             f"With filtering and actions on the selected {Contact.get_meta_info().plural_name}.",
             handler=ContactsListIHandler,
@@ -141,7 +141,7 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
         #
         CommandMeta(
             command=Command.NOTES_LIST,
-            args_config=NOTES_I_ARGS_CONFIG_LIST_I_ARGS_CONFIG,
+            args_config=LIST_I_ARGS_CONFIG,
             description=f"List {Note.get_meta_info().plural_name}. "
             f"With filtering and actions on the selected {Note.get_meta_info().plural_name}.",
             handler=NotesListIHandler,

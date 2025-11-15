@@ -1,4 +1,3 @@
-import enum
 from collections import defaultdict
 from typing import TYPE_CHECKING, cast
 
@@ -12,52 +11,28 @@ from persyval.models.note import (
     Note,
     NoteUid,
 )
-from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
 from persyval.services.console.add_option_i_to_main_menu import (
     add_option_i_to_main_menu,
 )
-from persyval.services.data_actions.note_list import (
-    LIST_FILTER_MODE_REGISTRY,
-    ListFilterModeEnum,
+from persyval.services.data_actions.notes_list import (
     NotesListConfig,
     note_list,
 )
-from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers.notes.note_item_ask_next_action import (
     note_item_ask_next_action,
+)
+from persyval.services.handlers.shared.sort_and_filter import (
+    LIST_FILTER_MODE_REGISTRY,
+    LIST_I_ARGS_CONFIG,
+    ListFilterModeEnum,
+    ListIArgs,
 )
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message
 
 if TYPE_CHECKING:
+    from persyval.services.commands.args_config import ArgsConfig
     from persyval.services.console.types import PromptToolkitFormattedText
-
-
-@enum.unique
-class FilterModeEnum(enum.StrEnum):
-    ALL = "all"
-    FILTER = "filter"
-
-
-class NotesListIArgs(HandlerArgsBase):
-    filter_mode: ListFilterModeEnum | None = None
-    queries: list[str] | None = None
-
-
-NOTES_I_ARGS_CONFIG_LIST_I_ARGS_CONFIG = ArgsConfig[NotesListIArgs](
-    result_cls=NotesListIArgs,
-    args=[
-        ArgMetaConfig(
-            name="filter_mode",
-            parser_func=lambda x: ListFilterModeEnum(x) if x else None,
-        ),
-        ArgMetaConfig(
-            name="queries",
-            type_=ArgType.LIST_BY_COMMA,
-            default_factory=list,
-        ),
-    ],
-)
 
 
 def parse_queries(queries: list[str]) -> dict[AllowedKeysToFilterForNote, str]:
@@ -109,12 +84,12 @@ def choose_from_list(
 
 
 class NotesListIHandler(
-    HandlerBase[NotesListIArgs],
+    HandlerBase[ListIArgs],
 ):
-    def _get_args_config(self) -> ArgsConfig[NotesListIArgs]:
-        return NOTES_I_ARGS_CONFIG_LIST_I_ARGS_CONFIG
+    def _get_args_config(self) -> ArgsConfig[ListIArgs]:
+        return LIST_I_ARGS_CONFIG
 
-    def _make_action(self, parsed_args: NotesListIArgs) -> None:  # noqa: C901, PLR0912
+    def _make_action(self, parsed_args: ListIArgs) -> None:  # noqa: C901, PLR0912
         if parsed_args.filter_mode is None and self.non_interactive:
             msg = "Filter mode is required."
             raise InvalidCommandError(msg)
