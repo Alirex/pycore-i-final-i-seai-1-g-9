@@ -16,3 +16,8 @@ class InvalidDataError(Exception):
 
 class EmptyDataError(Exception):
     pass
+
+
+class IncorrectNoteFormatError(Exception):
+    def __init__(self, message: str = "Incorrect note format.") -> None:
+        super().__init__(message)

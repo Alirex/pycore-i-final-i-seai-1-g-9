@@ -54,11 +54,12 @@ class NoteDeleteIHandler(
             )
             return None
 
+        note = self.data_storage.data.notes[parsed_args.uid]
         note_delete(data_storage=self.data_storage, note_uid=parsed_args.uid)
 
         render_good_message(
             self.console,
-            f"{Note.get_meta_info().singular_name} with uid {parsed_args.uid} has been deleted.",
+            f"{Note.get_meta_info().singular_name} with title {note.title} (uid {parsed_args.uid}) has been deleted.",
         )
 
         return None
