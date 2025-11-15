@@ -98,7 +98,7 @@ class ContactsListIHandler(
             if not queries:
                 message = (
                     "Enter queries to filter by. \n"
-                    "Format: key=value,key2=value2 (e.g., name=John,address=UA \n"
+                    "Format: key=value,key2=value2 (e.g., name=John,address=UA)\n"
                     f"Allowed keys: {', '.join(sorted(ALLOWED_KEYS_TO_FILTER))}\n"
                 )
                 queries_raw = prompt(

@@ -1,3 +1,4 @@
+import enum
 import uuid
 from typing import TYPE_CHECKING, Annotated, Final, NewType
 
@@ -12,6 +13,14 @@ TRIM_CONTENT_PREVIEW: Final[int] = 40
 LONG_PLACEHOLDER: Final[str] = "..."
 
 NoteUid = NewType("NoteUid", uuid.UUID)
+
+
+class AllowedKeysToFilterForNote(enum.StrEnum):
+    TITLE = "title"
+    CONTENT = "content"
+
+
+ALLOWED_KEYS_TO_FILTER_FOR_NOTE: Final[set[str]] = set(AllowedKeysToFilterForNote)
 
 
 class Note(BaseModel):
