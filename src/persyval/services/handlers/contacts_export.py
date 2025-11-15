@@ -32,6 +32,8 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
         # TODO: (?) Add ability to check path.
         #  If exists, ask for overwrite or provide other not-existing path.
 
+        # TODO: (?) Implement all of this for notes.
+
         contacts = contacts_list(
             data_storage=self.data_storage,
             list_config=ContactsListConfig(
