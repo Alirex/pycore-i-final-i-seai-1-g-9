@@ -33,7 +33,9 @@ from persyval.services.handlers.contacts_root import (
 from persyval.services.handlers.exit import EXIT_I_ARGS_CONFIG, ExitIHandler
 from persyval.services.handlers.hello import HelloIHandler
 from persyval.services.handlers.help import HELP_I_ARGS_CONFIG, HelpIHandler
+from persyval.services.handlers.note_add import NoteAddIHandler
 from persyval.services.handlers.note_delete import NOTE_DELETE_I_ARGS_CONFIG, NoteDeleteIHandler
+from persyval.services.handlers.note_edit import NOTE_EDIT_I_ARGS_CONFIG, NoteEditIHandler
 from persyval.services.handlers.note_view import (
     NOTE_VIEW_I_ARGS_CONFIG,
     NoteViewIHandler,
@@ -128,12 +130,26 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             f"With filtering and actions on the selected {Note.get_meta_info().plural_name}.",
             handler=NotesListIHandler,
         ),
+        CommandMeta(
+            command=Command.NOTE_ADD,
+            args_config=ARGS_CONFIG_I_EMPTY,
+            description=f"Add a {Note.get_meta_info().singular_name}.",
+            handler=NoteAddIHandler,
+            hidden=True,
+        ),
         #
         CommandMeta(
             command=Command.NOTE_VIEW,
             args_config=NOTE_VIEW_I_ARGS_CONFIG,
             description=f"View a {Note.get_meta_info().singular_name}.",
             handler=NoteViewIHandler,
+            hidden=True,
+        ),
+        CommandMeta(
+            command=Command.NOTE_EDIT,
+            args_config=NOTE_EDIT_I_ARGS_CONFIG,
+            description=f"Edit a {Note.get_meta_info().singular_name}.",
+            handler=NoteEditIHandler,
             hidden=True,
         ),
         CommandMeta(

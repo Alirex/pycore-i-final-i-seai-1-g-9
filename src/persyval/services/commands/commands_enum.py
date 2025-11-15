@@ -25,9 +25,9 @@ class Command(enum.StrEnum):
     # NOTES_ROOT = "notes"
     #
     NOTES_LIST = "notes_list"
-    # NOTE_ADD = "note_add"
+    NOTE_ADD = "note_add"
 
-    # NOTE_EDIT = "note_edit"
+    NOTE_EDIT = "note_edit"
     NOTE_VIEW = "note_view"
     NOTE_DELETE = "note_delete"
 
@@ -71,9 +71,9 @@ COMMANDS_ORDER: Final[list[Command]] = [
     # Command.NOTES_ROOT,
     # #
     Command.NOTES_LIST,
-    # Command.NOTE_ADD,
+    Command.NOTE_ADD,
     # #
-    # Command.NOTE_EDIT,
+    Command.NOTE_EDIT,
     Command.NOTE_VIEW,
     Command.NOTE_DELETE,
     # [notes]-[END]
