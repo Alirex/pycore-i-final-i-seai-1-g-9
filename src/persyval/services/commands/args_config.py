@@ -183,11 +183,15 @@ class ArgsConfig[ParseResult](BaseModel):
                     case ArgType.TEXT:
                         arg_result = arg
                     case ArgType.INT:
-                        arg_result = int(arg)
+                        try:
+                            arg_result = int(arg)
+                        except ValueError as exc:
+                            msg = f"Invalid integer value: '{arg}'"
+                            raise InvalidCommandError(msg) from exc
                     case ArgType.BOOL:
                         arg_result = convert_command_part_to_bool(arg)
                     case ArgType.LIST_BY_COMMA:
-                        arg_result = arg.split(",")
+                        arg_result = list(filter(None, arg.split(",")))
                     case _:
                         msg = f"Unknown arg type: {arg_type}"
                         raise ValueError(msg)
