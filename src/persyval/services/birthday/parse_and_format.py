@@ -25,7 +25,7 @@ def format_birthday_for_output(birthday: datetime.date) -> str:
     return birthday.strftime(FORMAT_BIRTHDAY_OUTPUT)
 
 
-def format_birthday_for_edit(birthday: datetime.date) -> str:
+def format_birthday_for_edit_and_export(birthday: datetime.date) -> str:
     if type(birthday) is not datetime.date:
         msg = "Invalid birthday date for formatting."
         raise TypeError(msg)

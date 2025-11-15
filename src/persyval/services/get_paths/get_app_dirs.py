@@ -63,6 +63,14 @@ def get_app_dirs_in_user_space(
     )
 
 
+def get_downloads_dir_in_user_space(
+    *,
+    ensure_exists: bool = False,
+) -> pathlib.Path:
+    """Get application downloads directory in user space."""
+    return pathlib.Path(PlatformDirs(ensure_exists=ensure_exists).user_downloads_dir)
+
+
 def get_data_dir_in_user_space(
     *,
     ensure_exists: bool = False,

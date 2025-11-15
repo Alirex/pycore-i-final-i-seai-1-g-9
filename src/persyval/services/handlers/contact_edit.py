@@ -8,7 +8,7 @@ from persyval.models.contact import (
     ContactUid,
 )
 from persyval.services.birthday.parse_and_format import (
-    format_birthday_for_edit,
+    format_birthday_for_edit_and_export,
     parse_birthday,
 )
 from persyval.services.birthday.validate_birthday import validate_birthday
@@ -70,7 +70,7 @@ class ContactEditIHandler(
         )
         birthday = prompt(
             message=HTML("<b>Birthday</b> (YYYY-MM-DD): "),
-            default=format_birthday_for_edit(contact.birthday) if contact.birthday else "",
+            default=format_birthday_for_edit_and_export(contact.birthday) if contact.birthday else "",
         )
 
         phones_input = prompt(

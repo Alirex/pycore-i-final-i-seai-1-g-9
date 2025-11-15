@@ -13,7 +13,7 @@ class Command(enum.StrEnum):
 
     CONTACTS_LIST = "contacts_list"
     CONTACT_ADD = "contact_add"
-    CONTACTS_DOWNLOAD = "contacts_download"
+    CONTACTS_EXPORT = "contacts_export"
 
     CONTACT_EDIT = "contact_edit"
     CONTACT_VIEW = "contact_view"
@@ -60,7 +60,7 @@ COMMANDS_ORDER: Final[list[Command]] = [
     #
     Command.CONTACTS_LIST,
     Command.CONTACT_ADD,
-    Command.CONTACTS_DOWNLOAD,
+    Command.CONTACTS_EXPORT,
     #
     Command.CONTACT_EDIT,
     Command.CONTACT_VIEW,
