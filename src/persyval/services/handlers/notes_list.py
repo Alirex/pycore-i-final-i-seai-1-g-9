@@ -1,8 +1,10 @@
 import enum
-from typing import TYPE_CHECKING
+from collections import defaultdict
+from typing import TYPE_CHECKING, cast
 
-from prompt_toolkit import choice, print_formatted_text, prompt
+from prompt_toolkit import HTML, choice, print_formatted_text, prompt
 
+from persyval.constants.text import CHOICE_I_TO_MAIN_MENU
 from persyval.exceptions.main import InvalidCommandError
 from persyval.models.note import (
     ALLOWED_KEYS_TO_FILTER_FOR_NOTE,
@@ -73,6 +75,37 @@ def parse_queries(queries: list[str]) -> dict[AllowedKeysToFilterForNote, str]:
 
 
 # TODO: Make repeatable filtering without exiting to main menu
+
+
+def notes_by_tag(notes: list[Note]) -> dict[str, list[Note]]:
+    tag_dict: dict[str, list[Note]] = defaultdict(list)
+
+    for note in notes:
+        if note.tags:  # note has tags
+            for tag in note.tags:
+                tag_dict[tag].append(note)
+        else:  # optionally handle notes without tags under a special key
+            tag_dict["(No tag)"].append(note)
+
+    return dict(tag_dict)
+
+
+def choose_from_list(
+    message: str,
+    items: list[tuple[NoteUid | str | None, PromptToolkitFormattedText]],
+) -> NoteUid | str | None:
+    """Show a choice list to the user and return the selected UID (or None).
+
+    Adds a special 'i' option for returning to the main menu.
+    """
+    options_list: list[tuple[NoteUid | str | None, PromptToolkitFormattedText]] = []
+    add_option_i_to_main_menu(options_list)
+    options_list.extend(items)
+
+    return choice(
+        message=message,
+        options=options_list,
+    )
 
 
 class NotesListIHandler(
@@ -153,23 +186,39 @@ class NotesListIHandler(
             )
             return
 
-        options_list: list[tuple[NoteUid | None, PromptToolkitFormattedText]] = []
-        add_option_i_to_main_menu(options_list)
-
-        options_list.extend((note.uid, note.get_prompt_toolkit_output()) for note in notes)
-
-        message_after_filter = f"{Note.get_meta_info().plural_name} found: {len(notes)}. \nChoose one to interact:"
-        choice_by_list = choice(
-            message=message_after_filter,
-            options=options_list,
+        tags_dict = notes_by_tag(notes)
+        sorted_tags_list = sorted(
+            tags_dict.keys(),
+            key=lambda tag: (tag == "(No tag)", tag),
         )
+
+        tag_options: list[tuple[NoteUid | str | None, HTML | str]] = [
+            (tag, HTML(f"<b>{tag}</b>")) for tag in sorted_tags_list
+        ]
+        message_after_filter = (
+            f"{Note.get_meta_info().plural_name} found: {len(notes)}. \nChoose tag group to interact:"
+        )
+
+        choice_by_list = choose_from_list(message_after_filter, tag_options)
 
         if choice_by_list is None:
             return
 
-        note_item_ask_next_action(
-            execution_queue=self.execution_queue,
-            uid=choice_by_list,
-        )
+        if choice_by_list is not CHOICE_I_TO_MAIN_MENU:
+            tag_notes = tags_dict[str(choice_by_list)]
+            tag_options = [(note.uid, note.get_prompt_toolkit_output()) for note in tag_notes]
+            message_after_tag_filter = (
+                f"{Note.get_meta_info().plural_name} found: {len(tag_notes)}. \nChoose note to interact:"
+            )
+
+            choice_by_tag_list = choose_from_list(message_after_tag_filter, tag_options)
+
+            if choice_by_tag_list is None:
+                return
+
+            note_item_ask_next_action(
+                execution_queue=self.execution_queue,
+                uid=cast("NoteUid", choice_by_tag_list),
+            )
 
         return
