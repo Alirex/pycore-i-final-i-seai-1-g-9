@@ -34,11 +34,11 @@ LIST_FILTER_MODE_REGISTRY: dict[ListFilterModeEnum, ListFilterModeMeta] = {
     for item in [
         ListFilterModeMeta(
             mode=ListFilterModeEnum.ALL,
-            title="Show all notes",
+            title="Show all",
         ),
         ListFilterModeMeta(
             mode=ListFilterModeEnum.FILTER,
-            title="Filter notes",
+            title="Filter",
         ),
     ]
 }
