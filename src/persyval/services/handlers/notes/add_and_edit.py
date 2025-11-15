@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 import typer
 
+from persyval.exceptions.main import IncorrectNoteFormatError
 from persyval.models.note import Note
 from persyval.services.data_actions.note_add import note_add
 from persyval.services.data_actions.note_update import note_update
@@ -77,9 +78,12 @@ def extract_title_and_body(content: str) -> tuple[str, str]:
     """Split editor content into title and body sections."""
     marker = "##########  BODY  ###########."
     parts = content.split(marker, maxsplit=1)
+    if len(parts) <= 1:
+        msg = "Body section marker in note is missing. Please recreate your note without removing it."
+        raise IncorrectNoteFormatError(msg)
 
     title_part = parts[0]
-    body_part = parts[1] if len(parts) > 1 else ""
+    body_part = parts[1]
 
     # Clean both parts from comments and empty lines
 
