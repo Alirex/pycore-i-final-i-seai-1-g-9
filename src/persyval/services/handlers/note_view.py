@@ -66,7 +66,7 @@ def render_details(console: Console, note: Note) -> None:
         console=console,
         entity_title=note.get_meta_info().singular_name,
         list_to_render=[
-            RenderItem(name="Name", value=note.title),
+            RenderItem(name="Name", value=note.title or "[No Title]"),
             RenderItem(name="Address", value=note.content),
             # TODO: Tags
             RenderItem(name="Uid", value=str(note.uid)),

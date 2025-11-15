@@ -3,17 +3,14 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Final
 
 import typer
-from prompt_toolkit import choice, print_formatted_text, prompt
-from rich import box, table, text
+from prompt_toolkit import choice
 
-from persyval.exceptions.main import InvalidCommandError
-from persyval.models.note import ALLOWED_KEYS_TO_FILTER_FOR_NOTE, AllowedKeysToFilterForNote, Note, NoteUid
+from persyval.models.note import Note, NoteUid
 from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig
 from persyval.services.console.yes_no_dialog import yes_no_dialog
 from persyval.services.data_actions.note_add import note_add
 from persyval.services.data_actions.note_delete import note_delete
 from persyval.services.data_actions.note_list import (
-    LIST_FILTER_MODE_REGISTRY,
     ListFilterModeEnum,
     NotesListConfig,
     note_list,
@@ -33,6 +30,7 @@ LONG_PLACEHOLDER: Final[str] = "..."
 class NoteItemsActions(enum.StrEnum):
     LIST = "list"
     ADD = "add"
+
     EDIT = "edit"
     DELETE = "delete"
     VIEW = "view"
@@ -53,20 +51,6 @@ NOTES_I_ARGS_CONFIG = ArgsConfig[NotesListIArgs](
 )
 
 
-def parse_queries(queries: list[str]) -> dict[AllowedKeysToFilterForNote, str]:
-    result = {}
-    for part in queries:
-        split = part.split("=")
-        if len(split) != 2:  # noqa: PLR2004
-            continue
-
-        key, value = split
-        key_ = AllowedKeysToFilterForNote(key)
-        result[key_] = value
-
-    return result
-
-
 class NotesIHandler(
     HandlerBase[NotesListIArgs],
 ):
@@ -83,14 +67,8 @@ class NotesIHandler(
             )
 
         match choice_result:
-            case NoteItemsActions.LIST:
-                self._handler_show_list()
-
             case NoteItemsActions.ADD:
                 self._handler_add()
-
-            case NoteItemsActions.VIEW:
-                self._handler_view()
 
             case NoteItemsActions.EDIT:
                 self._handler_edit()
@@ -101,23 +79,6 @@ class NotesIHandler(
             case _:
                 return None
 
-        return None
-
-    def _handler_show_list(self) -> HandlerOutput | None:
-        choice_filter = choice(
-            message="Choose filter mode:",
-            options=[(item.mode, item.title) for item in LIST_FILTER_MODE_REGISTRY.values()],
-        )
-
-        match choice_filter:
-            case ListFilterModeEnum.ALL:
-                self._handler_view()
-                return None
-            case ListFilterModeEnum.FILTER:
-                self._handler_show_filtered_list()
-                return None
-            case _:
-                return None
         return None
 
     def _handler_add(self) -> HandlerOutput | None:
@@ -133,91 +94,6 @@ class NotesIHandler(
         note_add(data_storage=self.data_storage, note=note)
         render_good_message(self.console, f"Note '{title}' added successfully.")
 
-        return None
-
-    def _handler_show_filtered_list(self) -> HandlerOutput | None:
-        message = (
-            "Enter queries to filter by. \n"
-            "Format: key=value,key2=value2 (e.g., title=My title, content=My body)\n"
-            f"Allowed keys: {', '.join(sorted(ALLOWED_KEYS_TO_FILTER_FOR_NOTE))}\n"
-        )
-        queries_raw = prompt(
-            message=message,
-        )
-        queries = queries_raw.split(",")
-
-        if not queries:
-            msg = "Queries are required."
-            raise InvalidCommandError(msg)
-
-        parsed_queries = parse_queries(queries)
-
-        if not parsed_queries:
-            msg = "Queries are required."
-            raise InvalidCommandError(msg)
-
-        for key in parsed_queries:
-            if key not in ALLOWED_KEYS_TO_FILTER_FOR_NOTE:
-                msg = f"Filtering by '{key}' is not allowed."
-                raise InvalidCommandError(msg)
-
-        list_config = NotesListConfig(
-            filter_mode=ListFilterModeEnum.FILTER,
-            queries_as_map=parsed_queries,
-        )
-
-        notes = note_list(
-            data_storage=self.data_storage,
-            list_config=list_config,
-        )
-
-        if self.plain_render:
-            for note in notes:
-                print(note.uid)
-            return None
-
-        if self.non_interactive:
-            for note in notes:
-                print_formatted_text(note.get_prompt_toolkit_output())
-            return None
-
-        self._handler_view(notes=notes)
-
-        return None
-
-    def _handler_view(self, notes: list[Note] | None = None) -> HandlerOutput | None:
-        if notes is None:
-            notes = note_list(
-                data_storage=self.data_storage,
-                list_config=NotesListConfig(filter_mode=ListFilterModeEnum.ALL),
-            )
-        if not notes:
-            render_canceled_message(self.console, "No notes found in storage.")
-            return None
-
-        notes_table = table.Table(
-            title="📒 Notes List",
-            title_style="bold frame",
-            show_header=True,
-            header_style="bold cyan",
-            leading=True,
-            box=box.SIMPLE_HEAVY,
-        )
-
-        notes_table.add_column("No.", style="light_cyan3", max_width=10, justify="center")
-        notes_table.add_column("Title", style="light_cyan3", max_width=50, no_wrap=True)
-        notes_table.add_column("Content", style="light_cyan3", max_width=MAX_CONTENT_WIDTH, overflow="fold")
-
-        for index, note in enumerate(notes):
-            title_str = text.Text(note.title or "[No Title]", style="bold")
-            content_str = text.Text(self._truncate_text(note.content, MAX_CONTENT_WIDTH), style="dim")
-            notes_table.add_row(
-                str(index + 1),
-                title_str,
-                content_str,
-            )
-
-        self.console.print(notes_table)
         return None
 
     def _handler_edit(self) -> HandlerOutput | None:

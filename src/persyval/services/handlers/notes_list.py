@@ -1,0 +1,175 @@
+import enum
+from typing import TYPE_CHECKING
+
+from prompt_toolkit import choice, print_formatted_text, prompt
+
+from persyval.exceptions.main import InvalidCommandError
+from persyval.models.note import (
+    ALLOWED_KEYS_TO_FILTER_FOR_NOTE,
+    AllowedKeysToFilterForNote,
+    Note,
+    NoteUid,
+)
+from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
+from persyval.services.console.add_option_i_to_main_menu import (
+    add_option_i_to_main_menu,
+)
+from persyval.services.data_actions.note_list import (
+    LIST_FILTER_MODE_REGISTRY,
+    ListFilterModeEnum,
+    NotesListConfig,
+    note_list,
+)
+from persyval.services.execution_queue.execution_queue import HandlerArgsBase
+from persyval.services.handlers.notes.note_item_ask_next_action import (
+    note_item_ask_next_action,
+)
+from persyval.services.handlers_base.handler_base import HandlerBase
+from persyval.utils.format import render_canceled_message
+
+if TYPE_CHECKING:
+    from persyval.services.console.types import PromptToolkitFormattedText
+
+
+@enum.unique
+class FilterModeEnum(enum.StrEnum):
+    ALL = "all"
+    FILTER = "filter"
+
+
+class NotesListIArgs(HandlerArgsBase):
+    filter_mode: ListFilterModeEnum | None = None
+    queries: list[str] | None = None
+
+
+NOTES_I_ARGS_CONFIG_LIST_I_ARGS_CONFIG = ArgsConfig[NotesListIArgs](
+    result_cls=NotesListIArgs,
+    args=[
+        ArgMetaConfig(
+            name="filter_mode",
+            parser_func=lambda x: ListFilterModeEnum(x) if x else None,
+        ),
+        ArgMetaConfig(
+            name="queries",
+            type_=ArgType.LIST_BY_COMMA,
+            default_factory=list,
+        ),
+    ],
+)
+
+
+def parse_queries(queries: list[str]) -> dict[AllowedKeysToFilterForNote, str]:
+    result = {}
+    for part in queries:
+        split = part.split("=")
+        if len(split) != 2:  # noqa: PLR2004
+            continue
+
+        key, value = split
+        key_ = AllowedKeysToFilterForNote(key)
+        result[key_] = value
+
+    return result
+
+
+# TODO: Make repeatable filtering without exiting to main menu
+
+
+class NotesListIHandler(
+    HandlerBase[NotesListIArgs],
+):
+    def _get_args_config(self) -> ArgsConfig[NotesListIArgs]:
+        return NOTES_I_ARGS_CONFIG_LIST_I_ARGS_CONFIG
+
+    def _make_action(self, parsed_args: NotesListIArgs) -> None:  # noqa: C901, PLR0912
+        if parsed_args.filter_mode is None and self.non_interactive:
+            msg = "Filter mode is required."
+            raise InvalidCommandError(msg)
+
+        if parsed_args.filter_mode is not None:
+            choice_filter = parsed_args.filter_mode
+        else:
+            choice_filter = choice(
+                message="Choose filter mode:",
+                options=[(item.mode, item.title) for item in LIST_FILTER_MODE_REGISTRY.values()],
+            )
+
+        if choice_filter is ListFilterModeEnum.FILTER:
+            queries = parsed_args.queries
+            if not queries:
+                message = (
+                    "Enter queries to filter by. \n"
+                    "Format: key=value,key2=value2 (e.g., name=John,address=UA)\n"
+                    f"Allowed keys: {', '.join(sorted(ALLOWED_KEYS_TO_FILTER_FOR_NOTE))}\n"
+                )
+                queries_raw = prompt(
+                    message=message,
+                )
+                queries = queries_raw.split(",")
+
+            if not queries:
+                msg = "Queries are required."
+                raise InvalidCommandError(msg)
+
+            parsed_queries = parse_queries(queries)
+
+            if not parsed_queries:
+                msg = "Queries are required."
+                raise InvalidCommandError(msg)
+
+            for key in parsed_queries:
+                if key not in ALLOWED_KEYS_TO_FILTER_FOR_NOTE:
+                    msg = f"Filtering by '{key}' is not allowed."
+                    raise InvalidCommandError(msg)
+
+        else:
+            parsed_queries = {}
+
+        list_config = NotesListConfig(
+            filter_mode=choice_filter,
+            queries_as_map=parsed_queries,
+        )
+
+        notes = note_list(
+            data_storage=self.data_storage,
+            list_config=list_config,
+        )
+
+        if self.plain_render:
+            for note in notes:
+                print(note.uid)
+            return
+
+        if self.non_interactive:
+            for note in notes:
+                print_formatted_text(note.get_prompt_toolkit_output())
+            return
+
+        if not notes:
+            render_canceled_message(
+                self.console,
+                f"No {Note.get_meta_info().plural_name.lower()} found.",
+                title="Not found",
+            )
+            return
+
+        options_list: list[tuple[NoteUid | None, PromptToolkitFormattedText]] = []
+        add_option_i_to_main_menu(options_list)
+
+        options_list.extend((note.uid, note.get_prompt_toolkit_output()) for note in notes)
+
+        message_after_filter = f"{Note.get_meta_info().plural_name} found: {len(notes)}. \nChoose one to interact:"
+        choice_by_list = choice(
+            message=message_after_filter,
+            options=options_list,
+        )
+
+        if choice_by_list is None:
+            return
+
+        note_item_ask_next_action(
+            execution_queue=self.execution_queue,
+            uid=choice_by_list,
+        )
+
+        return
