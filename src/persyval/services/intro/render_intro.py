@@ -11,19 +11,22 @@ if TYPE_CHECKING:
 
 
 def render_intro(console: Console) -> None:
-    msg_intro = f"""[yellow]Welcome to the personal assistant chat.
+    msg_intro = rf"""
+    [cyan]
+    ╭─────────────────────────────────────────────╮
+    │        Welcome to your Assistant!           │
+    ╰─────────────────────────────────────────────╯
 
-            .-------.
-           / O     O \\
-          |     |     |
-           \\  \\___/  /
-            `-------'
+            (\_/)
+            ( •_•)   I'm here to help.
+           / >💾     Just tell me what you need!
 
-Type [bold]{escape(Command.HELP)}[/bold] for a list of available commands.
-[italic]Autocomplete for commands is enabled.[/italic]
+     Type [bold]{escape(Command.HELP)}[/bold] for available commands.
+     Autocomplete is enabled.
 
-[italic]Press [bold]Enter[/bold] to access the selectable menu.[/italic][/yellow]"""
-
+     Press [bold]Enter[/bold] to open the menu.
+    [/cyan]
+    """
     app_name = APP_NAME.capitalize()
 
     panel = Panel(

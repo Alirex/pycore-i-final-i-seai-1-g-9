@@ -21,7 +21,7 @@ class HelloIHandler(
     ) -> HandlerOutput | None:
         render_good_message(
             self.console,
-            message="Hello, world!",
+            message="Hello, how can I assist you today?",
             title="Hello",
         )
         return None
