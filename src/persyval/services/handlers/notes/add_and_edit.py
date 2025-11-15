@@ -75,7 +75,7 @@ def clean(section: str) -> str:
 
 def extract_title_and_body(content: str) -> tuple[str, str]:
     """Split editor content into title and body sections."""
-    marker = "# Enter body of your note below."
+    marker = "##########  BODY  ###########."
     parts = content.split(marker, maxsplit=1)
 
     title_part = parts[0]
@@ -99,10 +99,8 @@ def form_editor_template(note: Note | None) -> str:
     template_content_data = note.content or "" if note else ""
 
     return (
-        "# Enter title of your note below.\n"
-        "# Lines starting with '#' will be ignored.\n"
+        "##########  TITLE  ##########.\n"
         f"{template_title_data}\n\n"
-        "# Enter body of your note below.\n"
-        "# Everything after this line will be the note body.\n\n"
+        "##########  BODY  ###########.\n"
         f"{template_content_data}\n"
     )
