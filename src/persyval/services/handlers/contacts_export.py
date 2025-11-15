@@ -23,7 +23,7 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
         self,
         parsed_args: ArgsIEmpty,  # noqa: ARG002
     ) -> None:
-        # TODO: (?) Add export to different formats (CSV, JSON).
+        # TODO: (?) Add export to different formats (with select) (CSV, JSON (by pydantic RootModel ?)).
 
         # TODO: (?) Add ability to filter data or get all.
 
