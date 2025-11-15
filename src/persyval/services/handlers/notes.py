@@ -3,15 +3,21 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Final
 
 import typer
-from prompt_toolkit import choice
+from prompt_toolkit import choice, print_formatted_text, prompt
 from rich import box, table, text
 
-from persyval.models.note import Note, NoteUid
+from persyval.exceptions.main import InvalidCommandError
+from persyval.models.note import ALLOWED_KEYS_TO_FILTER_FOR_NOTE, AllowedKeysToFilterForNote, Note, NoteUid
 from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig
 from persyval.services.console.yes_no_dialog import yes_no_dialog
 from persyval.services.data_actions.note_add import note_add
 from persyval.services.data_actions.note_delete import note_delete
-from persyval.services.data_actions.note_list import note_list
+from persyval.services.data_actions.note_list import (
+    LIST_FILTER_MODE_REGISTRY,
+    ListFilterModeEnum,
+    NotesListConfig,
+    note_list,
+)
 from persyval.services.data_actions.note_update import note_update
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
@@ -25,6 +31,7 @@ LONG_PLACEHOLDER: Final[str] = "..."
 
 
 class NoteItemsActions(enum.StrEnum):
+    LIST = "list"
     ADD = "add"
     EDIT = "edit"
     DELETE = "delete"
@@ -46,6 +53,20 @@ NOTES_I_ARGS_CONFIG = ArgsConfig[NotesListIArgs](
 )
 
 
+def parse_queries(queries: list[str]) -> dict[AllowedKeysToFilterForNote, str]:
+    result = {}
+    for part in queries:
+        split = part.split("=")
+        if len(split) != 2:  # noqa: PLR2004
+            continue
+
+        key, value = split
+        key_ = AllowedKeysToFilterForNote(key)
+        result[key_] = value
+
+    return result
+
+
 class NotesIHandler(
     HandlerBase[NotesListIArgs],
 ):
@@ -62,6 +83,9 @@ class NotesIHandler(
             )
 
         match choice_result:
+            case NoteItemsActions.LIST:
+                self._handler_show_list()
+
             case NoteItemsActions.ADD:
                 self._handler_add()
 
@@ -79,6 +103,23 @@ class NotesIHandler(
 
         return None
 
+    def _handler_show_list(self) -> HandlerOutput | None:
+        choice_filter = choice(
+            message="Choose filter mode:",
+            options=[(item.mode, item.title) for item in LIST_FILTER_MODE_REGISTRY.values()],
+        )
+
+        match choice_filter:
+            case ListFilterModeEnum.ALL:
+                self._handler_view()
+                return None
+            case ListFilterModeEnum.FILTER:
+                self._handler_show_filtered_list()
+                return None
+            case _:
+                return None
+        return None
+
     def _handler_add(self) -> HandlerOutput | None:
         content = self._open_editor_template(None)
 
@@ -94,8 +135,62 @@ class NotesIHandler(
 
         return None
 
-    def _handler_view(self) -> HandlerOutput | None:
-        notes = note_list(data_storage=self.data_storage)
+    def _handler_show_filtered_list(self) -> HandlerOutput | None:
+        message = (
+            "Enter queries to filter by. \n"
+            "Format: key=value,key2=value2 (e.g., title=My title, content=My body)\n"
+            f"Allowed keys: {', '.join(sorted(ALLOWED_KEYS_TO_FILTER_FOR_NOTE))}\n"
+        )
+        queries_raw = prompt(
+            message=message,
+        )
+        queries = queries_raw.split(",")
+
+        if not queries:
+            msg = "Queries are required."
+            raise InvalidCommandError(msg)
+
+        parsed_queries = parse_queries(queries)
+
+        if not parsed_queries:
+            msg = "Queries are required."
+            raise InvalidCommandError(msg)
+
+        for key in parsed_queries:
+            if key not in ALLOWED_KEYS_TO_FILTER_FOR_NOTE:
+                msg = f"Filtering by '{key}' is not allowed."
+                raise InvalidCommandError(msg)
+
+        list_config = NotesListConfig(
+            filter_mode=ListFilterModeEnum.FILTER,
+            queries_as_map=parsed_queries,
+        )
+
+        notes = note_list(
+            data_storage=self.data_storage,
+            list_config=list_config,
+        )
+
+        if self.plain_render:
+            for note in notes:
+                print(note.uid)
+            return None
+
+        if self.non_interactive:
+            for note in notes:
+                print_formatted_text(note.get_prompt_toolkit_output())
+            return None
+
+        self._handler_view(notes=notes)
+
+        return None
+
+    def _handler_view(self, notes: list[Note] | None = None) -> HandlerOutput | None:
+        if notes is None:
+            notes = note_list(
+                data_storage=self.data_storage,
+                list_config=NotesListConfig(filter_mode=ListFilterModeEnum.ALL),
+            )
         if not notes:
             render_canceled_message(self.console, "No notes found in storage.")
             return None
@@ -126,7 +221,10 @@ class NotesIHandler(
         return None
 
     def _handler_edit(self) -> HandlerOutput | None:
-        notes = note_list(data_storage=self.data_storage)
+        notes = note_list(
+            data_storage=self.data_storage,
+            list_config=NotesListConfig(filter_mode=ListFilterModeEnum.ALL),
+        )
         if not notes:
             render_canceled_message(self.console, "No notes found in storage.")
             return None
@@ -155,7 +253,10 @@ class NotesIHandler(
         return None
 
     def _handler_delete(self) -> HandlerOutput | None:
-        notes = note_list(data_storage=self.data_storage)
+        notes = note_list(
+            data_storage=self.data_storage,
+            list_config=NotesListConfig(filter_mode=ListFilterModeEnum.ALL),
+        )
         if not notes:
             render_canceled_message(self.console, "No notes found in storage.")
             return None
@@ -226,7 +327,10 @@ class NotesIHandler(
         return cleaned_text
 
     def _get_note_id(self) -> NoteUid:
-        notes = note_list(data_storage=self.data_storage)
+        notes = note_list(
+            data_storage=self.data_storage,
+            list_config=NotesListConfig(filter_mode=ListFilterModeEnum.ALL),
+        )
 
         selected_note_id: NoteUid = choice(
             message="Choose a note:",
