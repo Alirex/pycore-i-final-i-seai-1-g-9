@@ -19,8 +19,10 @@ def render_intro(console: Console) -> None:
            \\  \\___/  /
             `-------'
 
-Type [bold]{escape(Command.HELP)}[/bold] or press [bold]Enter[/bold] for a list of available commands.
-[italic]Autocomplete for commands is enabled.[/italic][/yellow]"""
+Type [bold]{escape(Command.HELP)}[/bold] for a list of available commands.
+[italic]Autocomplete for commands is enabled.[/italic]
+
+[italic]Press [bold]Enter[/bold] to access the selectable menu.[/italic][/yellow]"""
 
     app_name = APP_NAME.capitalize()
 
