@@ -41,6 +41,7 @@ from persyval.services.handlers.note_view import (
     NoteViewIHandler,
 )
 from persyval.services.handlers.notes_list import NOTES_I_ARGS_CONFIG_LIST_I_ARGS_CONFIG, NotesListIHandler
+from persyval.services.handlers.notes_root import NOTES_ROOT_I_ARGS_CONFIG, NotesRootIHandler
 from persyval.services.handlers.root import RootIHandler
 from persyval.services.handlers.shared.args_i_empty import ARGS_CONFIG_I_EMPTY
 from persyval.services.handlers.storage_clear import (
@@ -121,6 +122,13 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             description=f"Show upcoming birthdays for the {Contact.get_meta_info().plural_name}.",
             handler=ContactsGetUpcomingBirthdaysIHandler,
             hidden=True,
+        ),
+        #
+        CommandMeta(
+            command=Command.NOTES_ROOT,
+            args_config=NOTES_ROOT_I_ARGS_CONFIG,
+            description=f"Manage {Note.get_meta_info().plural_name}.",
+            handler=NotesRootIHandler,
         ),
         #
         CommandMeta(

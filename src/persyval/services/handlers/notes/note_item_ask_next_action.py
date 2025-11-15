@@ -93,23 +93,27 @@ def note_item_ask_next_action(
                     ),
                 ),
             )
-        # case NoteItemAction.EDIT:
-        #     execution_queue.put(
-        #         HandlerFullArgs(
-        #             command=Command.NOTE_EDIT,
-        #             args=NoteEditIArgs(
-        #                 uid=uid,
-        #             ),
-        #         ),
-        #     )
-        # case NoteItemAction.DELETE:
-        #     execution_queue.put(
-        #         HandlerFullArgs(
-        #             command=Command.NOTE_DELETE,
-        #             args=NoteDeleteIArgs(
-        #                 uid=uid,
-        #             ),
-        #         ),
-        #     )
+        case NoteItemAction.EDIT:
+            from persyval.services.handlers.note_edit import NoteEditIArgs  # noqa: PLC0415
+
+            execution_queue.put(
+                HandlerFullArgs(
+                    command=Command.NOTE_EDIT,
+                    args=NoteEditIArgs(
+                        uid=uid,
+                    ),
+                ),
+            )
+        case NoteItemAction.DELETE:
+            from persyval.services.handlers.note_delete import NoteDeleteIArgs  # noqa: PLC0415
+
+            execution_queue.put(
+                HandlerFullArgs(
+                    command=Command.NOTE_DELETE,
+                    args=NoteDeleteIArgs(
+                        uid=uid,
+                    ),
+                ),
+            )
         case _:
             raise NotImplementedError
