@@ -119,6 +119,9 @@ class ArgsConfig[ParseResult](BaseModel):
                     msg = f"Required argument `{arg_meta_config.name}` is missing."
                     raise InvalidCommandError(msg)
 
+            if arg is None and non_interactive:
+                continue
+
             # ---
 
             if arg_meta_config.alternative_text:
