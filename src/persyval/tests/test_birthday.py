@@ -45,6 +45,7 @@ def test_parse_birthday_i_invalid_format(birthday_str: str) -> None:
     with pytest.raises(ValueError, match="Invalid isoformat"):
         parse_birthday(birthday_str)
 
+
 @pytest.mark.parametrize(
     "birthday",
     [
@@ -55,7 +56,8 @@ def test_parse_birthday_i_invalid_format(birthday_str: str) -> None:
 def test_parse_birthday_i_empty(birthday: str | None) -> None:
     result = parse_birthday(birthday)
     assert result is None
-    
+
+
 # Region: format_birthday_for_output tests
 @pytest.mark.parametrize(
     ("birthday", "expected"),
@@ -78,8 +80,8 @@ def test_format_birthday_for_output(birthday: datetime.date, expected: str) -> N
         datetime.datetime(2020, 1, 1, tzinfo=datetime.UTC),  # datetime instead of date (tz-aware)
     ],
 )
-def test_format_birthday_for_output_invalid_input(birthday: object) -> None:
-    with pytest.raises(ValueError, match=r".*"):
+def test_format_birthday_for_output_invalid_input_type(birthday: object) -> None:
+    with pytest.raises(TypeError, match=r".*"):
         format_birthday_for_output(cast("datetime.date", birthday))
 
 

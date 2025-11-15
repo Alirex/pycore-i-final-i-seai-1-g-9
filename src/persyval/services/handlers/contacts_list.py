@@ -7,6 +7,7 @@ from persyval.exceptions.main import InvalidCommandError
 from persyval.models.contact import (
     ALLOWED_KEYS_TO_FILTER,
     AllowedKeysToFilter,
+    Contact,
     ContactUid,
 )
 from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
@@ -20,8 +21,8 @@ from persyval.services.data_actions.contacts_list import (
     contacts_list,
 )
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
-from persyval.services.handlers.contacts.contacts_ask_next_action import (
-    contacts_ask_next_action,
+from persyval.services.handlers.contacts.contact_item_ask_next_action import (
+    contact_item_ask_next_action,
 )
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message
@@ -148,7 +149,7 @@ class ContactsListIHandler(
         if not contacts:
             render_canceled_message(
                 self.console,
-                "No contacts found.",
+                f"No {Contact.get_meta_info().plural_name.lower()} found.",
                 title="Not found",
             )
             return
@@ -158,7 +159,9 @@ class ContactsListIHandler(
 
         options_list.extend((contact.uid, contact.get_prompt_toolkit_output()) for contact in contacts)
 
-        message_after_filter = f"Contacts found: {len(contacts)}. \nChoose one to interact:"
+        message_after_filter = (
+            f"{Contact.get_meta_info().plural_name} found: {len(contacts)}. \nChoose one to interact:"
+        )
         choice_by_list = choice(
             message=message_after_filter,
             options=options_list,
@@ -167,9 +170,9 @@ class ContactsListIHandler(
         if choice_by_list is None:
             return
 
-        contacts_ask_next_action(
+        contact_item_ask_next_action(
             execution_queue=self.execution_queue,
-            contact_uid=choice_by_list,
+            uid=choice_by_list,
         )
 
         return

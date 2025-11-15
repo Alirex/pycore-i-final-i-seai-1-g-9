@@ -1,9 +1,12 @@
 import enum
 import uuid
+from functools import cache
 from typing import TYPE_CHECKING, Annotated, Final, NewType
 
 from prompt_toolkit import HTML
 from pydantic import BaseModel, ConfigDict, Field
+
+from persyval.services.model_meta.model_meta_info import ModelMetaInfo
 
 if TYPE_CHECKING:
     from persyval.services.console.types import PromptToolkitFormattedText
@@ -13,6 +16,8 @@ TRIM_CONTENT_PREVIEW: Final[int] = 40
 LONG_PLACEHOLDER: Final[str] = "..."
 
 NoteUid = NewType("NoteUid", uuid.UUID)
+
+ENTITY_PUBLIC_NAME: Final[str] = "Note"
 
 
 class AllowedKeysToFilterForNote(enum.StrEnum):
@@ -57,3 +62,8 @@ class Note(BaseModel):
         text += f"  (<i>{self.uid}</i>)"
 
         return HTML(text)
+
+    @classmethod
+    @cache
+    def get_meta_info(cls) -> ModelMetaInfo:
+        return ModelMetaInfo.from_class(cls)

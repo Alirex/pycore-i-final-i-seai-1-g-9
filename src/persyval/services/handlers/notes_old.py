@@ -279,7 +279,7 @@ class NotesIHandler(
 
         render_good_message(
             self.console,
-            f"Note with uid {selected_note_id} has been removed.",
+            f"Note with uid {selected_note_id} has been deleted.",
         )
 
         return None

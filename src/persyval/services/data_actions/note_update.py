@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from persyval.exceptions.main import NotFoundError
+from persyval.models.note import Note
 
 if TYPE_CHECKING:
     from persyval.models.note import NoteUid
@@ -10,6 +11,7 @@ if TYPE_CHECKING:
 def note_update(
     data_storage: DataStorage,
     note_uid: NoteUid,
+    #
     new_title: str,
     new_content: str,
 ) -> None:
@@ -19,5 +21,5 @@ def note_update(
         target_note.content = new_content
 
     except KeyError as exc:
-        msg = f"Note with uid {note_uid} not found."
+        msg = f"{Note.get_meta_info().singular_name} with uid {note_uid} not found."
         raise NotFoundError(msg) from exc

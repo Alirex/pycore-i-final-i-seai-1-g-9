@@ -23,6 +23,7 @@ RENDER_I_STYLE: Final[str] = "green bold"
 
 def render_item_card_with_panel(
     console: Console,
+    entity_title: str,
     list_to_render: list[RenderItem],
 ) -> None:
     message_as_list = []
@@ -38,7 +39,7 @@ def render_item_card_with_panel(
 
     render_with_panel(
         console=console,
-        title="Contact details",
+        title=f"{entity_title} details",
         message=RichFormattedText(message),
         style=RENDER_I_STYLE,
     )

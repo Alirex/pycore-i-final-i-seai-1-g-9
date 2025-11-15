@@ -61,6 +61,8 @@ class ContactsGetUpcomingBirthdaysIHandler(
             )
             return
 
+        # TODO: (?) Rework to options list?
+
         table = Table(title="Upcoming birthdays", title_justify="left")
         table.add_column("Name")
         table.add_column("Congratulation date")

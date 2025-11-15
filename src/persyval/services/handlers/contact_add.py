@@ -74,5 +74,5 @@ class ContactAddIHandler(
 
         render_good_message(
             self.console,
-            f"Contact '{contact.name}' added successfully.",
+            f"{Contact.get_meta_info().singular_name} '{contact.name}' added successfully.",
         )

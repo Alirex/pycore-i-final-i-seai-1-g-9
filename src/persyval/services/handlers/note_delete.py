@@ -2,10 +2,10 @@ import uuid
 from typing import TYPE_CHECKING
 
 from persyval.models.note import (
+    Note,
     NoteUid,
 )
 from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
-from persyval.services.console.yes_no_dialog import yes_no_dialog
 from persyval.services.data_actions.note_delete import note_delete
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
 from persyval.services.handlers_base.handler_base import HandlerBase
@@ -31,6 +31,10 @@ NOTE_DELETE_I_ARGS_CONFIG = ArgsConfig[NoteDeleteIArgs](
         ArgMetaConfig(
             name="force",
             type_=ArgType.BOOL,
+            required=True,
+            allow_input_on_empty=True,
+            alternative_text=f"Are you sure you want to delete this {Note.get_meta_info().singular_name}?",
+            boolean_text="Yes/No",
         ),
     ],
 )
@@ -43,19 +47,10 @@ class NoteDeleteIHandler(
         return NOTE_DELETE_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: NoteDeleteIArgs) -> HandlerOutput | None:
-        if parsed_args.force is None:
-            is_do = yes_no_dialog(
-                title="Confirm Note Delete",
-                text="Are you sure you want to delete the note?",
-            )
-
-        else:
-            is_do = parsed_args.force
-
-        if not is_do:
+        if not parsed_args.force:
             render_canceled_message(
                 self.console,
-                "Note delete operation cancelled by user.",
+                f"{Note.get_meta_info().singular_name} delete operation cancelled by user.",
             )
             return None
 
@@ -63,7 +58,7 @@ class NoteDeleteIHandler(
 
         render_good_message(
             self.console,
-            f"Note with uid {parsed_args.uid} has been removed.",
+            f"{Note.get_meta_info().singular_name} with uid {parsed_args.uid} has been deleted.",
         )
 
         return None

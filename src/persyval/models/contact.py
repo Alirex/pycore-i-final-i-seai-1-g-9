@@ -1,6 +1,7 @@
 import datetime
 import enum
 import uuid
+from functools import cache
 from typing import TYPE_CHECKING, Annotated, Final, NewType
 
 from prompt_toolkit import HTML
@@ -9,6 +10,7 @@ from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 from persyval.services.birthday.parse_and_format import format_birthday_for_output
 from persyval.services.birthday.validate_birthday import validate_birthday
 from persyval.services.email.validate_email import validate_email_list
+from persyval.services.model_meta.model_meta_info import ModelMetaInfo
 from persyval.services.phone.validate_phone_list import validate_phone_list
 
 if TYPE_CHECKING:
@@ -32,6 +34,8 @@ class AllowedKeysToFilter(enum.StrEnum):
 
 
 ALLOWED_KEYS_TO_FILTER: Final[set[str]] = set(AllowedKeysToFilter)
+
+ENTITY_PUBLIC_NAME: Final[str] = "Contact"
 
 
 class Contact(BaseModel):
@@ -91,3 +95,8 @@ class Contact(BaseModel):
         text += f"  (<i>{self.uid}</i>)"
 
         return HTML(text)
+
+    @classmethod
+    @cache
+    def get_meta_info(cls) -> ModelMetaInfo:
+        return ModelMetaInfo.from_class(cls)

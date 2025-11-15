@@ -1,4 +1,5 @@
 from persyval.models.contact import (
+    Contact,
     ContactUid,
 )
 from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
@@ -25,7 +26,7 @@ CONTACT_DELETE_I_ARGS_CONFIG = ArgsConfig[ContactDeleteIArgs](
             type_=ArgType.BOOL,
             required=True,
             allow_input_on_empty=True,
-            alternative_text="Are you sure you want to delete this contact?",
+            alternative_text=f"Are you sure you want to delete this {Contact.get_meta_info().singular_name}?",
             boolean_text="Yes/No",
         ),
     ],
@@ -42,17 +43,15 @@ class ContactDeleteIHandler(
         if not parsed_args.force:
             render_canceled_message(
                 self.console,
-                "Contact remove operation cancelled by user.",
+                f"{Contact.get_meta_info().singular_name} delete operation cancelled by user.",
             )
             return
-
-        # ---
 
         contact = contact_delete(data_storage=self.data_storage, contact_uid=parsed_args.uid)
 
         render_good_message(
             self.console,
-            f"Contact '{contact.name}' ({contact.uid}) has been deleted.",
+            f"{Contact.get_meta_info().singular_name} '{contact.name}' ({contact.uid}) has been deleted.",
         )
 
         return

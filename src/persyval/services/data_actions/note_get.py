@@ -8,13 +8,12 @@ if TYPE_CHECKING:
     from persyval.services.data_storage.data_storage import DataStorage
 
 
-def note_delete(
+def note_get(
     data_storage: DataStorage,
-    note_uid: NoteUid,
-) -> None:
+    uid: NoteUid,
+) -> Note:
     try:
-        with data_storage.autosave():
-            del data_storage.data.notes[note_uid]
+        return data_storage.data.notes[uid]
     except KeyError as exc:
-        msg = f"{Note.get_meta_info().singular_name} with uid {note_uid} not found."
+        msg = f"{Note.get_meta_info().singular_name} with uid {uid} not found."
         raise NotFoundError(msg) from exc

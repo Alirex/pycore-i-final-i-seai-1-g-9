@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING
 
 from persyval.exceptions.main import AlreadyExistsError
+from persyval.models.note import Note
 
 if TYPE_CHECKING:
-    from persyval.models.note import Note
     from persyval.services.data_storage.data_storage import DataStorage
 
 
@@ -12,7 +12,7 @@ def note_add(
     note: Note,
 ) -> Note:
     if note.uid in data_storage.data.notes:
-        msg = f"Note with uid {note.uid} already exists."
+        msg = f"{Note.get_meta_info().singular_name} with uid {note.uid} already exists."
         raise AlreadyExistsError(msg)
 
     with data_storage.autosave():

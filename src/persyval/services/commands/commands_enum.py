@@ -8,6 +8,7 @@ class Command(enum.StrEnum):
 
     ROOT = "root"
 
+    # [contacts]-[BEGIN]
     CONTACTS_ROOT = "contacts"
 
     CONTACTS_LIST = "contacts_list"
@@ -18,13 +19,26 @@ class Command(enum.StrEnum):
     CONTACT_DELETE = "contact_delete"
 
     CONTACTS_GET_UPCOMING_BIRTHDAYS = "contacts_get_upcoming_birthdays"
+    # [contacts]-[END]
 
-    NOTES = "notes"
+    # [notes]-[BEGIN]
+    # NOTES_ROOT = "notes"
+    #
+    # NOTES_LIST = "notes_list"
+    # NOTE_ADD = "note_add"
 
+    # NOTE_EDIT = "note_edit"
+    NOTE_VIEW = "note_view"
+    NOTE_DELETE = "note_delete"
+
+    # [notes]-[END]
+
+    # [storage]-[BEGIN]
     STORAGE_ROOT = "storage"
 
     STORAGE_STATS = "storage_stats"
     STORAGE_CLEAR = "storage_clear"
+    # [storage]-[END]
 
     HELP = "help"
 
@@ -54,7 +68,14 @@ COMMANDS_ORDER: Final[list[Command]] = [
     # [contacts]-[END]
     #
     # [notes]-[BEGIN]
-    Command.NOTES,
+    # Command.NOTES_ROOT,
+    # #
+    # Command.NOTES_LIST,
+    # Command.NOTE_ADD,
+    # #
+    # Command.NOTE_EDIT,
+    Command.NOTE_VIEW,
+    Command.NOTE_DELETE,
     # [notes]-[END]
     #
     # [storage]-[BEGIN]

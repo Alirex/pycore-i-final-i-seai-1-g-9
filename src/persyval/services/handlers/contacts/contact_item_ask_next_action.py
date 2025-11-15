@@ -54,10 +54,10 @@ CHOICE_ITEM_META_REGISTRY: dict[ContactItemAction, ChoiceItemMeta] = {
 }
 
 
-def contacts_ask_next_action(
+def contact_item_ask_next_action(
     *,
     execution_queue: ExecutionQueue,
-    contact_uid: ContactUid,
+    uid: ContactUid,
     is_from_view: bool = False,
 ) -> None:
     options: list[tuple[ContactItemAction | None, PromptToolkitFormattedText]] = []
@@ -89,7 +89,7 @@ def contacts_ask_next_action(
                 HandlerFullArgs(
                     command=Command.CONTACT_VIEW,
                     args=ContactViewIArgs(
-                        uid=contact_uid,
+                        uid=uid,
                     ),
                 ),
             )
@@ -102,7 +102,7 @@ def contacts_ask_next_action(
                 HandlerFullArgs(
                     command=Command.CONTACT_EDIT,
                     args=ContactEditIArgs(
-                        uid=contact_uid,
+                        uid=uid,
                     ),
                 ),
             )
@@ -115,7 +115,7 @@ def contacts_ask_next_action(
                 HandlerFullArgs(
                     command=Command.CONTACT_DELETE,
                     args=ContactDeleteIArgs(
-                        uid=contact_uid,
+                        uid=uid,
                     ),
                 ),
             )

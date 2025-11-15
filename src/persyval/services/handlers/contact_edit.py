@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from prompt_toolkit import HTML, prompt
 
 from persyval.models.contact import (
+    Contact,
     ContactUid,
 )
 from persyval.services.birthday.parse_and_format import (
@@ -16,7 +17,7 @@ from persyval.services.data_actions.contact_get import contact_get
 from persyval.services.data_actions.contact_update import contact_update
 from persyval.services.email.validate_email import parse_emails, validate_email_list
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
-from persyval.services.handlers.contacts.contacts_ask_next_action import contacts_ask_next_action
+from persyval.services.handlers.contacts.contact_item_ask_next_action import contact_item_ask_next_action
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.services.phone.validate_phone_list import (
     parse_phones,
@@ -54,9 +55,10 @@ class ContactEditIHandler(
         contact = copy.deepcopy(
             contact_get(
                 data_storage=self.data_storage,
-                contact_uid=parsed_args.uid,
+                uid=parsed_args.uid,
             ),
         )
+        # TODO: Rework to use ArgsConfig input handling
 
         name = prompt(
             message=HTML("<b>Name</b>: "),
@@ -98,12 +100,12 @@ class ContactEditIHandler(
 
         render_good_message(
             self.console,
-            f"Contact '{contact.name}' edited successfully.",
+            f"{Contact.get_meta_info().singular_name} '{contact.name}' edited successfully.",
         )
 
-        contacts_ask_next_action(
+        contact_item_ask_next_action(
             execution_queue=self.execution_queue,
-            contact_uid=contact.uid,
+            uid=contact.uid,
         )
 
         return None
