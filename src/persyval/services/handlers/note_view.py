@@ -61,13 +61,20 @@ class NoteViewIHandler(
         )
 
 
+NO_TITLE = "[No Title]"
+NO_CONTENT = "[No Content]"
+
+
 def render_details(console: Console, note: Note) -> None:
+    title = (note.title or "").strip() or NO_TITLE
+    content = (note.content or "").strip() or NO_CONTENT
+
     render_item_card_with_panel(
         console=console,
         entity_title=note.get_meta_info().singular_name,
         list_to_render=[
-            RenderItem(name="Title", value=note.title or "[No Title]"),
-            RenderItem(name="Content", value=note.content),
+            RenderItem(name="Title", value=title),
+            RenderItem(name="Content", value=content),
             # TODO: Tags
             RenderItem(name="Uid", value=str(note.uid)),
         ],
