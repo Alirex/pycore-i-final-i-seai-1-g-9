@@ -57,6 +57,8 @@ else
 fi
 ```
 
+Dev installation: [see here](#install-app-system-wide-in-development-mode)
+
 ## Check that project in the list
 
 ```shell
