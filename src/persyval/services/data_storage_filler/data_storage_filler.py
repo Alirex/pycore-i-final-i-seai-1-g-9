@@ -3,7 +3,9 @@ from typing import TYPE_CHECKING, Final
 from faker import Faker
 
 from persyval.models.contact import Contact
+from persyval.models.note import Note
 from persyval.services.data_actions.contact_add import contact_add
+from persyval.services.data_actions.note_add import note_add
 from persyval.services.data_storage.data_storage import DataStorage
 
 if TYPE_CHECKING:
@@ -30,6 +32,18 @@ def generate_phone_number(
     )
 
 
+def generate_note(
+    faker: Faker,
+) -> Note:
+    title = faker.sentence(nb_words=6) if faker.boolean(chance_of_getting_true=70) else None
+    content = faker.paragraph(nb_sentences=3)
+
+    return Note(
+        title=title,
+        content=content,
+    )
+
+
 def generate_contact(
     faker: Faker,
 ) -> Contact:
@@ -48,6 +62,14 @@ def generate_contacts(
 ) -> Generator[Contact]:
     for _ in range(amount):
         yield generate_contact(faker)
+
+
+def generate_notes(
+    amount: int,
+    faker: Faker,
+) -> Generator[Note]:
+    for _ in range(amount):
+        yield generate_note(faker)
 
 
 def fill_data_storage_by_path(
@@ -83,6 +105,15 @@ def fill_data_storage(
             contact_add(
                 data_storage=data_storage,
                 contact=contact,
+            )
+
+    if init_only and data_storage.data.notes:
+        print("Notes already exists. Skipping.")
+    else:
+        for note in generate_notes(amount, faker):
+            note_add(
+                data_storage=data_storage,
+                note=note,
             )
 
     for info in data_storage.get_stats():
