@@ -11,13 +11,16 @@ if TYPE_CHECKING:
 
 
 def render_intro(console: Console) -> None:
+    # Disk: 💾
+    # Note: Emoji broke render on some terminals.
+
     msg_intro = rf"""[cyan]╭─────────────────────────────────────────────╮
 │        Welcome to your Assistant!           │
 ╰─────────────────────────────────────────────╯
 
         (\_/)
         ( •_•)   I'm here to help.
-       / >💾     Just tell me what you need!
+       / >[:]   Just tell me what you need!
 
     Type [bold]{escape(Command.HELP)}[/bold] for available commands.
     Autocomplete is enabled.
