@@ -20,7 +20,7 @@ def render_intro(console: Console) -> None:
 
         (\_/)
         ( •_•)   I'm here to help.
-       / >[:]   Just tell me what you need!
+       / >[::]   Just tell me what you need!
 
     Type [bold]{escape(Command.HELP)}[/bold] for available commands.
     Autocomplete is enabled.
