@@ -9,6 +9,7 @@ from persyval.services.execution_queue.execution_queue import (
     HandlerArgsBase,
     HandlerFullArgs,
 )
+from persyval.services.handlers.shared.args_i_empty import ArgsIEmpty
 from persyval.services.handlers_base.handler_base import HandlerBase
 
 if TYPE_CHECKING:
@@ -65,6 +66,7 @@ class StorageRootIHandler(
                 self.execution_queue.put(
                     HandlerFullArgs(
                         command=Command.STORAGE_STATS,
+                        args=ArgsIEmpty(),
                     ),
                 )
 

@@ -7,6 +7,7 @@ from persyval.services.handlers_base.handler_base import HandlerBase
 
 if TYPE_CHECKING:
     from persyval.services.commands.args_config import ArgsConfig
+    from persyval.services.handlers_base.handler_output import HandlerOutput
 
 
 class StorageStatsIHandler(
@@ -18,7 +19,7 @@ class StorageStatsIHandler(
     def _make_action(
         self,
         parsed_args: ArgsIEmpty,  # noqa: ARG002
-    ) -> None:
+    ) -> HandlerOutput | None:
         table = Table(title="Storage Stats", title_justify="left")
         table.add_column("Name")
         table.add_column("Amount")
@@ -30,3 +31,4 @@ class StorageStatsIHandler(
             )
 
         self.console.print(table)
+        return None
