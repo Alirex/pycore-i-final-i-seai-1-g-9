@@ -125,12 +125,14 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             args_config=NOTE_VIEW_I_ARGS_CONFIG,
             description=f"View a {Note.get_meta_info().singular_name}.",
             handler=NoteViewIHandler,
+            hidden=True,
         ),
         CommandMeta(
             command=Command.NOTE_DELETE,
             args_config=NOTE_DELETE_I_ARGS_CONFIG,
             description=f"Delete a {Note.get_meta_info().singular_name}.",
             handler=NoteDeleteIHandler,
+            hidden=True,
         ),
         #
         CommandMeta(
