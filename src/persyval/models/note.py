@@ -53,22 +53,22 @@ class Note(BaseModel):
     )
 
     def get_prompt_toolkit_output(self) -> PromptToolkitFormattedText:
-        display_title: str
-        is_real_title: bool = False
+        single_line_content = self.content.replace("\n", " ")
 
-        if self.title:
-            display_title = self.title
-            is_real_title = True
-        elif len(self.content) > TRIM_CONTENT_PREVIEW:
-            size = TRIM_CONTENT_PREVIEW - len(LONG_PLACEHOLDER)
-            display_title = f"{self.content.replace(chr(10), ' ')[:size]}{LONG_PLACEHOLDER}"
+        is_real_title = self.title is not None
+
+        if is_real_title:
+            display_title = self.title or ""
+        elif len(single_line_content) > TRIM_CONTENT_PREVIEW:
+            preview_size = TRIM_CONTENT_PREVIEW - len(LONG_PLACEHOLDER)
+            display_title = f"{single_line_content[:preview_size]}{LONG_PLACEHOLDER}"
         else:
-            display_title = self.content.replace(chr(10), " ")
+            display_title = single_line_content
 
-        text: str
-        text = f"<b>{display_title}</b>" if is_real_title else f"<i>{display_title}</i>"
+        title_tag = "b" if is_real_title else "i"
+        text = f"<{title_tag}>{display_title}</{title_tag}>"
 
-        text += f"  (<i>{self.uid}</i>)"
+        text += f"\n<i>{self.uid}</i>"
 
         return HTML(text)
 
