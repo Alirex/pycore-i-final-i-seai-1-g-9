@@ -29,6 +29,7 @@ from persyval.services.handlers.exit import EXIT_I_ARGS_CONFIG, ExitIHandler
 from persyval.services.handlers.hello import HelloIHandler
 from persyval.services.handlers.help import HELP_I_ARGS_CONFIG, HelpIHandler
 from persyval.services.handlers.notes import NOTES_I_ARGS_CONFIG, NotesIHandler
+from persyval.services.handlers.root import RootIHandler
 from persyval.services.handlers.shared.args_i_empty import ARGS_CONFIG_I_EMPTY
 from persyval.services.handlers.storage_clear import (
     STORAGE_CLEAR_I_ARGS_CONFIG,
@@ -45,6 +46,13 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             args_config=ARGS_CONFIG_I_EMPTY,
             description="Display greeting.",
             handler=HelloIHandler,
+        ),
+        CommandMeta(
+            command=Command.ROOT,
+            args_config=ARGS_CONFIG_I_EMPTY,
+            description="Display root menu.",
+            handler=RootIHandler,
+            hidden=True,
         ),
         #
         CommandMeta(

@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 
 from prompt_toolkit import choice, print_formatted_text, prompt
 
-from persyval.constants.text import CHOICE_I_TO_MAIN_MENU
 from persyval.exceptions.main import InvalidCommandError
 from persyval.models.contact import (
     ALLOWED_KEYS_TO_FILTER,
@@ -11,6 +10,9 @@ from persyval.models.contact import (
     ContactUid,
 )
 from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, ArgType
+from persyval.services.console.add_option_i_to_main_menu import (
+    add_option_i_to_main_menu,
+)
 from persyval.services.data_actions.contacts_list import (
     LIST_FILTER_MODE_REGISTRY,
     ContactsListConfig,
@@ -18,7 +20,9 @@ from persyval.services.data_actions.contacts_list import (
     contacts_list,
 )
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
-from persyval.services.handlers.contacts.contacts_ask_next_action import contacts_ask_next_action
+from persyval.services.handlers.contacts.contacts_ask_next_action import (
+    contacts_ask_next_action,
+)
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message
 
@@ -149,9 +153,9 @@ class ContactsListIHandler(
             )
             return
 
-        options_list: list[tuple[ContactUid | None, PromptToolkitFormattedText]] = [
-            (None, CHOICE_I_TO_MAIN_MENU),
-        ]
+        options_list: list[tuple[ContactUid | None, PromptToolkitFormattedText]] = []
+        add_option_i_to_main_menu(options_list)
+
         options_list.extend((contact.uid, contact.get_prompt_toolkit_output()) for contact in contacts)
 
         message_after_filter = f"Contacts found: {len(contacts)}. \nChoose one to interact:"

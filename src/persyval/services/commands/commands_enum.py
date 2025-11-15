@@ -6,6 +6,8 @@ from typing import Final
 class Command(enum.StrEnum):
     HELLO = "hello"
 
+    ROOT = "root"
+
     CONTACTS_ROOT = "contacts"
 
     CONTACTS_LIST = "contacts_list"
@@ -30,12 +32,15 @@ class Command(enum.StrEnum):
 
     @classmethod
     def get_default(cls) -> Command:
-        return cls.HELP
+        return cls.ROOT
 
 
 COMMANDS_ORDER: Final[list[Command]] = [
+    Command.ROOT,
+    #
     Command.HELLO,
     #
+    # [contacts]-[BEGIN]
     Command.CONTACTS_ROOT,
     #
     Command.CONTACTS_LIST,
@@ -46,13 +51,18 @@ COMMANDS_ORDER: Final[list[Command]] = [
     Command.CONTACT_DELETE,
     #
     Command.CONTACTS_GET_UPCOMING_BIRTHDAYS,
+    # [contacts]-[END]
     #
+    # [notes]-[BEGIN]
     Command.NOTES,
+    # [notes]-[END]
     #
+    # [storage]-[BEGIN]
     Command.STORAGE_ROOT,
     #
     Command.STORAGE_STATS,
     Command.STORAGE_CLEAR,
+    # [storage]-[END]
     #
     Command.HELP,
     #
