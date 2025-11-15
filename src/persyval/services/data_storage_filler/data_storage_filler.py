@@ -37,10 +37,12 @@ def generate_note(
 ) -> Note:
     title = faker.sentence(nb_words=6) if faker.boolean(chance_of_getting_true=70) else None
     content = faker.paragraph(nb_sentences=3)
+    tags = [faker.word() for _ in range(faker.random_int(min=0, max=5))]
 
     return Note(
         title=title,
         content=content,
+        tags=tags,
     )
 
 
