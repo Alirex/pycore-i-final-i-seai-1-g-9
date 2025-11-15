@@ -26,6 +26,7 @@ from persyval.services.handlers.contacts_list import (
 )
 from persyval.services.handlers.contacts_root import CONTACTS_ROOT_I_ARGS_CONFIG, ContactsRootIHandler
 from persyval.services.handlers.exit import EXIT_I_ARGS_CONFIG, ExitIHandler
+from persyval.services.handlers.hello import HelloIHandler
 from persyval.services.handlers.help import HELP_I_ARGS_CONFIG, HelpIHandler
 from persyval.services.handlers.notes import NOTES_I_ARGS_CONFIG, NotesIHandler
 from persyval.services.handlers.shared.args_i_empty import ARGS_CONFIG_I_EMPTY
@@ -39,6 +40,13 @@ from persyval.services.handlers.storage_stats import StorageStatsIHandler
 COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
     item.command: item
     for item in [
+        CommandMeta(
+            command=Command.HELLO,
+            args_config=ARGS_CONFIG_I_EMPTY,
+            description="Display greeting.",
+            handler=HelloIHandler,
+        ),
+        #
         CommandMeta(
             command=Command.CONTACTS_ROOT,
             args_config=CONTACTS_ROOT_I_ARGS_CONFIG,
