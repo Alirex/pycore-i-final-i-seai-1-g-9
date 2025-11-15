@@ -10,7 +10,7 @@ from persyval.services.birthday.get_nearest_anniversary import (
     is_leap_year,
 )
 from persyval.services.birthday.parse_and_format import (
-    format_birthday_for_edit,
+    format_birthday_for_edit_and_export,
     format_birthday_for_output,
     parse_birthday,
 )
@@ -95,7 +95,7 @@ def test_format_birthday_for_output_invalid_input_type(birthday: object) -> None
     ],
 )
 def test_format_birthday_for_edit_valid(birthday: datetime.date, expected: str) -> None:
-    result = format_birthday_for_edit(birthday)
+    result = format_birthday_for_edit_and_export(birthday)
     assert result == expected
 
 
@@ -109,7 +109,7 @@ def test_format_birthday_for_edit_valid(birthday: datetime.date, expected: str) 
 )
 def test_format_birthday_for_edit_invalid(birthday: object) -> None:
     with pytest.raises((TypeError, ValueError)):
-        format_birthday_for_edit(cast("datetime.date", birthday))
+        format_birthday_for_edit_and_export(cast("datetime.date", birthday))
 
 
 # Region: is_leap_year tests

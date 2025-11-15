@@ -18,6 +18,7 @@ from persyval.services.handlers.contact_view import (
     CONTACT_VIEW_I_ARGS_CONFIG,
     ContactViewIHandler,
 )
+from persyval.services.handlers.contacts_export import ContactsExportIHandler
 from persyval.services.handlers.contacts_get_upcoming_birthdays import (
     CONTACTS_GET_BIRTHDAYS_I_ARGS_CONFIG,
     ContactsGetUpcomingBirthdaysIHandler,
@@ -91,6 +92,13 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             args_config=CONTACT_ADD_I_ARGS_CONFIG,
             description=f"Add a {Contact.get_meta_info().singular_name}.",
             handler=ContactAddIHandler,
+            hidden=True,
+        ),
+        CommandMeta(
+            command=Command.CONTACTS_EXPORT,
+            args_config=CONTACT_ADD_I_ARGS_CONFIG,
+            description=f"Export {Contact.get_meta_info().plural_name.lower()} to file.",
+            handler=ContactsExportIHandler,
             hidden=True,
         ),
         #

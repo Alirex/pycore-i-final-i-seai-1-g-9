@@ -5,9 +5,9 @@ from functools import cache
 from typing import TYPE_CHECKING, Annotated, Final, NewType
 
 from prompt_toolkit import HTML
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, field_serializer
 
-from persyval.services.birthday.parse_and_format import format_birthday_for_output
+from persyval.services.birthday.parse_and_format import format_birthday_for_edit_and_export, format_birthday_for_output
 from persyval.services.birthday.validate_birthday import validate_birthday
 from persyval.services.email.validate_email import validate_email_list
 from persyval.services.model_meta.model_meta_info import ModelMetaInfo
@@ -66,6 +66,10 @@ class Contact(BaseModel):
         datetime.date | None,
         AfterValidator(validate_birthday),
     ] = None
+
+    @field_serializer("birthday")
+    def serialize_birthday(self, birthday: datetime.date | None) -> str | None:
+        return format_birthday_for_edit_and_export(birthday) if birthday else None
 
     model_config = ConfigDict(
         validate_assignment=True,

@@ -23,6 +23,7 @@ ENTITY_PUBLIC_NAME: Final[str] = "Note"
 class AllowedKeysToFilterForNote(enum.StrEnum):
     TITLE = "title"
     CONTENT = "content"
+    TAG = "tag"
 
 
 ALLOWED_KEYS_TO_FILTER_FOR_NOTE: Final[set[str]] = set(AllowedKeysToFilterForNote)
@@ -37,6 +38,14 @@ class Note(BaseModel):
     content: Annotated[
         str,
         Field(description="The main content of the note.", min_length=1),
+    ]
+
+    tags: Annotated[
+        list[str] | None,
+        Field(
+            default_factory=list,
+            description="List of note tags.",
+        ),
     ]
 
     model_config = ConfigDict(

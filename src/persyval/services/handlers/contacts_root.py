@@ -24,6 +24,7 @@ class ContactsRootIAction(enum.StrEnum):
     LIST = "list"
     ADD = "add"
     GET_UPCOMING_BIRTHDAYS = "get_upcoming_birthdays"
+    EXPORT = "export"
 
 
 class ContactsRootIArgs(HandlerArgsBase):
@@ -99,5 +100,16 @@ class ContactsRootIHandler(
                     HandlerFullArgs(
                         command=Command.CONTACTS_GET_UPCOMING_BIRTHDAYS,
                         args=ContactsGetUpcomingBirthdaysIArgs(),
+                    ),
+                )
+            case ContactsRootIAction.EXPORT:
+                from persyval.services.handlers.contacts_list import (  # noqa: PLC0415
+                    ContactsListIArgs,
+                )
+
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.CONTACTS_EXPORT,
+                        args=ContactsListIArgs(),
                     ),
                 )

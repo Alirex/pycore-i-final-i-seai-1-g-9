@@ -57,6 +57,8 @@ else
 fi
 ```
 
+Dev installation: [see here](#install-app-system-wide-in-development-mode)
+
 ## Check that project in the list
 
 ```shell
@@ -255,6 +257,18 @@ uv run pytest --verbose -k test_birthday
 ```
 
 Keyword can be any part of the test name. For example, the name of a file, or function.
+
+### Clear data
+
+```shell
+persyval helpers clear-storage
+```
+
+### Generate some data
+
+```shell
+persyval helpers fill-storage --init-only --amount 30
+```
 
 ## Interesting locations
 

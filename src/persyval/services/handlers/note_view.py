@@ -75,7 +75,10 @@ def render_details(console: Console, note: Note) -> None:
         list_to_render=[
             RenderItem(name="Title", value=title),
             RenderItem(name="Content", value=content),
-            # TODO: Tags
+            RenderItem(
+                name="Tags",
+                value=str(", ".join(note.tags) if note.tags and len(note.tags) > 0 else "[No Tags]"),
+            ),
             RenderItem(name="Uid", value=str(note.uid)),
         ],
     )

@@ -11,22 +11,21 @@ if TYPE_CHECKING:
 
 
 def render_intro(console: Console) -> None:
-    msg_intro = rf"""
-    [cyan]
-    ╭─────────────────────────────────────────────╮
-    │        Welcome to your Assistant!           │
-    ╰─────────────────────────────────────────────╯
+    # Disk: 💾
+    # Note: Emoji broke render on some terminals.
 
-            (\_/)
-            ( •_•)   I'm here to help.
-           / >💾     Just tell me what you need!
+    msg_intro = rf"""[cyan]╭─────────────────────────────────────────────╮
+│        Welcome to your Assistant!           │
+╰─────────────────────────────────────────────╯
 
-     Type [bold]{escape(Command.HELP)}[/bold] for available commands.
-     Autocomplete is enabled.
+        (\_/)
+        ( •_•)   I'm here to help.
+       / >[::]   Just tell me what you need!
 
-     Press [bold]Enter[/bold] to open the menu.
-    [/cyan]
-    """
+    Type [bold]{escape(Command.HELP)}[/bold] for available commands.
+    Autocomplete is enabled.
+
+    Press [bold]Enter[/bold] to open the menu.[/cyan]"""
     app_name = APP_NAME.capitalize()
 
     panel = Panel(

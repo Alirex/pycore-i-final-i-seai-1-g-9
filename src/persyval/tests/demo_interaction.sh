@@ -42,7 +42,9 @@ persy_exec_plain() {
 
 
 # Show help message
-persy --show-commands --non-interactive help
+persy --show-commands --non-interactive "help true"
+
+persy_exec "help false"
 
 # Wrong argument in help command
 persy_exec "help bla" || true
@@ -58,6 +60,10 @@ persy_exec "storage_stats"
 
 # Clear storage
 persy_exec "storage_clear true"
+
+# -----------------------------------
+# Contact management demo
+# -----------------------------------
 
 persy_exec "contact_add Some"
 
@@ -89,5 +95,6 @@ persy_exec "contact_delete ${last_line} true"
 # Show all contacts
 persy_exec "contacts_list all"
 
+# Export contacts
 
-#echo "----- Restarting -----"
+persy_exec "contacts_export"
