@@ -13,6 +13,6 @@ class ModelMetaInfo(BaseModel):
         _cls: type[BaseModel],
     ) -> Self:
         return cls(
-            singular_name=cls.__name__.lower(),
-            plural_name=f"{cls.__name__.lower()}s",
+            singular_name=_cls.__name__,
+            plural_name=f"{_cls.__name__}s",
         )
