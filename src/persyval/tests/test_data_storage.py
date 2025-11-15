@@ -26,7 +26,7 @@ def test_data_storage_clear(
         amount=amount,
     )
     assert len(data_storage_fixture.data.contacts) == amount
-    assert len(data_storage_fixture.data.notes) == 0
+    assert len(data_storage_fixture.data.notes) == amount
 
     data_storage_fixture.clear()
     assert len(data_storage_fixture.data.contacts) == 0
