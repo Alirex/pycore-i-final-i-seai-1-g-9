@@ -6,7 +6,7 @@ def yes_no_dialog(
     text: str,
     title: str | None = None,
     boolean_text: str = "Yes/No",
-) -> bool | None:
+) -> bool:
     message = text
     if title:
         message = f"<b>{title}</b>\n{text}"
