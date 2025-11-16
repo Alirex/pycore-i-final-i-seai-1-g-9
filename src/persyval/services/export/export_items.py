@@ -1,14 +1,57 @@
 import csv
 import json
+from enum import Enum
 from typing import TYPE_CHECKING, Any
 
+from prompt_toolkit.shortcuts import choice
+
 from persyval.exceptions.main import NotFoundError
+from persyval.services.get_paths.get_app_dirs import get_downloads_dir_in_user_space
+from persyval.utils.format import render_canceled_message, render_error, render_good_message
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
 
     from pydantic import BaseModel
+    from rich.console import Console
+
+
+class ExportFormat(str, Enum):
+    CSV = "csv"
+    JSON = "json"
+
+
+format_choices = [
+    (ExportFormat.CSV, "CSV"),
+    (ExportFormat.JSON, "JSON"),
+]
+
+
+def choose_export_format() -> ExportFormat | None:
+    return choice(
+        message="Choose export format",
+        options=format_choices,
+    )
+
+
+def ensure_overwrite_allowed(console: Console, export_path: Path) -> bool:
+    if not export_path.exists():
+        return True
+
+    console.print(f"[yellow]File already exists:\n{export_path.as_uri()}[/yellow]")
+
+    overwrite_choices = [
+        (True, "Yes, overwrite the existing file"),
+        (False, "No, cancel export"),
+    ]
+
+    result = choice(
+        message="Would you like to continue?",
+        options=overwrite_choices,
+    )
+
+    return bool(result)
 
 
 def adapt_fields_to_csv(
@@ -54,3 +97,39 @@ def write_to_json(
 
     with path.open("w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
+
+
+def export_items(
+    *,
+    console: Console,
+    items: Iterable[BaseModel],
+    file_base_name: str,
+    chosen_format: ExportFormat,
+) -> None:
+    extension = chosen_format.value
+    export_path = get_downloads_dir_in_user_space() / f"{file_base_name}.{extension}"
+
+    # overwrite check
+    if not ensure_overwrite_allowed(console, export_path):
+        render_canceled_message(console, "Export canceled by user.")
+        return
+
+    # export itself
+    try:
+        if chosen_format == ExportFormat.CSV:
+            write_to_csv(items=items, path=export_path)
+        elif chosen_format == ExportFormat.JSON:
+            write_to_json(items=items, path=export_path)
+
+    except Exception as exc:  # noqa: BLE001
+        render_error(
+            console,
+            title=exc.__class__.__name__,
+            message=f"Error while exporting to {export_path.as_uri()}: {exc}",
+        )
+        return
+
+    render_good_message(
+        console,
+        f"Successfully exported to {export_path.as_uri()}",
+    )
