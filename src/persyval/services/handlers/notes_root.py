@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 class NotesRootIAction(enum.StrEnum):
     LIST = "list"
     ADD = "add"
+    EXPORT = "export"
 
 
 class NotesRootIArgs(HandlerArgsBase):
@@ -83,5 +84,15 @@ class NotesRootIHandler(
                     HandlerFullArgs(
                         command=Command.NOTE_ADD,
                         args=ArgsIEmpty(),
+                    ),
+                )
+
+            case NotesRootIAction.EXPORT:
+                from persyval.services.handlers.shared.sort_and_filter import ListIArgs  # noqa: PLC0415
+
+                self.execution_queue.put(
+                    HandlerFullArgs(
+                        command=Command.NOTES_EXPORT,
+                        args=ListIArgs(),
                     ),
                 )
