@@ -9,8 +9,9 @@ from persyval.services.data_actions.contact_add import contact_add
 from persyval.services.data_actions.contact_delete import contact_delete
 from persyval.services.data_actions.contact_get import contact_get
 from persyval.services.data_actions.contact_update import contact_update
-from persyval.services.data_actions.contacts_list import ContactsListConfig, ListFilterModeEnum, contacts_list
+from persyval.services.data_actions.contacts_list import ContactsListConfig, contacts_list
 from persyval.services.data_storage.data_storage import DataStorage
+from persyval.services.handlers.shared.sort_and_filter import ListFilterModeEnum
 
 if TYPE_CHECKING:
     from collections.abc import Generator

@@ -68,14 +68,12 @@ class ContactsRootIHandler(
         match choice_result:
             # TODO: (?) Use lazy import, when available. https://peps.python.org/pep-0810/
             case ContactsRootIAction.LIST:
-                from persyval.services.handlers.contacts_list import (  # noqa: PLC0415
-                    ContactsListIArgs,
-                )
+                from persyval.services.handlers.shared.sort_and_filter import ListIArgs  # noqa: PLC0415
 
                 self.execution_queue.put(
                     HandlerFullArgs(
                         command=Command.CONTACTS_LIST,
-                        args=ContactsListIArgs(),
+                        args=ListIArgs(),
                     ),
                 )
 
@@ -103,13 +101,11 @@ class ContactsRootIHandler(
                     ),
                 )
             case ContactsRootIAction.EXPORT:
-                from persyval.services.handlers.contacts_list import (  # noqa: PLC0415
-                    ContactsListIArgs,
-                )
+                from persyval.services.handlers.shared.args_i_empty import ArgsIEmpty  # noqa: PLC0415
 
                 self.execution_queue.put(
                     HandlerFullArgs(
                         command=Command.CONTACTS_EXPORT,
-                        args=ContactsListIArgs(),
+                        args=ArgsIEmpty(),
                     ),
                 )
