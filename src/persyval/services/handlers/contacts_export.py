@@ -35,9 +35,6 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
 
         # TODO: (?) Add ability to import data.
 
-        # TODO: (?) Add ability to check path.
-        #  If exists, ask for overwrite or provide other not-existing path.
-
         # TODO: (?) Implement all of this for notes.
 
         format_choices = [
@@ -72,6 +69,25 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
         extension: str = chosen_format.value
         base_name: Final[str] = f"{Contact.get_meta_info().plural_name.lower()}.{extension}"
         export_path = get_downloads_dir_in_user_space() / base_name
+
+        if export_path.exists():
+            self.console.print(
+                f"[yellow]Warning: The file already exists at this path:\n{export_path.as_uri()}[/yellow]",
+            )
+
+            overwrite_choices = [
+                (True, "Yes, overwrite the existing file"),
+                (False, "No, cancel export"),
+            ]
+
+            should_overwrite = choice(
+                message="Would you like to continue?",
+                options=overwrite_choices,
+            )
+
+            if not should_overwrite:
+                render_canceled_message(self.console, "Export canceled by user.")
+                return
 
         try:
             if chosen_format == ExportFormat.CSV:
