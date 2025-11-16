@@ -27,6 +27,7 @@ class Command(enum.StrEnum):
 
     NOTES_LIST = "notes_list"
     NOTE_ADD = "note_add"
+    NOTES_EXPORT = "notes_export"
 
     NOTE_EDIT = "note_edit"
     NOTE_VIEW = "note_view"
@@ -78,6 +79,7 @@ COMMANDS_ORDER: Final[list[Command]] = [
     Command.NOTE_EDIT,
     Command.NOTE_VIEW,
     Command.NOTE_DELETE,
+    Command.NOTES_EXPORT,
     # [notes]-[END]
     #
     # [storage]-[BEGIN]

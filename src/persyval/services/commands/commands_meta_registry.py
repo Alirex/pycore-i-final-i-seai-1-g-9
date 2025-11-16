@@ -40,6 +40,7 @@ from persyval.services.handlers.note_view import (
     NOTE_VIEW_I_ARGS_CONFIG,
     NoteViewIHandler,
 )
+from persyval.services.handlers.notes_export import NotesExportIHandler
 from persyval.services.handlers.notes_list import NotesListIHandler
 from persyval.services.handlers.notes_root import NOTES_ROOT_I_ARGS_CONFIG, NotesRootIHandler
 from persyval.services.handlers.root import RootIHandler
@@ -174,6 +175,13 @@ COMMANDS_META_REGISTRY: dict[Command, CommandMeta] = {
             args_config=NOTE_DELETE_I_ARGS_CONFIG,
             description=f"Delete a {Note.get_meta_info().singular_name}.",
             handler=NoteDeleteIHandler,
+            hidden=True,
+        ),
+        CommandMeta(
+            command=Command.NOTES_EXPORT,
+            args_config=CONTACT_ADD_I_ARGS_CONFIG,
+            description=f"Export {Note.get_meta_info().plural_name.lower()} to file.",
+            handler=NotesExportIHandler,
             hidden=True,
         ),
         #
