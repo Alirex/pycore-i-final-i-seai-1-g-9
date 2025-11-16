@@ -19,7 +19,10 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
     def _get_args_config(self) -> ArgsConfig[ArgsIEmpty]:
         return ARGS_CONFIG_I_EMPTY
 
-    def _make_action(self, _parsed_args: ArgsIEmpty) -> None:
+    def _make_action(
+        self,
+        parsed_args: ArgsIEmpty,  # noqa: ARG002
+    ) -> None:
         chosen_format = choose_export_format()
         if chosen_format is None:
             render_canceled_message(self.console, "Export canceled.")
