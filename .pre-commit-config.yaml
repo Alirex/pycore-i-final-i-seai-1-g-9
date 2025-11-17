@@ -76,6 +76,16 @@ repos:
         language: system
         pass_filenames: false
 
+      - id: basedpyright
+        # Check Python code style.
+        name: basedpyright
+        entry: uv run basedpyright
+        language: system
+        types: [python]
+        pass_filenames: false
+        # hook will execute using a single process instead of in parallel
+        require_serial: true
+
       - id: mypy
         # Static type checker for Python.
         name: mypy
