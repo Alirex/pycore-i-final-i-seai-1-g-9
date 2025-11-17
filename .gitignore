@@ -172,5 +172,7 @@ cython_debug/
 !.idea/ruff.xml
 # [jet_brains_custom]-[END]
 
+.zed
+
 # For task:
 pull_requests_list.txt
