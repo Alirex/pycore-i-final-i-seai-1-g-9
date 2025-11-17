@@ -48,7 +48,7 @@ CONTACT_EDIT_I_ARGS_CONFIG = ArgsConfig[ContactEditIArgs](
 class ContactEditIHandler(
     HandlerBase[ContactEditIArgs],
 ):
-    def _get_args_config(self) -> ArgsConfig[ContactEditIArgs]:
+    def _get_args_config(self) -> ArgsConfig[ContactEditIArgs]:  # pyright: ignore[reportImplicitOverride]
         return CONTACT_EDIT_I_ARGS_CONFIG
 
     def _make_action(self, parsed_args: ContactEditIArgs) -> HandlerOutput | None:

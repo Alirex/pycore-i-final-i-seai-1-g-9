@@ -57,10 +57,28 @@ def ensure_overwrite_allowed(console: Console, export_path: Path) -> bool:
 def adapt_fields_to_csv(
     item: dict[str, Any],
 ) -> dict[str, Any]:
+    new_item: dict[str, Any] = {}
+
     for key, value in item.items():
+        # Convert lists to a comma-separated string, converting nested structures to JSON where appropriate.
         if isinstance(value, list):
-            item[key] = ",".join(str(v) for v in value)
-    return item
+            parts: list[str] = []
+            for elem in value:  # pyright: ignore[reportUnknownVariableType]
+                if elem is None:
+                    parts.append("")
+                elif isinstance(elem, (dict, list)):
+                    parts.append(json.dumps(elem, ensure_ascii=False))
+                else:
+                    parts.append(str(elem))  # pyright: ignore[reportUnknownArgumentType]
+            new_item[key] = ",".join(parts)
+        # Convert dicts to a JSON string so CSV cell contains a readable representation
+        elif isinstance(value, dict):
+            new_item[key] = json.dumps(value, ensure_ascii=False)
+
+        else:
+            new_item[key] = str(value)
+
+    return new_item
 
 
 def write_to_csv(

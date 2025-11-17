@@ -1,6 +1,6 @@
 import abc
 import sys
-from typing import TYPE_CHECKING, Annotated, Any
+from typing import TYPE_CHECKING, Annotated
 
 import rich
 from pydantic import BaseModel, ConfigDict, Field
@@ -49,7 +49,7 @@ class HandlerBase[HandlerArgs](abc.ABC, BaseModel):
     )
 
     @abc.abstractmethod
-    def _get_args_config(self) -> ArgsConfig[Any]:
+    def _get_args_config(self) -> ArgsConfig[HandlerArgs]:
         """Get arguments configuration."""
 
     def parsed_call(self, parsed_args: HandlerArgs) -> HandlerOutput | None:
@@ -92,14 +92,14 @@ class HandlerBase[HandlerArgs](abc.ABC, BaseModel):
         #   Because it is better, at first, to validate input.
 
         if parsed_args is None and args is not None:
-            parsed_args = args_config.parse(args=args, non_interactive=self.non_interactive)
+            reparsed_args = args_config.parse(args=args, non_interactive=self.non_interactive)
         elif args is None and parsed_args is not None:
-            parsed_args = args_config.reparse(parsed_args=parsed_args, non_interactive=self.non_interactive)
+            reparsed_args = args_config.reparse(parsed_args=parsed_args, non_interactive=self.non_interactive)
         else:
             msg = "Either args or parsed_args must be provided."
             raise ValueError(msg)
 
-        return parsed_args
+        return reparsed_args
 
     def run(
         self,

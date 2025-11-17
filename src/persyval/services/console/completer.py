@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from pydantic import BaseModel
@@ -14,10 +14,11 @@ if TYPE_CHECKING:
 class HintsCompleter(Completer, BaseModel):
     hints: list[str]
 
+    @override
     def get_completions(
         self,
         document: Document,
-        complete_event: CompleteEvent,  # noqa: ARG002
+        complete_event: CompleteEvent,
     ) -> Iterable[Completion]:
         text = document.text_before_cursor
 

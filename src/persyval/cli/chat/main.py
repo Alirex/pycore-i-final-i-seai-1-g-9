@@ -8,7 +8,9 @@ from persyval.cli.constants import CLI_DOC_NEWLINE, CLI_DOC_NEWLINE_AT_END
 from persyval.services.chat.main import main_chat
 from persyval.services.get_paths.get_app_dirs import get_data_dir_in_user_space
 
-app = typer.Typer()
+app = typer.Typer(
+    pretty_exceptions_show_locals=False,
+)
 
 ENV_VAR_NAME_I_PREDEFINED_INPUT: Final[str] = "PERSYVAL_I_PREDEFINED_INPUT"
 
@@ -52,7 +54,7 @@ def run(  # noqa: PLR0913
         typer.Option(
             "--plain-render",
             help=f"Render plain text without any special formatting (e.g., colors, styles). {CLI_DOC_NEWLINE}"
-            f"Useful for simple terminals and CLI automations scripts.{CLI_DOC_NEWLINE_AT_END}",
+            f"Useful for simple terminals and CLI automation scripts.{CLI_DOC_NEWLINE_AT_END}",
         ),
     ] = False,
     terminal_simplified: Annotated[

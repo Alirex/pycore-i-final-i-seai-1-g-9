@@ -11,6 +11,7 @@ from persyval.services.commands.args_config import ArgMetaConfig, ArgsConfig, Ar
 from persyval.services.data_actions.contact_add import contact_add
 from persyval.services.email.validate_email import validate_email_list
 from persyval.services.execution_queue.execution_queue import HandlerArgsBase
+from persyval.services.handlers.contacts.contact_item_ask_next_action import contact_item_ask_next_action
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.services.phone.validate_phone_list import validate_phone_list
 from persyval.utils.format import render_good_message
@@ -70,9 +71,14 @@ class ContactAddIHandler(
     def _make_action(self, parsed_args: ContactAddIArgs) -> None:
         contact = Contact.model_validate(parsed_args.model_dump())
 
-        contact_add(data_storage=self.data_storage, contact=contact)
+        contact = contact_add(data_storage=self.data_storage, contact=contact)
 
         render_good_message(
             self.console,
             f"{Contact.get_meta_info().singular_name} '{contact.name}' added successfully.",
+        )
+
+        contact_item_ask_next_action(
+            execution_queue=self.execution_queue,
+            uid=contact.uid,
         )

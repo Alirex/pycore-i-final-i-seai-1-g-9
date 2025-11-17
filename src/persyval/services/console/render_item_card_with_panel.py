@@ -26,7 +26,7 @@ def render_item_card_with_panel(
     entity_title: str,
     list_to_render: list[RenderItem],
 ) -> None:
-    message_as_list = []
+    message_as_list: list[str] = []
     for item in list_to_render:
         value = item.value if item.value is not None else RENDER_I_PLACEHOLDER
         if not item.no_escape_value:

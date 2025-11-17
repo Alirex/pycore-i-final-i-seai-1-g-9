@@ -119,5 +119,3 @@ def contact_item_ask_next_action(
                     ),
                 ),
             )
-        case _:
-            raise NotImplementedError

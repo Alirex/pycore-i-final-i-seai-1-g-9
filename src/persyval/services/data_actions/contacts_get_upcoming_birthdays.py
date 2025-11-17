@@ -21,7 +21,7 @@ def contacts_get_upcoming_birthdays(
     *,
     sort: bool = False,
 ) -> list[AnniversaryContactInfo]:
-    upcoming_birthdays = []
+    upcoming_birthdays: list[AnniversaryContactInfo] = []
 
     # Ignore the timezone for this case for now.
     current_date = datetime.datetime.now().date()  # noqa: DTZ005

@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 
 
 def parse_queries(queries: list[str]) -> dict[AllowedKeysToFilter, str]:
-    result = {}
+    result: dict[AllowedKeysToFilter, str] = {}
     for part in queries:
         split = part.split("=")
         if len(split) != 2:  # noqa: PLR2004

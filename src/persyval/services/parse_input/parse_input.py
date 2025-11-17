@@ -22,7 +22,7 @@ class UserInput(BaseModel):
         msg = f"[bold]{escape(self.command)}[/bold]"
         if self.args:
             # args = [f"'[italic]{escape(arg)}[/italic]'" for arg in self.args]
-            args = []
+            args: list[str] = []
             for arg in self.args:
                 arg_normalized = str(arg) if arg else None
 

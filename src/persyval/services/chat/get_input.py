@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from persyval.services.console.completer import get_completer
 from persyval.utils.format import format_prompt_message
@@ -11,17 +11,19 @@ if TYPE_CHECKING:
 def get_input(
     *,
     console: Console,
-    prompt_session: PromptSession | None,  # type: ignore[type-arg]
+    prompt_session: PromptSession[Any] | None,
     use_advanced_completer: bool = False,
 ) -> str:
     input_prompt_msg = format_prompt_message("Enter command: ")
     console.print(input_prompt_msg)
 
     if prompt_session:
-        result = prompt_session.prompt(
-            message="> ",
-            completer=get_completer(use_advanced_completer=use_advanced_completer),
-            show_frame=True,
+        result = str(
+            prompt_session.prompt(  # pyright: ignore[reportUnknownArgumentType]
+                message="> ",
+                completer=get_completer(use_advanced_completer=use_advanced_completer),
+                show_frame=True,
+            ),
         )
     else:
         result = input("> ")

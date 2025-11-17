@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from prompt_toolkit import PromptSession
 from rich.console import Console
@@ -39,7 +39,7 @@ def main_chat(  # noqa: PLR0913
         dir_path=storage_dir,
     ) as data_storage:
         console = Console()
-        prompt_session: PromptSession | None = None if terminal_simplified else PromptSession()  # type: ignore[type-arg]
+        prompt_session: PromptSession[Any] | None = None if terminal_simplified else PromptSession()
 
         execution_queue = create_execution_queue()
 

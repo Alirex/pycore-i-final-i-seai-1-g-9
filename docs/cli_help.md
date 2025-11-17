@@ -72,7 +72,7 @@ Do not prompt for user input. Exit after completion of action.
 .
 * `--plain-render`: Render plain text without any special formatting (e.g., colors, styles). 
 
-Useful for simple terminals and CLI automations scripts.
+Useful for simple terminals and CLI automation scripts.
 
 .
 * `--terminal-simplified`: Use simplified terminal input. 

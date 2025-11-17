@@ -41,6 +41,8 @@ class DataStorageAutosaver(BaseModel):
         exc_val: BaseException | None,
         exc_tb: TracebackType | None,
     ) -> bool | None:
+        del exc_val, exc_tb
+
         # Save only if there is no exception.
         if exc_type is None:
             self.data_storage.save()

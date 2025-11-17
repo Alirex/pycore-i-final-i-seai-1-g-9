@@ -74,7 +74,7 @@ class ArgsConfig[ParseResult](BaseModel):
         parsed_args: ParseResult,
         non_interactive: bool = False,
     ) -> ParseResult:
-        args = []
+        args: list[str | None] = []
         for arg_meta_config in self.args:
             arg = getattr(parsed_args, arg_meta_config.name)
             arg = str(arg) if arg else None

@@ -66,7 +66,7 @@ def parse_input_and_make_action(  # noqa: PLR0913
 
     command_meta = COMMANDS_META_REGISTRY[command]
 
-    handler_obj = command_meta.handler(
+    handler_obj = command_meta.handler(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
         execution_queue=execution_queue,
         #
         data_storage=data_storage,
@@ -79,7 +79,7 @@ def parse_input_and_make_action(  # noqa: PLR0913
         throw_full_error=throw_full_error,
     )
 
-    handler_output = handler_obj.run(
+    handler_output = handler_obj.run(  # pyright: ignore[reportUnknownMemberType]
         args=args,
         parsed_args=parsed_args,
     )
