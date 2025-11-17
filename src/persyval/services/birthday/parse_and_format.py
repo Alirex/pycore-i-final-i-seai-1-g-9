@@ -1,6 +1,8 @@
 import datetime
 from typing import Final
 
+from pydantic.validate_call_decorator import validate_call
+
 FORMAT_BIRTHDAY_FOR_HUMAN: Final[str] = "YYYY-MM-DD"
 """ISO-8601 format for birthday."""
 
@@ -17,25 +19,16 @@ YYYY-MM-DD Weekday
 """
 
 
+@validate_call
 def format_birthday_for_output(birthday: datetime.date) -> str:
-    if type(birthday) is not datetime.date:
-        msg = "Invalid birthday date for formatting."
-        raise TypeError(msg)
-
     return birthday.strftime(FORMAT_BIRTHDAY_OUTPUT)
 
 
+@validate_call
 def format_birthday_for_edit_and_export(birthday: datetime.date) -> str:
-    if type(birthday) is not datetime.date:
-        msg = "Invalid birthday date for formatting."
-        raise TypeError(msg)
-
     return birthday.isoformat()
 
 
+@validate_call
 def parse_birthday(birthday: str | None) -> datetime.date | None:
-    if not isinstance(birthday, (str, type(None))):
-        msg = "Invalid birthday date for formatting."
-        raise TypeError(msg)
-
     return datetime.date.fromisoformat(birthday) if birthday else None
