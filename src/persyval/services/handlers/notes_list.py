@@ -58,7 +58,8 @@ def notes_by_tag(notes: list[Note]) -> dict[str, list[Note]]:
     for note in notes:
         if note.tags:  # note has tags
             for tag in note.tags:
-                tag_dict[tag].append(note)
+                normalized_tag = tag.strip().lower()
+                tag_dict[normalized_tag].append(note)
         else:  # optionally handle notes without tags under a special key
             tag_dict["(No tag)"].append(note)
 
