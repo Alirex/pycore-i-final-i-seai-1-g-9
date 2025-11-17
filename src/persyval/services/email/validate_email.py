@@ -25,7 +25,7 @@ def validate_email(email: str) -> str:
 
 
 def validate_email_list(emails: list[str]) -> list[str]:
-    validated_emails = []
+    validated_emails: list[str] = []
 
     for email in emails:
         try:
@@ -34,8 +34,8 @@ def validate_email_list(emails: list[str]) -> list[str]:
             continue
         validated_emails.append(validated)
 
-    exist = set()
-    unique_emails = []
+    exist: set[str] = set()
+    unique_emails: list[str] = []
     for email in validated_emails:
         if email not in exist:
             unique_emails.append(email)

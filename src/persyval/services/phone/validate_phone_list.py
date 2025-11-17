@@ -47,7 +47,7 @@ def validate_phone(phone: str) -> str:
 
 
 def validate_phone_list(phones: list[str]) -> list[str]:
-    validated_phones = []
+    validated_phones: list[str] = []
 
     for phone in phones:
         try:
@@ -57,8 +57,8 @@ def validate_phone_list(phones: list[str]) -> list[str]:
         validated_phones.append(validated)
 
     # Remove duplicates. But keep the order.
-    existing_phones = set()
-    unique_phones = []
+    existing_phones: set[str] = set()
+    unique_phones: list[str] = []
     for phone in validated_phones:
         if phone not in existing_phones:
             unique_phones.append(phone)
