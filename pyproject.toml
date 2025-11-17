@@ -59,11 +59,38 @@ dev = [
     # Interactive command-line testing.
     "pexpect>=4.9.0",
     # [testing]-[END]
+    # Extra checker. Used by Zed.
+    "basedpyright>=1.33.0",
+    # Task runner
+    "poethepoet>=0.37.0",
+    # Dead code checker
+    "vulture>=2.14",
+    # Code complexity checker
+    "radon>=6.0.1",
 ]
 
 [project.scripts]
 persyval = "persyval:main"
 persy = "persyval:main_short"
+
+[tool.poe.tasks]
+# Run with: poe metrics or uv run poe metrics
+# Check code quality: dead code, complexity, and maintainability
+metrics = [
+    {cmd = "vulture . --min-confidence 80 --exclude .venv,build,dist,docs,scripts,tests"},
+    {cmd = "radon cc . -a -nb"},
+    {cmd = "radon mi . -nb"}
+]
+
+# Run with: poe quality or uv run poe quality
+# Full quality check: format, lint, type check, and metrics
+quality = [
+    {cmd = "ruff format ."},
+    {cmd = "ruff check . --fix"},
+    {cmd = "basedpyright --level error"},
+    {cmd = "vulture . --min-confidence 80 --exclude .venv,build,dist,docs,scripts,tests"},
+    {cmd = "radon cc . -a -nb"}
+]
 
 [build-system]
 requires = ["uv_build>=0.9.8,<0.10.0"]
@@ -92,9 +119,22 @@ warn_required_dynamic_aliases = true
 
 [tool.ruff]
 line-length = 120
+fix = true
+show-fixes = true
 
 extend-exclude = [
 ]
+
+# [tool.ruff.lint.isort]
+# # known-first-party = ["your_package_name"]  # CHANGE THIS
+# combine-as-imports = true
+# force-sort-within-sections = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 [tool.ruff.lint]
 extend-select = [
@@ -167,3 +207,130 @@ runtime-evaluated-decorators = [
     "pydantic.validate_call",
     "app.command",
 ]
+
+[tool.basedpyright]
+typeCheckingMode = "strict"
+
+# # ============================================================
+# # IMPORT AND MODULE CHECKS
+# # ============================================================
+# reportMissingImports = true
+# reportMissingTypeStubs = true  # Stricter: require type stubs
+# reportUndefinedVariable = true
+# reportAssertAlwaysTrue = true
+# reportInvalidStringEscapeSequence = true
+
+# # ============================================================
+# # STRICT NULL SAFETY (like TS strictNullChecks)
+# # ============================================================
+# reportOptionalSubscript = true
+# reportOptionalMemberAccess = true
+# reportOptionalCall = true
+# reportOptionalIterable = true
+# reportOptionalContextManager = true
+# reportOptionalOperand = true
+# reportAny = true  # Prohibir Any completamente
+# reportExplicitAny = true
+# reportIgnoreCommentWithoutRule = false  # No permitir # type: ignore sin código
+# reportPrivateLocalImportUsage = true
+# # Unrecognized configuration
+# # reportUnnecessaryTypeAnnotation = true  # Detectar anotaciones redundantes
+
+# # ============================================================
+# # TYPE COMPLETENESS (like TS noImplicitAny + strictFunctionTypes)
+# # ============================================================
+# reportMissingParameterType = true
+# reportMissingTypeArgument = true
+# reportUnknownParameterType = true
+# reportUnknownLambdaType = true
+# reportUnknownArgumentType = true   # STRICT: Enable (can be noisy)
+# reportUnknownVariableType = true   # STRICT: Enable (can be noisy)
+# reportUnknownMemberType = true     # STRICT: Enable (can be noisy)
+# reportUntypedFunctionDecorator = true
+# reportUntypedClassDecorator = true
+# reportUntypedBaseClass = true
+# reportUntypedNamedTuple = true
+
+# # ============================================================
+# # CLASS AND INHERITANCE CHECKS
+# # ============================================================
+# reportIncompatibleMethodOverride = true
+# reportIncompatibleVariableOverride = true
+# reportInconsistentConstructor = true
+# reportUninitializedInstanceVariable = true
+# reportOverlappingOverload = true
+# reportMissingSuperCall = true  # STRICT: Enable
+
+# # ============================================================
+# # CODE QUALITY (like TS noUnusedLocals + noUnusedParameters)
+# # ============================================================
+# reportPrivateUsage = true
+# reportConstantRedefinition = true
+# reportInvalidStubStatement = true
+# reportIncompleteStub = true
+# reportUnsupportedDunderAll = true
+# reportUnusedClass = "error"        # STRICT: Error instead of warning
+# reportUnusedFunction = "error"     # STRICT: Error instead of warning
+# reportUnusedVariable = "error"     # STRICT: Error instead of warning
+# reportUnusedImport = "error"       # STRICT: Error instead of warning
+# reportDuplicateImport = "error"    # STRICT: Error instead of warning
+
+# # ============================================================
+# # UNNECESSARY CODE DETECTION
+# # ============================================================
+# reportUnnecessaryIsInstance = "error"         # STRICT: Error
+# reportUnnecessaryCast = "error"               # STRICT: Error
+# reportUnnecessaryComparison = "error"         # STRICT: Error
+# reportUnnecessaryContains = "error"           # STRICT: Error
+# reportUnnecessaryTypeIgnoreComment = "error"  # STRICT: Error
+
+# # ============================================================
+# # FUNCTION/METHOD SIGNATURE STRICTNESS
+# # ============================================================
+# reportGeneralTypeIssues = true
+# reportPropertyTypeMismatch = true
+# reportFunctionMemberAccess = true
+# reportCallInDefaultInitializer = true
+# # Note: This is too strict, but can be enabled if desired
+# # reportImplicitStringConcatenation = true  # STRICT: Enable
+
+# # ============================================================
+# # ADDITIONAL STRICT CHECKS (Progressive Enhancement)
+# # ============================================================
+# reportImplicitOverride = true    # STRICT: Require @override decorator (Python 3.12+)
+# # Unrecognized configuration
+# # reportShadowedImports = true     # STRICT: Detect shadowed imports
+# reportDeprecated = "warning"     # Warn on deprecated usage
+
+# # ============================================================
+# # ADDITIONAL TYPE CHECKS
+# # ============================================================
+# reportImportCycles = "warning"
+
+# # ============================================================
+# # EXCLUSIONS
+# # ============================================================
+# exclude = [
+#     "**/__pycache__",
+#     "**/node_modules",
+#     ".git",
+#     ".mypy_cache",
+#     ".pyright_cache",
+#     ".ruff_cache",
+#     ".pytest_cache",
+#     ".venv",
+#     "venv",
+#     "env",
+#     "logs",
+#     "output",
+#     "data",
+#     "build",
+#     "dist",
+#     "*.egg-info",
+# ]
+
+# venvPath = "."
+# venv = ".venv"
+
+# Useful:
+# https://github.com/Ranteck/PyStrict-strict-python/blob/develop/pyproject.toml
