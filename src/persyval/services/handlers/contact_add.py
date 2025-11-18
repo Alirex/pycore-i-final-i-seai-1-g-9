@@ -78,6 +78,9 @@ class ContactAddIHandler(
             f"{Contact.get_meta_info().singular_name} '{contact.name}' added successfully.",
         )
 
+        if self.non_interactive:
+            return
+
         contact_item_ask_next_action(
             execution_queue=self.execution_queue,
             uid=contact.uid,

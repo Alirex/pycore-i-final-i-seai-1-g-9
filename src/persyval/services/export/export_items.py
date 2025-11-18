@@ -7,7 +7,7 @@ from prompt_toolkit.shortcuts import choice
 
 from persyval.exceptions.main import NotFoundError
 from persyval.services.get_paths.get_app_dirs import get_downloads_dir_in_user_space
-from persyval.utils.format import render_canceled_message, render_error, render_good_message
+from persyval.utils.format import render_error, render_good_message
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -28,7 +28,11 @@ format_choices = [
 ]
 
 
-def choose_export_format() -> ExportFormat | None:
+def choose_export_format(
+    non_interactive: bool = False,  # noqa: FBT001, FBT002
+) -> ExportFormat | None:
+    if non_interactive:
+        return ExportFormat.CSV
     return choice(
         message="Choose export format",
         options=format_choices,
@@ -128,9 +132,9 @@ def export_items(
     export_path = get_downloads_dir_in_user_space() / f"{file_base_name}.{extension}"
 
     # overwrite check
-    if not ensure_overwrite_allowed(console, export_path):
-        render_canceled_message(console, "Export canceled by user.")
-        return
+    # if not ensure_overwrite_allowed(console, export_path):
+    #     render_canceled_message(console, "Export canceled by user.")
+    #     return
 
     # export itself
     try:

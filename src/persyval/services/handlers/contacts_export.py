@@ -7,7 +7,7 @@ from persyval.services.handlers.shared.args_i_empty import (
     ARGS_CONFIG_I_EMPTY,
     ArgsIEmpty,
 )
-from persyval.services.handlers.shared.sort_and_filter import ListConfig, ListFilterModeEnum
+from persyval.services.handlers.shared.sort_and_filter import ListConfig, ListFilterModeEnum, ListOrderModeEnum
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message
 
@@ -23,14 +23,17 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
         self,
         parsed_args: ArgsIEmpty,  # noqa: ARG002
     ) -> None:
-        chosen_format = choose_export_format()
+        chosen_format = choose_export_format(non_interactive=self.non_interactive)
         if chosen_format is None:
             render_canceled_message(self.console, "Export canceled.")
             return
 
         contacts = contacts_list(
             data_storage=self.data_storage,
-            list_config=ListConfig(filter_mode=ListFilterModeEnum.ALL),
+            list_config=ListConfig(
+                filter_mode=ListFilterModeEnum.ALL,
+                order_mode=ListOrderModeEnum.DEFAULT,
+            ),
         )
 
         if not contacts:

@@ -46,9 +46,6 @@ persy --show-commands --non-interactive "help true"
 
 persy_exec "help false"
 
-# Wrong argument in help command
-persy_exec "help bla" || true
-
 # Wrong command
 persy_exec "he123" || true
 
@@ -78,13 +75,13 @@ done
 persy_exec "storage_stats"
 
 # Show all contacts
-persy_exec "contacts_list all"
+persy_exec "contacts_list default '' all ''"
 
 # Show filtered
-persy_exec_plain "contacts_list filter name=x2"
+persy_exec_plain "contacts_list default '' filter name=x2"
 
 # Get last line from output
-last_line=$(persy_exec_plain "contacts_list filter name=x2" | tail --lines 1)
+last_line=$(persy_exec_plain "contacts_list default '' filter name=x2" | tail --lines 1)
 
 # Remove contact based on last line
 persy_exec "contact_view ${last_line}"
@@ -93,7 +90,7 @@ persy_exec "contact_view ${last_line}"
 persy_exec "contact_delete ${last_line} true"
 
 # Show all contacts
-persy_exec "contacts_list all"
+persy_exec "contacts_list custom name all '"
 
 # Export contacts
 

@@ -105,6 +105,9 @@ def validate_filter_query_i_wrapper(model: type[HaveMetaInfoProtocol]) -> Callab
 
         new_dict: dict[str, Any] = {}
         for key, val in value.items():
+            if key == "''":
+                continue
+
             try:
                 fact_name = meta_config.get_field_name_fact(key)
             except KeyError:
@@ -149,6 +152,8 @@ def validate_order_query_i_wrapper(model: type[HaveMetaInfoProtocol]) -> Callabl
         new_list: list[str] = []
         for item in value:
             key = item.lstrip("-")
+            if key == "''":
+                continue
 
             try:
                 fact_name = meta_config.get_field_name_fact(key)
