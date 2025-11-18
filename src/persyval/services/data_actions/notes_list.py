@@ -12,7 +12,7 @@ def notes_list(
     list_config: ListConfig,
 ) -> list[Note]:
     return filter_iterable(
-        iterable=data_storage.data.contacts.values(),
+        iterable=data_storage.data.notes.values(),
         model=Note,
         list_config=list_config,
     )
