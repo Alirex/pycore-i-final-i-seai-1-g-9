@@ -7,7 +7,7 @@ from prompt_toolkit.shortcuts import choice
 
 from persyval.exceptions.main import NotFoundError
 from persyval.services.get_paths.get_app_dirs import get_downloads_dir_in_user_space
-from persyval.utils.format import render_error, render_good_message
+from persyval.utils.format import render_canceled_message, render_error, render_good_message
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -39,23 +39,35 @@ def choose_export_format(
     )
 
 
-def ensure_overwrite_allowed(console: Console, export_path: Path) -> bool:
+def ensure_overwrite_allowed(
+    *,
+    console: Console,
+    export_path: Path,
+    non_interactive: bool = False,
+) -> bool:
     if not export_path.exists():
         return True
 
     console.print(f"[yellow]File already exists:\n{export_path.as_uri()}[/yellow]")
+
+    if non_interactive:
+        # TODO: Rework, to have better config for non-interactive mode.
+        render_error(
+            console,
+            "Non-interactive mode: export forced.",
+            title="Danger",
+        )
+        return True
 
     overwrite_choices = [
         (True, "Yes, overwrite the existing file"),
         (False, "No, cancel export"),
     ]
 
-    result = choice(
+    return choice(
         message="Would you like to continue?",
         options=overwrite_choices,
     )
-
-    return bool(result)
 
 
 def adapt_fields_to_csv(
@@ -115,6 +127,7 @@ def write_to_json(
     items: Iterable[BaseModel],
     path: Path,
 ) -> None:
+    # TODO: Rework to better pydantic usage.
     data = [item.model_dump(mode="json") for item in items]
 
     with path.open("w", encoding="utf-8") as f:
@@ -127,21 +140,26 @@ def export_items(
     items: Iterable[BaseModel],
     file_base_name: str,
     chosen_format: ExportFormat,
+    non_interactive: bool = False,
 ) -> None:
     extension = chosen_format.value
     export_path = get_downloads_dir_in_user_space() / f"{file_base_name}.{extension}"
 
-    # overwrite check
-    # if not ensure_overwrite_allowed(console, export_path):
-    #     render_canceled_message(console, "Export canceled by user.")
-    #     return
+    if not ensure_overwrite_allowed(
+        console=console,
+        export_path=export_path,
+        non_interactive=non_interactive,
+    ):
+        render_canceled_message(console, "Export canceled by user.")
+        return
 
     # export itself
     try:
-        if chosen_format == ExportFormat.CSV:
-            write_to_csv(items=items, path=export_path)
-        elif chosen_format == ExportFormat.JSON:
-            write_to_json(items=items, path=export_path)
+        match chosen_format:
+            case ExportFormat.CSV:
+                write_to_csv(items=items, path=export_path)
+            case ExportFormat.JSON:
+                write_to_json(items=items, path=export_path)
 
     except Exception as exc:  # noqa: BLE001
         render_error(

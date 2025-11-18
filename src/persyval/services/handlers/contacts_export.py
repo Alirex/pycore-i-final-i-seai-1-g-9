@@ -48,4 +48,5 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
             items=contacts,
             file_base_name=Contact.get_meta_info().plural_name.lower(),
             chosen_format=chosen_format,
+            non_interactive=self.non_interactive,
         )

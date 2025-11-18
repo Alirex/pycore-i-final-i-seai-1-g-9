@@ -48,4 +48,5 @@ class NotesExportIHandler(HandlerBase[ArgsIEmpty]):
             items=notes,
             file_base_name=Note.get_meta_info().plural_name.lower(),
             chosen_format=chosen_format,
+            non_interactive=self.non_interactive,
         )
