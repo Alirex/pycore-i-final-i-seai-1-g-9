@@ -20,6 +20,8 @@ class HintsCompleter(Completer, BaseModel):
         document: Document,
         complete_event: CompleteEvent,
     ) -> Iterable[Completion]:
+        del complete_event
+
         text = document.text_before_cursor
 
         if " " in text.lstrip():
