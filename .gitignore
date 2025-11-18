@@ -170,6 +170,7 @@ cython_debug/
 
 # Plugins settings
 !.idea/ruff.xml
+!.idea/externalDependencies.xml
 # [jet_brains_custom]-[END]
 
 .zed
