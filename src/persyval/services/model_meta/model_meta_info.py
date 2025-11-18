@@ -1,8 +1,11 @@
-from typing import Protocol, Self
+from typing import TYPE_CHECKING, Protocol, Self
 
 from pydantic import BaseModel, Field
 
 from persyval.services.model_meta.field_meta import FieldsMetaConfig
+
+if TYPE_CHECKING:
+    from persyval.services.console.types import PromptToolkitFormattedText
 
 
 class ModelMetaInfo(BaseModel):
@@ -31,3 +34,9 @@ class ModelMetaInfo(BaseModel):
 class HaveMetaInfoProtocol(Protocol):
     @classmethod
     def get_meta_info(cls) -> ModelMetaInfo: ...
+
+
+class ModelProtocol[T](HaveMetaInfoProtocol, Protocol):
+    uid: T
+
+    def get_prompt_toolkit_output(self) -> PromptToolkitFormattedText: ...

@@ -6,12 +6,10 @@ from persyval.services.handlers.shared.sort_and_filter import ListConfig, filter
 if TYPE_CHECKING:
     from persyval.services.data_storage.data_storage import DataStorage
 
-NotesListConfig = ListConfig
 
-
-def note_list(
+def notes_list(
     data_storage: DataStorage,
-    list_config: NotesListConfig,
+    list_config: ListConfig,
 ) -> list[Note]:
     return filter_iterable(
         iterable=data_storage.data.contacts.values(),

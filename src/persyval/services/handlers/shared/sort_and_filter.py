@@ -1,3 +1,4 @@
+import datetime
 import enum
 from typing import TYPE_CHECKING, Any
 
@@ -6,6 +7,7 @@ from pydantic import BaseModel, Field
 
 from persyval.models.contact import Contact
 from persyval.models.note import Note
+from persyval.services.birthday.parse_and_format import format_birthday_for_edit_and_export
 from persyval.services.commands.args_config import (
     T_PARSE_RESULT_DICT,
     ArgMetaConfig,
@@ -43,7 +45,9 @@ ListOrderModeMeta = ListModeMeta[ListOrderModeEnum]
 
 
 class ListIArgs(HandlerArgsBase):
-    # order_mode: ListOrderModeEnum | None = None
+    order_mode: ListOrderModeEnum | None = None
+    order_query: list[str] | None = None
+
     filter_mode: ListFilterModeEnum | None = None
     filter_query: dict[str, Any] | None = None
 
@@ -78,6 +82,23 @@ LIST_ORDER_MODE_REGISTRY: dict[ListOrderModeEnum, ListOrderModeMeta] = {
 }
 
 
+def value_interactive_custom_i_filter_query_i_wrapper(
+    model: type[HaveMetaInfoProtocol],
+) -> Callable[[T_PARSE_RESULT_DICT], str]:
+    def handler(parsed: T_PARSE_RESULT_DICT) -> str:
+        if parsed.get("filter_mode") != ListFilterModeEnum.FILTER:
+            return ""
+
+        field_names = model.get_meta_info().fields_meta_config.get_field_names_for_filtering()
+
+        message = f"Enter queries to filter by. \nFormat: key=value,key2=value2 \nAllowed keys: {', '.join(sorted(field_names))}\n"  # noqa: E501
+        return prompt(
+            message=message,
+        )
+
+    return handler
+
+
 def validate_filter_query_i_wrapper(model: type[HaveMetaInfoProtocol]) -> Callable[[dict[str, str]], dict[str, Any]]:
     def validator(value: dict[str, str]) -> dict[str, Any]:
         meta_config = model.get_meta_info().fields_meta_config
@@ -97,17 +118,22 @@ def validate_filter_query_i_wrapper(model: type[HaveMetaInfoProtocol]) -> Callab
     return validator
 
 
-def value_interactive_custom_i_filter_query_i_wrapper(
+def value_interactive_custom_i_order_query_i_wrapper(
     model: type[HaveMetaInfoProtocol],
 ) -> Callable[[T_PARSE_RESULT_DICT], str]:
     def handler(parsed: T_PARSE_RESULT_DICT) -> str:
-        if parsed.get("filter_mode") != ListFilterModeEnum.FILTER:
+        if parsed.get("order_mode") != ListOrderModeEnum.CUSTOM:
             return ""
 
         field_names = model.get_meta_info().fields_meta_config.get_field_names_for_filtering()
 
-        message = "Enter queries to filter by. \n"
-        f"Format: key=value,key2=value2 \nAllowed keys: {', '.join(sorted(field_names))}\n"
+        message = (
+            "Enter queries to order by. \n"
+            "Format: key,-key2 \n"
+            "Add '-' before key to sort in descending order. \n"
+            "If field has multiple values, sorting will be done by the order of values. \n"
+            f"Allowed keys: {', '.join(sorted(field_names))}\n"
+        )
 
         return prompt(
             message=message,
@@ -116,16 +142,52 @@ def value_interactive_custom_i_filter_query_i_wrapper(
     return handler
 
 
+def validate_order_query_i_wrapper(model: type[HaveMetaInfoProtocol]) -> Callable[[list[str]], list[str]]:
+    def validator(value: list[str]) -> list[str]:
+        meta_config = model.get_meta_info().fields_meta_config
+
+        new_list: list[str] = []
+        for item in value:
+            key = item.lstrip("-")
+
+            try:
+                fact_name = meta_config.get_field_name_fact(key)
+            except KeyError:
+                msg = f"Ordering by '{key}' is not allowed."
+                raise KeyError(msg) from None
+
+            item_local = f"-{fact_name}" if item.startswith("-") else fact_name
+
+            new_list.append(item_local)
+
+        return new_list
+
+    return validator
+
+
 def collect_args_config_i_for_model(
     model: type[HaveMetaInfoProtocol],
 ) -> ArgsConfig[ListIArgs]:
     return ArgsConfig[ListIArgs](
         result_cls=ListIArgs,
         args=[
-            # ArgMetaConfig(
-            #     name="order_mode",
-            #     parser_func=lambda x: ListOrderModeEnum(x) if x else None,
-            # ),
+            ArgMetaConfig(
+                name="order_mode",
+                parser_func=lambda x: ListOrderModeEnum(x) if x else None,
+                allow_input_on_empty=True,
+                value_interactive_mode=ValueInteractiveMode.SELECT_FROM_OPTIONS,
+                value_interactive_options=[(item.mode, item.title) for item in LIST_ORDER_MODE_REGISTRY.values()],
+            ),
+            ArgMetaConfig(
+                name="order_query",
+                type_=ArgType.LIST_BY_COMMA,
+                default_factory=list,
+                allow_input_on_empty=True,
+                value_interactive_mode=ValueInteractiveMode.CUSTOM,
+                #
+                value_interactive_custom_handler=value_interactive_custom_i_order_query_i_wrapper(model),
+                validator_func=validate_order_query_i_wrapper(model),
+            ),
             ArgMetaConfig(
                 name="filter_mode",
                 parser_func=lambda x: ListFilterModeEnum(x) if x else None,
@@ -153,8 +215,10 @@ LIST_I_ARGS_CONFIG_NOTES = collect_args_config_i_for_model(model=Note)
 
 
 class ListConfig(BaseModel):
-    filter_mode: ListFilterModeEnum
+    order_mode: ListOrderModeEnum | None = None
+    order_query: list[str] = Field(default_factory=list)
 
+    filter_mode: ListFilterModeEnum | None = None
     filter_query: dict[str, str] = Field(default_factory=dict)
 
 
@@ -243,4 +307,45 @@ def filter_iterable[T: HaveMetaInfoProtocol](  # noqa: C901, PLR0912
                 if is_good:
                     result.append(item)
 
+        case None:
+            msg = "Filter mode is not specified."
+            raise ValueError(msg)
+
+    order_mode = list_config.order_mode
+    match order_mode:
+        case ListOrderModeEnum.DEFAULT:
+            return result
+        case ListOrderModeEnum.CUSTOM:
+            order_query = list_config.order_query
+
+            # Sort by lower() if the field is str
+
+            for order_field in reversed(order_query):
+                is_descending = order_field.startswith("-")
+                field_name = order_field.lstrip("-")
+
+                result.sort(
+                    key=lambda item: normalize_sort_value(getattr(item, field_name)),
+                    reverse=is_descending,
+                )
+
+        case None:
+            msg = "Order mode is not specified."
+            raise ValueError(msg)
+
     return result
+
+
+def normalize_sort_value(
+    value: Any,  # noqa: ANN401
+) -> Any:  # noqa: ANN401
+    if isinstance(value, str):
+        return value.lower()
+
+    if value is None:
+        return ""
+
+    if isinstance(value, datetime.date):
+        return format_birthday_for_edit_and_export(value)
+
+    return value

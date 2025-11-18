@@ -55,10 +55,9 @@ CHOICE_ITEM_META_REGISTRY: dict[ContactItemAction, ChoiceItemMeta] = {
 
 
 def contact_item_ask_next_action(
-    *,
     execution_queue: ExecutionQueue,
     uid: ContactUid,
-    is_from_view: bool = False,
+    is_from_view: bool = False,  # noqa: FBT001, FBT002
 ) -> None:
     options: list[tuple[ContactItemAction | None, PromptToolkitFormattedText]] = []
     for item in CHOICE_ITEM_ORDER:

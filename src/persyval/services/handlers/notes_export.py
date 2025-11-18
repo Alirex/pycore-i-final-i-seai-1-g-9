@@ -1,13 +1,13 @@
 from typing import TYPE_CHECKING
 
 from persyval.models.note import Note
-from persyval.services.data_actions.notes_list import NotesListConfig, note_list
+from persyval.services.data_actions.notes_list import notes_list
 from persyval.services.export.export_items import choose_export_format, export_items
 from persyval.services.handlers.shared.args_i_empty import (
     ARGS_CONFIG_I_EMPTY,
     ArgsIEmpty,
 )
-from persyval.services.handlers.shared.sort_and_filter import ListFilterModeEnum
+from persyval.services.handlers.shared.sort_and_filter import ListConfig, ListFilterModeEnum
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message
 
@@ -28,9 +28,9 @@ class NotesExportIHandler(HandlerBase[ArgsIEmpty]):
             render_canceled_message(self.console, "Export canceled.")
             return
 
-        notes = note_list(
+        notes = notes_list(
             data_storage=self.data_storage,
-            list_config=NotesListConfig(filter_mode=ListFilterModeEnum.ALL),
+            list_config=ListConfig(filter_mode=ListFilterModeEnum.ALL),
         )
 
         if not notes:

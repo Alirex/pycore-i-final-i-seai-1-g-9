@@ -1,13 +1,13 @@
 from typing import TYPE_CHECKING
 
 from persyval.models.contact import Contact
-from persyval.services.data_actions.contacts_list import ContactsListConfig, contacts_list
+from persyval.services.data_actions.contacts_list import contacts_list
 from persyval.services.export.export_items import choose_export_format, export_items
 from persyval.services.handlers.shared.args_i_empty import (
     ARGS_CONFIG_I_EMPTY,
     ArgsIEmpty,
 )
-from persyval.services.handlers.shared.sort_and_filter import ListFilterModeEnum
+from persyval.services.handlers.shared.sort_and_filter import ListConfig, ListFilterModeEnum
 from persyval.services.handlers_base.handler_base import HandlerBase
 from persyval.utils.format import render_canceled_message
 
@@ -30,7 +30,7 @@ class ContactsExportIHandler(HandlerBase[ArgsIEmpty]):
 
         contacts = contacts_list(
             data_storage=self.data_storage,
-            list_config=ContactsListConfig(filter_mode=ListFilterModeEnum.ALL),
+            list_config=ListConfig(filter_mode=ListFilterModeEnum.ALL),
         )
 
         if not contacts:

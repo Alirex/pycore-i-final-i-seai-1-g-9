@@ -9,15 +9,13 @@ if TYPE_CHECKING:
 
 # TODO: Rework
 
-ContactsListConfig = ListConfig
-
 
 # TODO: Refactor this function.
 
 
 def contacts_list(
     data_storage: DataStorage,
-    list_config: ContactsListConfig,
+    list_config: ListConfig,
 ) -> list[Contact]:
     return filter_iterable(
         iterable=data_storage.data.contacts.values(),

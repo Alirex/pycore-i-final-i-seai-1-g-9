@@ -9,9 +9,9 @@ from persyval.services.data_actions.contact_add import contact_add
 from persyval.services.data_actions.contact_delete import contact_delete
 from persyval.services.data_actions.contact_get import contact_get
 from persyval.services.data_actions.contact_update import contact_update
-from persyval.services.data_actions.contacts_list import ContactsListConfig, contacts_list
+from persyval.services.data_actions.contacts_list import contacts_list
 from persyval.services.data_storage.data_storage import DataStorage
-from persyval.services.handlers.shared.sort_and_filter import ListFilterModeEnum
+from persyval.services.handlers.shared.sort_and_filter import ListConfig, ListFilterModeEnum, ListOrderModeEnum
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -48,8 +48,9 @@ def test_contact_i_add_i_get_i_remove(
     contacts_amount_before = len(
         contacts_list(
             data_storage=data_storage_fixture,
-            list_config=ContactsListConfig(
+            list_config=ListConfig(
                 filter_mode=ListFilterModeEnum.ALL,
+                order_mode=ListOrderModeEnum.DEFAULT,
             ),
         ),
     )
@@ -86,8 +87,9 @@ def test_contact_i_add_i_get_i_remove(
     contacts_amount_after_add_all = len(
         contacts_list(
             data_storage=data_storage_fixture,
-            list_config=ContactsListConfig(
+            list_config=ListConfig(
                 filter_mode=ListFilterModeEnum.ALL,
+                order_mode=ListOrderModeEnum.DEFAULT,
             ),
         ),
     )
@@ -97,7 +99,8 @@ def test_contact_i_add_i_get_i_remove(
     contacts_amount_after_add_filtered = len(
         contacts_list(
             data_storage=data_storage_fixture,
-            list_config=ContactsListConfig(
+            list_config=ListConfig(
+                order_mode=ListOrderModeEnum.DEFAULT,
                 filter_mode=ListFilterModeEnum.FILTER,
                 filter_query={"name": name},
             ),
@@ -143,8 +146,9 @@ def test_contact_i_add_i_get_i_remove(
     contacts_amount_end = len(
         contacts_list(
             data_storage=data_storage_fixture,
-            list_config=ContactsListConfig(
+            list_config=ListConfig(
                 filter_mode=ListFilterModeEnum.ALL,
+                order_mode=ListOrderModeEnum.DEFAULT,
             ),
         ),
     )

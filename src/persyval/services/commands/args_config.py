@@ -337,13 +337,20 @@ def parse_arg_to_arg_result(
             case ArgType.BOOL:
                 arg_result = convert_command_part_to_bool(arg)
             case ArgType.LIST_BY_COMMA:
-                arg_result = list(filter(None, arg.split(",")))  # pyright: ignore[reportUnknownArgumentType, reportUnknownVariableType]
+                arg_result = parse_list(arg)  # pyright: ignore[reportUnknownArgumentType, reportUnknownVariableType]
             case ArgType.DICT_BY_COMMA_AND_EQUAL:
                 arg_result = parse_dict(arg)
             case ArgType.DATE:
                 arg_result = datetime.date.fromisoformat(arg)
 
     return arg_result
+
+
+def parse_list(value: str | list[str]) -> list[str]:
+    if isinstance(value, list):
+        return value
+
+    return list(filter(None, value.split(",")))
 
 
 def parse_dict(value: str | dict[str, Any]) -> dict[str, str]:

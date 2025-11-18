@@ -54,6 +54,9 @@ class FieldsMetaConfig(BaseModel):
         description="List of field metadata configurations.",
     )
 
+    def get_fields_meta_registry(self) -> dict[str, FieldItemMetaConfig]:
+        return {field.name: field for field in self.fields}
+
     def get_field_name_fact(self, field_name: str) -> str:
         field_name = field_name.strip().lower()
         for field in self.fields:
@@ -69,5 +72,8 @@ class FieldsMetaConfig(BaseModel):
     def get_field_names_for_filtering(self) -> list[str]:
         return [field.name for field in self.get_fields_for_filtering()]
 
-    def get_fields_meta_registry(self) -> dict[str, FieldItemMetaConfig]:
-        return {field.name: field for field in self.fields}
+    def get_fields_for_sorting(self) -> list[FieldItemMetaConfig]:
+        return [field for field in self.fields if field.is_sortable]
+
+    def get_field_names_for_sorting(self) -> list[str]:
+        return [field.name for field in self.get_fields_for_sorting()]
