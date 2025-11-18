@@ -149,11 +149,13 @@ class ArgsConfig[ParseResult](BaseModel):
             except IndexError:
                 arg = None
 
-            arg = handle_default_for_arg(
-                arg_meta_config=arg_meta_config,
-                arg=arg,
-                non_interactive_guard=non_interactive,
-            )
+            if non_interactive:
+                # Note: Early handling of defaults in non-interactive mode.
+                arg = handle_default_for_arg(
+                    arg_meta_config=arg_meta_config,
+                    arg=arg,
+                    non_interactive_guard=non_interactive,
+                )
 
             # ---------
 
