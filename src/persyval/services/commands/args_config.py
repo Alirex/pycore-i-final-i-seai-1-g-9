@@ -261,10 +261,19 @@ def handle_input_on_empty_arg(  # noqa: C901, PLR0912
     if not arg and arg_meta_config.allow_input_on_empty:
         value_interactive_mode = arg_meta_config.value_interactive_mode
         if not value_interactive_mode:
-            if arg_meta_config.type_ == ArgType.BOOL:
-                value_interactive_mode = ValueInteractiveMode.BOOL_INPUT
-            elif arg_meta_config.type_ == ArgType.TEXT:
-                value_interactive_mode = ValueInteractiveMode.TEXT_INPUT
+            match arg_meta_config.type_:
+                case ArgType.BOOL:
+                    value_interactive_mode = ValueInteractiveMode.BOOL_INPUT
+                case ArgType.TEXT:
+                    value_interactive_mode = ValueInteractiveMode.TEXT_INPUT
+                case ArgType.INT:
+                    value_interactive_mode = ValueInteractiveMode.TEXT_INPUT
+                case ArgType.LIST_BY_COMMA:
+                    value_interactive_mode = ValueInteractiveMode.TEXT_INPUT
+                case ArgType.DICT_BY_COMMA_AND_EQUAL:
+                    value_interactive_mode = ValueInteractiveMode.TEXT_INPUT
+                case ArgType.DATE:
+                    value_interactive_mode = ValueInteractiveMode.TEXT_INPUT
 
         # ---------
 
@@ -305,8 +314,6 @@ def handle_input_on_empty_arg(  # noqa: C901, PLR0912
                     raise InvalidCommandError(msg)
 
                 arg = arg_meta_config.value_interactive_custom_handler(result_dict)
-            case None:
-                pass
 
     return arg  # pyright: ignore[reportUnknownVariableType]
 
