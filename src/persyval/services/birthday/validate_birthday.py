@@ -40,7 +40,7 @@ def validate_birthday(date: datetime.date | None) -> datetime.date | None:
     # Check age limit.
     difference = relativedelta(current_date, date)
     if difference.years > MAX_AGE:
-        msg = "Birthday date is invalid. Contact can not be more then 100 years old."
+        msg = f"Birthday date is invalid. Contact can not be more then {MAX_AGE} years old."
         raise InvalidDataError(msg)
 
     return date
