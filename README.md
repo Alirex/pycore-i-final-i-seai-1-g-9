@@ -258,6 +258,12 @@ uv run pytest --verbose -k test_birthday
 
 Keyword can be any part of the test name. For example, the name of a file, or function.
 
+### Check code quality
+
+```shell
+uv run poe quality
+```
+
 ### Clear data
 
 ```shell
