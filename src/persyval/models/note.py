@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Annotated, Final, NewType
 from prompt_toolkit import HTML
 from pydantic import BaseModel, ConfigDict, Field
 
+from persyval.services.model_meta.field_meta import FieldItemMetaConfig, FieldsMetaConfig, FilterMode
 from persyval.services.model_meta.model_meta_info import ModelMetaInfo
 
 if TYPE_CHECKING:
@@ -16,8 +17,6 @@ TRIM_CONTENT_PREVIEW: Final[int] = 40
 LONG_PLACEHOLDER: Final[str] = "..."
 
 NoteUid = NewType("NoteUid", uuid.UUID)
-
-ENTITY_PUBLIC_NAME: Final[str] = "Note"
 
 
 class AllowedKeysToFilterForNote(enum.StrEnum):
@@ -75,4 +74,33 @@ class Note(BaseModel):
     @classmethod
     @cache
     def get_meta_info(cls) -> ModelMetaInfo:
-        return ModelMetaInfo.from_class(cls)
+        return ModelMetaInfo.from_class(
+            cls,
+            fields_meta_config=FieldsMetaConfig(
+                fields=[
+                    FieldItemMetaConfig(
+                        name="uid",
+                        description="The unique identifier.",
+                        filter_mode=FilterMode.EXACT,
+                        is_groupable=False,
+                        parse_func=lambda x: NoteUid(uuid.UUID(str(x))),  # pyright: ignore[reportUnknownArgumentType, reportUnknownLambdaType]
+                    ),
+                    FieldItemMetaConfig(
+                        name="title",
+                        description="The title.",
+                        is_groupable=False,
+                    ),
+                    FieldItemMetaConfig(
+                        name="content",
+                        description="The main content.",
+                        is_groupable=False,
+                    ),
+                    FieldItemMetaConfig(
+                        name="tags",
+                        aliases=["tag"],
+                        description="List of tags associated with the item.",
+                        is_list_based=True,
+                    ),
+                ],
+            ),
+        )

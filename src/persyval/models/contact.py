@@ -1,5 +1,4 @@
 import datetime
-import enum
 import uuid
 from functools import cache
 from typing import TYPE_CHECKING, Annotated, Final, NewType
@@ -10,6 +9,7 @@ from pydantic import AfterValidator, BaseModel, ConfigDict, Field, field_seriali
 from persyval.services.birthday.parse_and_format import format_birthday_for_edit_and_export, format_birthday_for_output
 from persyval.services.birthday.validate_birthday import validate_birthday
 from persyval.services.email.validate_email import validate_email_list
+from persyval.services.model_meta.field_meta import FieldItemMetaConfig, FieldsMetaConfig, FilterMode
 from persyval.services.model_meta.model_meta_info import ModelMetaInfo
 from persyval.services.phone.validate_phone_list import validate_phone_list
 
@@ -20,22 +20,6 @@ ContactUid = NewType("ContactUid", uuid.UUID)
 
 TRIM_ADDRESS: Final[int] = 10
 LONG_PLACEHOLDER: Final[str] = "..."
-
-
-class AllowedKeysToFilter(enum.StrEnum):
-    UID = "uid"
-    NAME = "name"
-    ADDRESS = "address"
-    BIRTHDAY = "birthday"
-
-    # Special. Because of the singular form.
-    PHONE = "phone"
-    EMAIL = "email"
-
-
-ALLOWED_KEYS_TO_FILTER: Final[set[str]] = set(AllowedKeysToFilter)
-
-ENTITY_PUBLIC_NAME: Final[str] = "Contact"
 
 
 class Contact(BaseModel):
@@ -103,4 +87,43 @@ class Contact(BaseModel):
     @classmethod
     @cache
     def get_meta_info(cls) -> ModelMetaInfo:
-        return ModelMetaInfo.from_class(cls)
+        return ModelMetaInfo.from_class(
+            cls,
+            fields_meta_config=FieldsMetaConfig(
+                fields=[
+                    FieldItemMetaConfig(
+                        name="uid",
+                        description="The unique identifier.",
+                        filter_mode=FilterMode.EXACT,
+                        is_groupable=False,
+                        parse_func=lambda x: ContactUid(uuid.UUID(str(x))),  # pyright: ignore[reportUnknownArgumentType, reportUnknownLambdaType]
+                    ),
+                    FieldItemMetaConfig(
+                        name="name",
+                        description="The name.",
+                    ),
+                    FieldItemMetaConfig(
+                        name="address",
+                        description="The address.",
+                    ),
+                    FieldItemMetaConfig(
+                        name="phones",
+                        aliases=["phone"],
+                        description="List of phone numbers associated with the item.",
+                        is_list_based=True,
+                    ),
+                    FieldItemMetaConfig(
+                        name="emails",
+                        aliases=["email"],
+                        description="List of email addresses associated with the item.",
+                        is_list_based=True,
+                    ),
+                    FieldItemMetaConfig(
+                        name="birthday",
+                        description="The birthday.",
+                        filter_mode=FilterMode.EXACT,
+                        parse_func=validate_birthday,
+                    ),
+                ],
+            ),
+        )

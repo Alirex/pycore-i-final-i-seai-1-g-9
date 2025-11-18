@@ -1,11 +1,8 @@
 from typing import TYPE_CHECKING
 
-from prompt_toolkit import choice, print_formatted_text, prompt
+from prompt_toolkit import choice, print_formatted_text
 
-from persyval.exceptions.main import InvalidCommandError
 from persyval.models.contact import (
-    ALLOWED_KEYS_TO_FILTER,
-    AllowedKeysToFilter,
     Contact,
     ContactUid,
 )
@@ -20,9 +17,7 @@ from persyval.services.handlers.contacts.contact_item_ask_next_action import (
     contact_item_ask_next_action,
 )
 from persyval.services.handlers.shared.sort_and_filter import (
-    LIST_FILTER_MODE_REGISTRY,
-    LIST_I_ARGS_CONFIG,
-    ListFilterModeEnum,
+    LIST_I_ARGS_CONFIG_CONTACTS,
     ListIArgs,
 )
 from persyval.services.handlers_base.handler_base import HandlerBase
@@ -33,20 +28,6 @@ if TYPE_CHECKING:
     from persyval.services.console.types import PromptToolkitFormattedText
 
 
-def parse_queries(queries: list[str]) -> dict[AllowedKeysToFilter, str]:
-    result: dict[AllowedKeysToFilter, str] = {}
-    for part in queries:
-        split = part.split("=")
-        if len(split) != 2:  # noqa: PLR2004
-            continue
-
-        key, value = split
-        key_ = AllowedKeysToFilter(key)
-        result[key_] = value
-
-    return result
-
-
 # TODO: Make repeatable filtering without exiting to main menu
 
 
@@ -54,55 +35,11 @@ class ContactsListIHandler(
     HandlerBase[ListIArgs],
 ):
     def _get_args_config(self) -> ArgsConfig[ListIArgs]:
-        return LIST_I_ARGS_CONFIG
+        return LIST_I_ARGS_CONFIG_CONTACTS
 
-    def _make_action(self, parsed_args: ListIArgs) -> None:  # noqa: C901, PLR0912
-        if parsed_args.filter_mode is None and self.non_interactive:
-            msg = "Filter mode is required."
-            raise InvalidCommandError(msg)
-
-        if parsed_args.filter_mode is not None:
-            choice_filter = parsed_args.filter_mode
-        else:
-            choice_filter = choice(
-                message="Choose filter mode:",
-                options=[(item.mode, item.title) for item in LIST_FILTER_MODE_REGISTRY.values()],
-            )
-
-        if choice_filter is ListFilterModeEnum.FILTER:
-            queries = parsed_args.queries
-            if not queries:
-                message = (
-                    "Enter queries to filter by. \n"
-                    "Format: key=value,key2=value2 (e.g., name=John,address=UA)\n"
-                    f"Allowed keys: {', '.join(sorted(ALLOWED_KEYS_TO_FILTER))}\n"
-                )
-                queries_raw = prompt(
-                    message=message,
-                )
-                queries = queries_raw.split(",")
-
-            if not queries:
-                msg = "Queries are required."
-                raise InvalidCommandError(msg)
-
-            parsed_queries = parse_queries(queries)
-
-            if not parsed_queries:
-                msg = "Queries are required."
-                raise InvalidCommandError(msg)
-
-            for key in parsed_queries:
-                if key not in ALLOWED_KEYS_TO_FILTER:
-                    msg = f"Filtering by '{key}' is not allowed."
-                    raise InvalidCommandError(msg)
-
-        else:
-            parsed_queries = {}
-
+    def _make_action(self, parsed_args: ListIArgs) -> None:
         list_config = ContactsListConfig(
-            filter_mode=choice_filter,
-            queries_as_map=parsed_queries,
+            **parsed_args.model_dump(),
         )
 
         contacts = contacts_list(

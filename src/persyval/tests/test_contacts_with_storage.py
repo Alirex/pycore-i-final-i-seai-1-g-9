@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from persyval.exceptions.main import AlreadyExistsError, NotFoundError
-from persyval.models.contact import AllowedKeysToFilter, Contact
+from persyval.models.contact import Contact
 from persyval.services.data_actions.contact_add import contact_add
 from persyval.services.data_actions.contact_delete import contact_delete
 from persyval.services.data_actions.contact_get import contact_get
@@ -99,7 +99,7 @@ def test_contact_i_add_i_get_i_remove(
             data_storage=data_storage_fixture,
             list_config=ContactsListConfig(
                 filter_mode=ListFilterModeEnum.FILTER,
-                queries_as_map={AllowedKeysToFilter.NAME: name},
+                filter_query={"name": name},
             ),
         ),
     )
