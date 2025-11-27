@@ -6,7 +6,7 @@ exclude: |
 
 repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.9.10
+    rev: 0.9.13
     hooks:
       - id: uv-lock
 
@@ -50,7 +50,7 @@ repos:
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.14.5
+    rev: v0.14.6
     hooks:
       - id: ruff-check
         # Run the linter.
@@ -83,8 +83,8 @@ repos:
         language: system
         types: [python]
         pass_filenames: false
-        # hook will execute using a single process instead of in parallel
-        require_serial: true
+      #        # hook will execute using a single process instead of in parallel
+      #        require_serial: true
 
       - id: mypy
         # Static type checker for Python.
@@ -92,5 +92,5 @@ repos:
         entry: uv run mypy
         language: system
         types: [python]
-        # hook will execute using a single process instead of in parallel
-        require_serial: true
+      #        # hook will execute using a single process instead of in parallel
+      #        require_serial: true

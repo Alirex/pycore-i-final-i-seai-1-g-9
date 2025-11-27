@@ -168,19 +168,22 @@ fi
 ruff --version
 ```
 
-### Install pre-commit
+### Install prek for pre-commit hooks
 
 Needed for automatic linting.
 
 ```shell
-if ! command -v pre-commit &> /dev/null; then
-    uv tool install pre-commit
+if ! command -v prek &> /dev/null; then
+    curl --proto '=https' --tlsv1.2 -LsSf https://github.com/j178/prek/releases/download/v0.2.19/prek-installer.sh | sh &&\
+    prek self update
 else
-    uv tool upgrade pre-commit
+    prek self update
 fi
 
-pre-commit --version
+prek --version
 ```
+
+Note: Run with self-update for installing the latest version of prek. Maybe they will provide a better script later.
 
 ### Clone the repository
 
@@ -203,7 +206,13 @@ It will be used automatically without manual activation with command like `uv ru
 Make this after cloning the repository.
 
 ```shell
-pre-commit install
+prek install
+```
+
+or, if you have pre-commit hooks installed before prek:
+
+```shell
+prek install --overwrite
 ```
 
 Make this each time after cloning the repository.
@@ -215,7 +224,7 @@ Don't need to do it after changing the hooks, commit or pull.
 If needed, run them manually.
 
 ```shell
-pre-commit run --all-files
+prek run --all-files
 ```
 
 Useful after changing the hooks. Or just to check if everything is fine.
